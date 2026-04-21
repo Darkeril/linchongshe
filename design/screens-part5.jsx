@@ -28,7 +28,12 @@ function MessagesScreen({ palette, radius }) {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '0 18px', zIndex: 20,
       }}>
-        <span style={{ fontSize: 22, fontWeight: 800, color: p.ink, fontFamily: TYPE.brand }}>消息</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ width: 34, height: 34, borderRadius: 17, background: p.surface, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke={p.ink} strokeWidth="2" strokeLinecap="round"><path d="M1 1.5h14M1 6h10M1 10.5h14" /></svg>
+          </div>
+          <span style={{ fontSize: 22, fontWeight: 800, color: p.ink, fontFamily: TYPE.brand }}>消息</span>
+        </div>
         <div style={{ display: 'flex', gap: 10 }}>
           <div style={{ width: 34, height: 34, borderRadius: 17, background: p.surface, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <SearchIcon size={16} color={p.ink} />
@@ -344,8 +349,13 @@ function ProfileScreen({ palette, radius }) {
         position: 'absolute', top: 46, left: 0, right: 0,
         display: 'flex', justifyContent: 'space-between', padding: '0 14px', zIndex: 20,
       }}>
-        <div style={{ width: 34, height: 34, borderRadius: 17, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <SearchIcon size={16} color={p.ink} />
+        <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ width: 34, height: 34, borderRadius: 17, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke={p.ink} strokeWidth="2" strokeLinecap="round"><path d="M1 1.5h14M1 6h10M1 10.5h14" /></svg>
+          </div>
+          <div style={{ width: 34, height: 34, borderRadius: 17, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <SearchIcon size={16} color={p.ink} />
+          </div>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <div style={{ width: 34, height: 34, borderRadius: 17, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

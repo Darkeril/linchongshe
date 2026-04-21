@@ -10,7 +10,7 @@ function PetProfileScreen({ palette, radius }) {
         <div style={{ position: 'absolute', top: 60, right: 20, opacity: 0.2 }}><PawIcon size={80} color="#fff" /></div>
         <div style={{ position: 'absolute', top: 160, left: 30, opacity: 0.15 }}><PawIcon size={46} color="#fff" /></div>
       </div>
-      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent
+      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent showMenu
         right={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><circle cx="12" cy="5" r="1.5" fill="#fff" /><circle cx="12" cy="12" r="1.5" fill="#fff" /><circle cx="12" cy="19" r="1.5" fill="#fff" /></svg>} />
 
       {/* 汤圆卡 */}
@@ -259,7 +259,7 @@ function TopicScreen({ palette, radius }) {
         <div style={{ position: 'absolute', top: -20, right: -20, opacity: 0.2 }}><PawIcon size={140} color="#fff" /></div>
         <div style={{ position: 'absolute', bottom: 30, left: 30, opacity: 0.14 }}><PawIcon size={60} color="#fff" /></div>
       </div>
-      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent
+      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent showMenu
         right={<ShareIcon size={18} color="#fff" />} />
 
       {/* Topic header */}

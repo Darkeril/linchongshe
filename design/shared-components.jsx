@@ -2,8 +2,9 @@
 // （StatusLine 和 AppTabBar 已在 screens-part1.jsx 里定义）
 
 // 通用顶部栏
-function TopBar({ palette, title, left = 'back', right, onBack, bg, onRight, subtitle, transparent }) {
+function TopBar({ palette, title, left = 'back', right, onBack, bg, onRight, subtitle, transparent, onMenu, showMenu }) {
   const p = palette;
+  const menuBg = transparent ? 'rgba(255,255,255,0.85)' : 'transparent';
   return (
     <div style={{
       position: 'absolute', top: 38, left: 0, right: 0, height: 50,
@@ -11,8 +12,8 @@ function TopBar({ palette, title, left = 'back', right, onBack, bg, onRight, sub
       padding: '0 14px', zIndex: 30,
       background: transparent ? 'transparent' : (bg || 'transparent'),
     }}>
-      <div style={{ width: 40, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', cursor: 'pointer' }}
-        onClick={onBack}>
+      <div style={{ minWidth: 40, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', cursor: 'pointer' }}
+        onClick={left === 'menu' ? onMenu : onBack}>
         {left === 'back' && (
           <div style={{
             width: 34, height: 34, borderRadius: 17,
@@ -25,6 +26,17 @@ function TopBar({ palette, title, left = 'back', right, onBack, bg, onRight, sub
             </svg>
           </div>
         )}
+        {left === 'menu' && (
+          <div style={{
+            width: 34, height: 34, borderRadius: 17,
+            background: menuBg, backdropFilter: transparent ? 'blur(8px)' : 'none',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke={p.ink} strokeWidth="2" strokeLinecap="round">
+              <path d="M1 1.5h14M1 6h10M1 10.5h14" />
+            </svg>
+          </div>
+        )}
         {left === 'close' && (
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke={p.ink} strokeWidth="2" strokeLinecap="round">
             <path d="M3 3l12 12M15 3L3 15" />
@@ -32,12 +44,24 @@ function TopBar({ palette, title, left = 'back', right, onBack, bg, onRight, sub
         )}
         {left === 'none' && null}
       </div>
-      <div style={{ textAlign: 'center', flex: 1 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: p.ink, fontFamily: TYPE.body }}>{title}</div>
+      <div style={{ textAlign: 'center', flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: p.ink, fontFamily: TYPE.body, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</div>
         {subtitle && <div style={{ fontSize: 10, color: p.inkMuted, marginTop: 1 }}>{subtitle}</div>}
       </div>
-      <div style={{ width: 40, display: 'flex', justifyContent: 'flex-end', cursor: 'pointer' }} onClick={onRight}>
-        {right}
+      <div style={{ minWidth: 40, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0, gap: 10 }}>
+        <div onClick={onRight} style={{ display: 'flex', alignItems: 'center' }}>{right}</div>
+        {showMenu && (
+          <div onClick={onMenu} style={{
+            width: 30, height: 30, borderRadius: 15,
+            background: menuBg, backdropFilter: transparent ? 'blur(8px)' : 'none',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexShrink: 0,
+          }}>
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none" stroke={transparent ? '#fff' : p.ink} strokeWidth="2" strokeLinecap="round">
+              <path d="M1 1.5h12M1 5.5h8M1 9.5h12" />
+            </svg>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -75,10 +75,18 @@ function HomeScreen({ palette, radius }) {
 
       {/* 顶部 Tab + 搜索 */}
       <div style={{
-        padding: '6px 16px 10px',
-        display: 'flex', alignItems: 'center', gap: 12,
+        padding: '6px 14px 10px',
+        display: 'flex', alignItems: 'center', gap: 10,
       }}>
-        <div style={{ display: 'flex', gap: 18, flex: 1 }}>
+        <div style={{
+          width: 34, height: 34, borderRadius: 17,
+          background: p.surface, flexShrink: 0,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+        }}>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke={p.ink} strokeWidth="2" strokeLinecap="round"><path d="M1 1.5h14M1 6h10M1 10.5h14" /></svg>
+        </div>
+        <div style={{ display: 'flex', gap: 16, flex: 1 }}>
           {tabs.map(t => (
             <div key={t.id} onClick={() => setTab(t.id)} style={{
               position: 'relative', padding: '4px 2px', cursor: 'pointer',

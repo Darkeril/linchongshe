@@ -40,6 +40,13 @@ function MarketScreen({ palette, radius }) {
         display: 'flex', alignItems: 'center', gap: 10, padding: '0 14px', zIndex: 20,
       }}>
         <div style={{
+          width: 34, height: 34, borderRadius: 17,
+          background: p.surface, flexShrink: 0,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke={p.ink} strokeWidth="2" strokeLinecap="round"><path d="M1 1.5h14M1 6h10M1 10.5h14" /></svg>
+        </div>
+        <div style={{
           flex: 1, height: 36, borderRadius: 18,
           background: p.surface,
           display: 'flex', alignItems: 'center', padding: '0 12px', gap: 8,

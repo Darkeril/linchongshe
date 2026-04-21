@@ -5,7 +5,7 @@ function PetDateScreen({ palette, radius }) {
   return (
     <div style={{ width: '100%', height: '100%', background: p.bg, position: 'relative', overflow: 'hidden', fontFamily: TYPE.body }}>
       <StatusLine color={p.ink} />
-      <TopBar palette={p} title="遛娃 · 宠友 🐾" right={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={p.ink} strokeWidth="2" strokeLinecap="round"><path d="M3 6h18M3 12h18M3 18h18" /></svg>} />
+      <TopBar palette={p} title="遛娃 · 宠友 🐾" showMenu right={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={p.ink} strokeWidth="2" strokeLinecap="round"><path d="M3 6h18M3 12h18M3 18h18" /></svg>} />
 
       {/* 条件 Chip */}
       <div style={{ position: 'absolute', top: 92, left: 0, right: 0, padding: '8px 14px', display: 'flex', gap: 6, overflowX: 'auto', borderBottom: `0.5px solid ${p.divider}`, zIndex: 3 }}>
@@ -86,9 +86,9 @@ function AdoptScreen({ palette, radius }) {
         <div style={{ position: 'absolute', bottom: -10, right: -10, opacity: 0.15 }}><PawIcon size={100} color="#fff" /></div>
         <div style={{ position: 'absolute', top: 20, left: 40, opacity: 0.12 }}><PawIcon size={40} color="#fff" /></div>
       </div>
-      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent right={<span style={{ fontSize: 12, color: '#fff' }}>我要送养 ›</span>} />
+      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent showMenu right={<span style={{ fontSize: 12, color: '#fff' }}>我要送养 ›</span>} />
 
-      <div style={{ position: 'absolute', top: 68, left: 14, right: 14, color: '#fff', zIndex: 2 }}>
+      <div style={{ position: 'absolute', top: 98, left: 14, right: 14, color: '#fff', zIndex: 2 }}>
         <div style={{ fontSize: 10, opacity: 0.9 }}>🤝 公益板块</div>
         <div style={{ fontSize: 22, fontWeight: 800, fontFamily: TYPE.brand, marginTop: 4 }}>领养代替购买 🏡</div>
         <div style={{ fontSize: 11, opacity: 0.9, marginTop: 4 }}>已有 8,420 只毛孩子找到了家 · 请谨慎决定</div>
@@ -169,9 +169,9 @@ function LostScreen({ palette, radius }) {
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 160, background: `linear-gradient(160deg, #c06a55, #9f4e3a)`, overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: 30, right: -10, opacity: 0.2 }}><PawIcon size={80} color="#fff" /></div>
       </div>
-      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent right={<span style={{ fontSize: 12, color: '#fff', fontWeight: 600 }}>📢 我要发布</span>} />
+      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent showMenu right={<span style={{ fontSize: 12, color: '#fff', fontWeight: 600 }}>📢 我要发布</span>} />
 
-      <div style={{ position: 'absolute', top: 74, left: 14, right: 14, color: '#fff', zIndex: 2 }}>
+      <div style={{ position: 'absolute', top: 98, left: 14, right: 14, color: '#fff', zIndex: 2 }}>
         <div style={{ fontSize: 10, opacity: 0.9 }}>🆘 走失播报</div>
         <div style={{ fontSize: 22, fontWeight: 800, fontFamily: TYPE.brand, marginTop: 4 }}>让每一只毛孩子都能回家</div>
         <div style={{ fontSize: 11, opacity: 0.9, marginTop: 4 }}>附近 3km · 1,248 位好心人已帮忙转发</div>
@@ -249,7 +249,7 @@ function AlbumScreen({ palette, radius }) {
   return (
     <div style={{ width: '100%', height: '100%', background: p.bg, position: 'relative', overflow: 'hidden', fontFamily: TYPE.body }}>
       <StatusLine color={p.ink} />
-      <TopBar palette={p} title="汤圆的相册" right={<span style={{ fontSize: 13, color: p.primary, fontWeight: 700 }}>＋上传</span>} />
+      <TopBar palette={p} title="汤圆的相册" showMenu right={<span style={{ fontSize: 13, color: p.primary, fontWeight: 700 }}>＋上传</span>} />
 
       {/* 切换视图 */}
       <div style={{ position: 'absolute', top: 92, left: 0, right: 0, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 10, zIndex: 3 }}>
@@ -309,7 +309,7 @@ function VIPScreen({ palette, radius }) {
         <div style={{ position: 'absolute', top: 40, right: -20, opacity: 0.15, color: '#d4a86a' }}><PawIcon size={120} color="#d4a86a" /></div>
         <div style={{ position: 'absolute', bottom: 20, left: -10, opacity: 0.12, color: '#d4a86a' }}><PawIcon size={60} color="#d4a86a" /></div>
       </div>
-      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent right={<span style={{ fontSize: 12, color: '#d4a86a' }}>会员规则</span>} />
+      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent showMenu right={<span style={{ fontSize: 12, color: '#d4a86a' }}>会员规则</span>} />
 
       {/* 会员卡 */}
       <div style={{ position: 'absolute', top: 82, left: 18, right: 18, height: 170, borderRadius: 18, background: 'linear-gradient(135deg, #d4a86a, #8a6230)', padding: 20, boxShadow: '0 12px 30px rgba(212, 168, 106, 0.25)', overflow: 'hidden' }}>
@@ -368,8 +368,8 @@ function VIPScreen({ palette, radius }) {
             { period: '季卡', price: '38', save: '省 4', unit: '/季' },
           ].map((pkg, i) => (
             <div key={i} style={{ flex: 1, padding: 12, borderRadius: 14, background: pkg.best ? `linear-gradient(135deg, #d4a86a, #8a6230)` : p.surface, border: pkg.best ? 'none' : `1.5px solid ${p.divider}`, color: pkg.best ? '#fff' : p.ink, textAlign: 'center', position: 'relative' }}>
-              {pkg.best && <div style={{ position: 'absolute', top: -8, left: '50%', transform: 'translateX(-50%)', padding: '2px 8px', borderRadius: 8, background: '#e07a5a', color: '#fff', fontSize: 9, fontWeight: 700 }}>🔥 推荐</div>}
-              <div style={{ fontSize: 11, fontWeight: 600, opacity: pkg.best ? 0.95 : 1 }}>{pkg.period}</div>
+              {pkg.best && <div style={{ position: 'absolute', top: -8, left: '50%', transform: 'translateX(-50%)', padding: '2px 8px', borderRadius: 8, background: '#e07a5a', color: '#fff', fontSize: 9, fontWeight: 700, whiteSpace: 'nowrap', minWidth: 'max-content' }}>🔥 推荐</div>}
+              <div style={{ fontSize: 11, fontWeight: 600, opacity: pkg.best ? 0.95 : 1, whiteSpace: 'nowrap' }}>{pkg.period}</div>
               <div style={{ marginTop: 4, fontSize: 22, fontWeight: 800, fontFamily: TYPE.num }}>
                 ¥{pkg.price}<span style={{ fontSize: 11, fontWeight: 500, opacity: 0.7 }}>{pkg.unit}</span>
               </div>
@@ -399,7 +399,7 @@ function AboutScreen({ palette, radius }) {
   return (
     <div style={{ width: '100%', height: '100%', background: p.bg, position: 'relative', overflow: 'hidden', fontFamily: TYPE.body }}>
       <StatusLine color={p.ink} />
-      <TopBar palette={p} title="关于爱宠社" />
+      <TopBar palette={p} title="关于爱宠社" showMenu />
 
       <div style={{ position: 'absolute', top: 92, left: 0, right: 0, bottom: 0, overflow: 'auto', paddingBottom: 30 }}>
         {/* Brand */}
