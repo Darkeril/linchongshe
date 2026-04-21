@@ -1,0 +1,462 @@
+# 完整的 Docker Compose 配置
+# 包含所有基础设施和微服务
+
+services:
+  # ==================== 基础设施服务 ====================
+
+  # MySQL 数据库
+  mysql:
+    image: mysql:latest
+    container_name: hongshu-mysql
+    restart: always  # ✅ 改为总是重启
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-Myj950501}
+      MYSQL_DATABASE: hongshu
+      TZ: Asia/Shanghai
+    volumes:
+      - ./mysql/conf:/etc/mysql/conf.d
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/logs:/var/log/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+#      - --default-authentication-plugin=mysql_native_password
+      - --max_connections=1000
+      - --max_allowed_packet=200M
+    networks:
+      - hongshu-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-Myj950501}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s  # ✅ 给 MySQL 30 秒初始化时间
+
+  # Redis 缓存
+  redis:
+    image: redis:latest
+    container_name: hongshu-redis
+    restart: always  # ✅ 改为总是重启
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-Myj950501}
+      TZ: Asia/Shanghai
+    volumes:
+      - ./redis/conf/redis.conf:/etc/redis/redis.conf
+      - ./redis/data:/data
+    command: redis-server /etc/redis/redis.conf
+    networks:
+      - hongshu-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s  # ✅ 添加启动等待时间
+
+  # Nacos 配置中心（使用 MySQL）
+  nacos:
+    image: nacos/nacos-server:v2.4.3
+    container_name: hongshu-nacos
+    restart: always  # ✅ 改为总是重启
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    environment:
+      MODE: standalone
+      PREFER_HOST_MODE: hostname
+      # MySQL 配置
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: mysql
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_DB_NAME: hongshu_nacos_config
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: Myj950501
+      MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+      # 认证配置（即使禁用认证，也需要设置 TOKEN）
+      NACOS_AUTH_ENABLE: "false"
+      NACOS_AUTH_TOKEN: "SecretKey012345678901234567890123456789012345678901234567890123456789"
+      NACOS_AUTH_IDENTITY_KEY: "nacos"
+      NACOS_AUTH_IDENTITY_VALUE: "nacos"
+      # JVM 配置
+      JVM_XMS: 256m
+      JVM_XMX: 256m
+    volumes:
+      - ./nacos/logs:/home/nacos/logs
+    networks:
+      - hongshu-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8848/nacos/actuator/health" ]
+      interval: 15s
+      timeout: 10s
+      retries: 15
+      start_period: 120s
+
+  # Elasticsearch 搜索引擎
+  elasticsearch:
+    image: elasticsearch:8.6.0
+    container_name: hongshu-elasticsearch
+    restart: always  # ✅ 改为总是重启
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: -Xms256m -Xmx256m
+      xpack.security.enabled: "false"
+      TAKE_FILE_OWNERSHIP: "true"
+      TZ: Asia/Shanghai
+    volumes:
+      - ./elasticsearch/data:/usr/share/elasticsearch/data
+      - ./elasticsearch/logs:/usr/share/elasticsearch/logs
+    networks:
+      - hongshu-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s  # ✅ 给 ES 60 秒启动时间
+
+  # RocketMQ NameServer
+#  rocketmq-namesrv:
+#    image: apache/rocketmq:latest
+#    container_name: hongshu-rocketmq-namesrv
+#    restart: always  # ✅ 改为总是重启
+#    ports:
+#      - "9876:9876"
+#    environment:
+#      JAVA_OPT_EXT: -Xms256m -Xmx256m
+#      TZ: Asia/Shanghai
+#    volumes:
+#      - ./rocketmq/namesrv/logs:/home/rocketmq/logs
+#    command: sh mqnamesrv
+#    networks:
+#      - hongshu-network
+
+  # RocketMQ Broker
+#  rocketmq-broker:
+#    image: apache/rocketmq:latest
+#    container_name: hongshu-rocketmq-broker
+#    restart: always  # ✅ 改为总是重启
+#    ports:
+#      - "10909:10909"
+#      - "10911:10911"
+#    environment:
+#      NAMESRV_ADDR: rocketmq-namesrv:9876
+#      JAVA_OPT_EXT: -Xms512m -Xmx512m
+#      TZ: Asia/Shanghai
+#    volumes:
+#      - ./rocketmq/broker/logs:/home/rocketmq/logs
+#      - ./rocketmq/broker/store:/home/rocketmq/store
+#      - ./rocketmq/broker/conf/broker.conf:/home/rocketmq/conf/broker.conf
+#    command: sh mqbroker -c /home/rocketmq/conf/broker.conf
+#    depends_on:
+#      - rocketmq-namesrv
+#    networks:
+#      - hongshu-network
+
+  # ==================== 微服务应用 ====================
+
+  # API 网关
+  gateway:
+    build:
+      context: ./microservices/gateway
+      dockerfile: Dockerfile
+    image: hongshu/gateway:latest
+    container_name: hongshu-gateway
+    restart: on-failure  # ✅ 改为失败重启
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      NACOS_SERVER_ADDR: nacos:8848
+      JAVA_OPTS: -Xms256m -Xmx512m -XX:+UseG1GC -Djava.awt.headless=true
+      TZ: Asia/Shanghai
+    volumes:
+      - ./logs/gateway:/app/logs
+    depends_on:
+      nacos:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - hongshu-network
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 5
+    #   start_period: 90s  # ✅ 给网关 90 秒启动时间
+
+  # 认证服务
+  auth:
+    build:
+      context: ./microservices/auth
+      dockerfile: Dockerfile
+    image: hongshu/auth:latest
+    container_name: hongshu-auth
+    restart: on-failure  # ✅ 改为失败重启
+    ports:
+      - "9001:9001"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      NACOS_SERVER_ADDR: nacos:8848
+      JAVA_OPTS: -Xms256m -Xmx384m -XX:+UseG1GC -Djava.awt.headless=true
+      TZ: Asia/Shanghai
+    volumes:
+      - ./logs/auth:/app/logs
+    depends_on:
+      nacos:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - hongshu-network
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:9001/actuator/health"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 5
+    #   start_period: 90s  # ✅ 给服务 90 秒启动时间
+
+  # 系统服务
+  system:
+    build:
+      context: ./microservices/system
+      dockerfile: Dockerfile
+    image: hongshu/system:latest
+    container_name: hongshu-system
+    restart: on-failure  # ✅ 改为失败重启
+    ports:
+      - "9003:9003"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      NACOS_SERVER_ADDR: nacos:8848
+      JAVA_OPTS: -Xms256m -Xmx384m -XX:+UseG1GC -Djava.awt.headless=true
+      TZ: Asia/Shanghai
+    volumes:
+      - ./logs/system:/app/logs
+    depends_on:
+      nacos:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - hongshu-network
+
+  # 文件服务
+  file:
+    build:
+      context: ./microservices/file
+      dockerfile: Dockerfile
+    image: hongshu/file:latest
+    container_name: hongshu-file
+    restart: on-failure  # ✅ 改为失败重启
+    ports:
+      - "9004:9004"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      NACOS_SERVER_ADDR: nacos:8848
+      JAVA_OPTS: -Xms256m -Xmx384m -XX:+UseG1GC -Djava.awt.headless=true
+      TZ: Asia/Shanghai
+    volumes:
+      - ./logs/file:/app/logs
+      - ./file-storage:/app/storage
+    depends_on:
+      nacos:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    networks:
+      - hongshu-network
+
+  # AI服务
+  ai:
+    build:
+      context: ./microservices/ai
+      dockerfile: Dockerfile
+    image: hongshu/ai:latest
+    container_name: hongshu-ai
+    restart: on-failure  # ✅ 改为失败重启
+    ports:
+      - "9005:9005"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      NACOS_SERVER_ADDR: nacos:8848
+      JAVA_OPTS: -Xms256m -Xmx512m -XX:+UseG1GC -Djava.awt.headless=true
+      TZ: Asia/Shanghai
+    volumes:
+      - ./logs/ai:/app/logs
+    depends_on:
+      nacos:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - hongshu-network
+
+  # IM服务
+  im:
+    build:
+      context: ./microservices/im
+      dockerfile: Dockerfile
+    image: hongshu/im:latest
+    container_name: hongshu-im
+    restart: on-failure  # ✅ 改为失败重启
+    ports:
+      - "9013:9013"
+      - "8878:8878"   # 映射 WebSocket 端口
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      NACOS_SERVER_ADDR: nacos:8848
+      JAVA_OPTS: -Xms256m -Xmx512m -XX:+UseG1GC -Djava.awt.headless=true
+      TZ: Asia/Shanghai
+    volumes:
+      - ./logs/im:/app/logs
+    depends_on:
+      nacos:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - hongshu-network
+
+  # 商品服务
+  idle:
+    build:
+      context: ./microservices/idle
+      dockerfile: Dockerfile
+    image: hongshu/idle:latest
+    container_name: hongshu-idle
+    restart: on-failure  # ✅ 改为失败重启
+    ports:
+      - "9006:9006"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      NACOS_SERVER_ADDR: nacos:8848
+      JAVA_OPTS: -Xms256m -Xmx512m -XX:+UseG1GC -Djava.awt.headless=true
+      TZ: Asia/Shanghai
+    volumes:
+      - ./logs/idle:/app/logs
+    depends_on:
+      nacos:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    #   elasticsearch:
+    #     condition: service_healthy
+    networks:
+      - hongshu-network
+
+  # 定时任务服务
+  job:
+    build:
+      context: ./microservices/job
+      dockerfile: Dockerfile
+    image: hongshu/job:latest
+    container_name: hongshu-job
+    restart: on-failure  # ✅ 改为失败重启
+    ports:
+      - "9007:9007"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      NACOS_SERVER_ADDR: nacos:8848
+      JAVA_OPTS: -Xms256m -Xmx512m -XX:+UseG1GC
+      TZ: Asia/Shanghai
+    volumes:
+      - ./logs/job:/app/logs
+    depends_on:
+      nacos:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    networks:
+      - hongshu-network
+
+  # Web 服务
+  web:
+    build:
+      context: ./microservices/web
+      dockerfile: Dockerfile
+    image: hongshu/web:latest
+    container_name: hongshu-web
+    restart: on-failure
+    ports:
+      - "9002:9002"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      NACOS_SERVER_ADDR: nacos:8848
+      JAVA_OPTS: -Xms512m -Xmx1024m -XX:+UseG1GC -Djava.awt.headless=true
+      TZ: Asia/Shanghai
+      # 指定Python命令路径
+      PYTHON_CMD: /usr/bin/python3
+    volumes:
+      - ./logs/web:/app/logs
+      # 挂载宿主机的Python3（CentOS 9）
+      - /usr/bin/python3:/usr/bin/python3:ro
+      - /usr/local/lib/python3.9:/usr/local/lib/python3.9:ro  # 包含 site-packages（PyExecJS 在这里）
+      - /usr/lib/python3.9:/usr/lib/python3.9:ro  # 系统 Python 库目录（可能也有 site-packages）
+      - /usr/lib64/python3.9:/usr/lib64/python3.9:ro
+      - /usr/local/bin/pip3:/usr/local/bin/pip3:ro
+      # 挂载 Node.js（PyExecJS 需要 JavaScript 运行时）
+      - /usr/bin/node:/usr/bin/node:ro
+      - /usr/bin/npm:/usr/bin/npm:ro
+      # 挂载共享库
+      - /usr/lib64:/usr/lib64:ro
+      - /lib64:/lib64:ro
+    depends_on:
+      nacos:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - hongshu-network
+
+  # Nginx 反向代理
+  nginx:
+    image: nginx:latest
+    container_name: hongshu-nginx
+    restart: on-failure  # ✅ 改为失败重启
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/html:/usr/share/nginx/html
+      - ./nginx/logs:/var/log/nginx
+      - ./nginx/cert:/etc/nginx/cert
+    depends_on:
+      - gateway
+    networks:
+      - hongshu-network
+
+# 网络配置
+networks:
+  hongshu-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hongshu.ai.mapper.GptLoginLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hongshu.ai.domain.entity.GptLoginLog">
+        <result column="id" property="id"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="expire_time" property="expireTime"/>
+        <result column="gpt_user_id" property="gptUserId"/>
+        <result column="session_id" property="sessionId"/>
+        <result column="username" property="username"/>
+        <result column="username" property="username"/>
+        <result column="ip" property="ip"/>
+        <result column="address" property="address"/>
+        <result column="domain" property="domain"/>
+        <result column="browser" property="browser"/>
+        <result column="os" property="os"/>
+        <result column="msg" property="msg"/>
+        <result column="status" property="status"/>
+        <result column="enabled" property="enabled"/>
+        <result column="authorization" property="authorization"/>
+        <result column="user_agent" property="userAgent"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id
+        ,
+        create_user,
+        create_time,
+        expire_time, gpt_user_id, session_id, username, ip, address, domain, browser, os, msg, authorization, user_agent, status, enabled, deleted
+    </sql>
+
+    <sql id="selectLoginLog">
+        select t.*,
+        t2.`name` as deptName
+        from gpt_login_log t
+        left join sys_user_dept t1 on t.gpt_user_id = t1.sys_user_id
+        left join sys_dept t2 on t1.dept_id = t2.id
+        left join sys_user_role t3 on t.gpt_user_id = t3.sys_user_id
+        <where>
+            t.deleted = 0
+            <if test="q.username != null and q.username != ''">
+                and t.username like concat('%',#{q.username},'%')
+            </if>
+            <if test="q.address != null and q.address != ''">
+                and t.address like concat('%',#{q.address},'%')
+            </if>
+            <if test="q.online != null and q.online != ''">
+                and t.status = 1
+                and t.enabled = 1
+                and t.expire_time >= CURRENT_TIMESTAMP
+            </if>
+        </where>
+        group by t.id,t2.name order by t.id desc
+    </sql>
+
+    <select id="pageLoginLogVO" resultType="com.hongshu.ai.domain.vo.LoginLogVO">
+        <include refid="selectLoginLog"></include>
+    </select>
+
+    <update id="disableLogin">
+        update gpt_login_log
+        set enabled = 0
+        where gpt_user_id = #{gptUserId}
+    </update>
+
+    <update id="disableLoginBySession">
+        update gpt_login_log
+        set enabled = 0
+        where gpt_user_id = #{gptUserId}
+          and session_id = #{sessionId}
+    </update>
+
+    <update id="disableLoginById">
+        update gpt_login_log
+        set enabled = 0
+        where id = #{id}
+    </update>
+
+    <update id="cleanLoginLog">
+        truncate table gpt_login_log
+    </update>
+
+</mapper>

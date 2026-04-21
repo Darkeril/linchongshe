@@ -1,0 +1,2 @@
+com.hongshu.common.log.service.AsyncLogService
+com.hongshu.common.log.aspect.LogAspect

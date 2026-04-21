@@ -1,0 +1,54 @@
+package com.hongshu.ai.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.hongshu.ai.common.Query;
+import com.hongshu.ai.domain.entity.Assistant;
+import com.hongshu.ai.domain.vo.AssistantVO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * AI助理功能 Mapper 接口
+ *
+ * @author: myj
+ * @date: 2023-04-28
+ * @version: 1.0.0
+ */
+public interface AssistantMapper extends BaseMapper<Assistant> {
+
+    /**
+     * 分页查询AI助理功能列表
+     *
+     * @param page  分页参数
+     * @param query 查询条件
+     * @return
+     */
+    IPage<AssistantVO> pageAssistant(IPage page, @Param("q") Query query);
+
+    /**
+     * 查询AI助理功能列表
+     *
+     * @param query 查询条件
+     * @return
+     */
+    List<AssistantVO> listAssistant(@Param("q") Query query);
+
+    /**
+     * 查询AI助理功能列表
+     *
+     * @param query 查询条件
+     * @return
+     */
+    List<AssistantVO> listAssistantRandom(@Param("q") Query query);
+
+    /**
+     * 查询AI助理功能
+     *
+     * @param query 查询条件
+     * @return
+     */
+    AssistantVO getAssistant(@Param("q") Query query);
+
+}

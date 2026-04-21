@@ -1,0 +1,1891 @@
+* {
+    box-sizing: border-box;
+    -webkit-user-select: auto;
+    user-select: auto;
+    scrollbar-width: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+
+  /* 浅色模式（默认） */
+  :root {
+    --bg-color: #ffffff;
+    --bg-secondary: #f9f9f9;
+    --text-color: #333333;
+    --text-secondary: rgba(51, 51, 51, 0.8);
+    --text-muted: rgba(51, 51, 51, 0.6);
+    --text-light: rgba(51, 51, 51, 0.3);
+    --border-color: #e4e7eb;
+    --border-light: rgba(0, 0, 0, 0.08);
+    --hover-bg: #f0f0f0;
+    --card-bg: #ffffff;
+    --shadow: rgba(0, 0, 0, 0.04);
+    --shadow-hover: rgba(0, 0, 0, 0.08);
+    --input-bg: #ffffff;
+    --input-border: #e4e7eb;
+    --sidebar-bg: #f9f9f9;
+    --menu-bg: #ffffff;
+    --menu-hover: #f0f0f0;
+    --header-bg: #ffffff;
+    --nav-bg: #ffffff;
+    --nav-text: rgba(51, 51, 51, 0.8);
+    --nav-active: #333333;
+    --nav-hover: rgba(0, 0, 0, 0.03);
+  }
+
+  /* 深色模式 */
+  .dark-mode {
+    --bg-color: #1a1a1a;
+    --bg-secondary: #2a2a2a;
+    --text-color: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --text-muted: rgba(255, 255, 255, 0.6);
+    --text-light: rgba(255, 255, 255, 0.3);
+    --border-color: #333333;
+    --border-light: rgba(255, 255, 255, 0.08);
+    --hover-bg: #2a2a2a;
+    --card-bg: #1a1a1a; /* 卡片背景为黑色 */
+    --card-text: #ffffff; /* 卡片内文字为白色 */
+    --card-text-secondary: rgba(255, 255, 255, 0.8); /* 卡片内次要文字为浅白色 */
+    --card-text-muted: rgba(255, 255, 255, 0.6); /* 卡片内弱化文字为浅白色 */
+    --shadow: rgba(0, 0, 0, 0.3);
+    --shadow-hover: rgba(0, 0, 0, 0.5);
+    --input-bg: #2a2a2a;
+    --input-border: #444444;
+    --sidebar-bg: #1a1a1a;
+    --menu-bg: #2a2a2a;
+    --menu-hover: #333333;
+    --header-bg: #1a1a1a;
+    --nav-bg: #1a1a1a;
+    --nav-text: rgba(255, 255, 255, 0.8);
+    --nav-active: #ffffff;
+    --nav-hover: rgba(255, 255, 255, 0.03);
+  }
+
+  /* 应用CSS变量到全局元素 */
+  html {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* 强制深色模式下的卡片样式 */
+  .dark-mode .card {
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+  }
+
+  .dark-mode .card .title {
+    color: #ffffff !important;
+  }
+
+  .dark-mode .card .author-wrapper {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  /* 强制覆盖所有可能的卡片背景色，但排除闲置页面 */
+  .dark-mode [class*="card"]:not(.idle-page [class*="card"]) {
+    background-color: #1a1a1a !important;
+  }
+
+  .dark-mode [class*="feeds-container"] .card:not(.idle-page [class*="card"]) {
+    background-color: #1a1a1a !important;
+  }
+
+  /* 闲置页面卡片保持原来的白色背景 */
+  .dark-mode .idle-page .card,
+  .dark-mode .idle-page [class*="card"],
+  .dark-mode .idle-page .feeds-container .card {
+    background-color: #ffffff !important;
+  }
+
+  /* 强制覆盖Element Plus组件 */
+  .dark-mode .el-skeleton {
+    background-color: #1a1a1a !important;
+  }
+
+  .dark-mode .el-skeleton-item {
+    background-color: #1a1a1a !important;
+  }
+
+  .dark-mode .ai-chat-header {
+    background-color: #1a1a1a !important;
+  }
+
+  /* 强制覆盖所有可能的背景色设置 */
+  .dark-mode *[style*="background-color"] {
+    background-color: #1a1a1a !important;
+  }
+
+  /* 强制覆盖Vue scoped CSS变量 */
+  .dark-mode *[style*="--"] {
+    background-color: #1a1a1a !important;
+  }
+
+  /* 强制覆盖所有div元素在feeds-container中 */
+  .dark-mode .feeds-container > div {
+    background-color: #1a1a1a !important;
+  }
+
+  /* 强制覆盖Waterfall组件 */
+  .dark-mode .feeds-container .waterfall-item {
+    background-color: #1a1a1a !important;
+  }
+
+  /* 深色模式下的心形图标颜色 */
+  .dark-mode .like-wrapper .iconfont.icon-follow {
+    color: #ffffff !important;
+  }
+
+  .dark-mode .like-wrapper .iconfont.icon-follow-fill {
+    color: #ff2442 !important; /* 点赞后保持红色 */
+  }
+
+  /* 深色模式下的其他图标颜色 */
+  .dark-mode .chat-wrapper .iconfont,
+  .dark-mode .chat-wrapper svg {
+    color: #ffffff !important;
+  }
+
+  .dark-mode .collect-wrapper .iconfont {
+    color: #ffffff !important;
+  }
+
+  .dark-mode .count {
+    color: #ffffff !important;
+  }
+
+  /* 深色模式下的顶部分类名称颜色 */
+  .dark-mode .channel {
+    color: #ffffff !important;
+  }
+
+  .dark-mode .channel.active {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .dark-mode .content-container {
+    color: #ffffff !important;
+  }
+
+  .dark-mode .channel-scroll-container {
+    color: #ffffff !important;
+  }
+
+  /* 深色模式下的通知页面样式 */
+  .dark-mode .reds-sticky {
+    background: #1a1a1a !important; /* 顶部导航栏背景为黑色 */
+  }
+
+  .dark-mode .reds-tab-item {
+    color: #ffffff !important; /* 导航标签文字为白色 */
+  }
+
+  .dark-mode .reds-tab-item.active {
+    color: #ffffff !important; /* 激活的导航标签文字为白色 */
+    background-color: rgba(255, 255, 255, 0.1) !important; /* 激活状态有半透明白色背景 */
+  }
+
+  /* 用户页面状态标签页样式（全部、审核中、已通过、未通过） */
+  .dark-mode .count-item {
+    color: #ffffff !important; /* 状态标签文字为白色 */
+  }
+
+  .dark-mode .count-item.active {
+    color: #ffffff !important; /* 激活的状态标签文字为白色 */
+  }
+
+  /* 编辑资料页面深色模式样式 */
+  .dark-mode .user-card {
+    background-color: #1a1a1a !important; /* 卡片背景为黑色 */
+  }
+
+  /* 强制覆盖抽屉内的用户卡片样式 */
+  .dark-mode .el-drawer .user-card {
+    background-color: #1a1a1a !important; /* 抽屉内卡片背景为黑色 */
+  }
+
+  .dark-mode .el-drawer .user-card * {
+    background-color: transparent !important; /* 清除所有子元素的背景色 */
+  }
+
+  .dark-mode .user-card .description :deep(.el-descriptions__label) {
+    color: #ffffff !important; /* 标签文字为白色 */
+  }
+
+  .dark-mode .user-card .description .info-text {
+    color: #ffffff !important; /* 信息文字为白色 */
+  }
+
+  .dark-mode .user-card .description .input {
+    background: rgba(255, 255, 255, 0.1) !important; /* 输入框背景为半透明白色 */
+    color: #ffffff !important; /* 输入框文字为白色 */
+    caret-color: #ffffff !important; /* 光标为白色 */
+  }
+
+  .dark-mode .user-card .description .textarea {
+    background: rgba(255, 255, 255, 0.1) !important; /* 文本域背景为半透明白色 */
+    color: #ffffff !important; /* 文本域文字为白色 */
+    caret-color: #ffffff !important; /* 光标为白色 */
+  }
+
+  .dark-mode .user-card .button-container {
+    background-color: #1a1a1a !important; /* 按钮容器背景为黑色 */
+    border-top-color: #333333 !important; /* 边框为深灰色 */
+  }
+
+  .dark-mode .tags-container .el-tag {
+    background-color: rgba(255, 255, 255, 0.1) !important; /* 标签背景为半透明白色 */
+    color: #ffffff !important; /* 标签文字为白色 */
+    border: 1px solid rgba(255, 255, 255, 0.2) !important; /* 标签边框为半透明白色 */
+  }
+
+  .dark-mode .tags-container .el-tag:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important; /* 标签悬停背景为更亮的半透明白色 */
+  }
+
+  .dark-mode .tags-container .button-new-tag {
+    border-color: rgba(255, 255, 255, 0.3) !important; /* 添加标签按钮边框为半透明白色 */
+    color: #ffffff !important; /* 添加标签按钮文字为白色 */
+  }
+
+  .dark-mode .tags-container .button-new-tag:hover {
+    border-color: #409EFF !important; /* 悬停时边框为蓝色 */
+    color: #409EFF !important; /* 悬停时文字为蓝色 */
+  }
+
+  .dark-mode .tags-container .tags-tip {
+    color: rgba(255, 255, 255, 0.6) !important; /* 提示文字为浅白色 */
+  }
+
+  /* 编辑资料页面抽屉深色模式样式 */
+  .dark-mode .el-drawer {
+    background-color: #1a1a1a !important; /* 抽屉背景为黑色 */
+  }
+
+  .dark-mode .el-drawer .el-drawer__header {
+    background-color: #1a1a1a !important; /* 抽屉头部背景为黑色 */
+    border-bottom-color: #333333 !important; /* 抽屉头部边框为深灰色 */
+  }
+
+  .dark-mode .el-drawer .el-drawer__title {
+    color: #ffffff !important; /* 抽屉标题为白色 */
+  }
+
+  .dark-mode .el-drawer .el-drawer__body {
+    background-color: #1a1a1a !important; /* 抽屉内容背景为黑色 */
+  }
+
+  .dark-mode .el-drawer .el-drawer__close-btn {
+    color: #ffffff !important; /* 抽屉关闭按钮为白色 */
+  }
+
+  .dark-mode .el-drawer .el-drawer__close-btn:hover {
+    color: #409EFF !important; /* 抽屉关闭按钮悬停时为蓝色 */
+  }
+
+  /* 编辑资料页面对话框深色模式样式 */
+  .dark-mode .el-dialog {
+    background-color: #1a1a1a !important; /* 对话框背景为黑色 */
+  }
+
+  .dark-mode .el-dialog .el-dialog__header {
+    background-color: #1a1a1a !important; /* 对话框头部背景为黑色 */
+  }
+
+  .dark-mode .el-dialog .el-dialog__title {
+    color: #ffffff !important; /* 对话框标题为白色 */
+  }
+
+  .dark-mode .el-dialog .el-dialog__body {
+    background-color: #1a1a1a !important; /* 对话框内容背景为黑色 */
+  }
+
+  .dark-mode .el-dialog .el-form-item__label {
+    color: #ffffff !important; /* 表单标签为白色 */
+  }
+
+  .dark-mode .el-dialog .el-input__inner {
+    background-color: rgba(255, 255, 255, 0.1) !important; /* 对话框输入框背景为半透明白色 */
+    color: #ffffff !important; /* 对话框输入框文字为白色 */
+    border-color: rgba(255, 255, 255, 0.2) !important; /* 对话框输入框边框为半透明白色 */
+  }
+
+  .dark-mode .el-dialog .el-input__inner:focus {
+    border-color: #409EFF !important; /* 对话框输入框聚焦时边框为蓝色 */
+  }
+
+  .dark-mode .dialog-footer {
+    background-color: #1a1a1a !important; /* 对话框底部背景为黑色 */
+  }
+
+  /* 强制覆盖抽屉内所有可能的白色背景 */
+  .dark-mode .el-drawer * {
+    background-color: #1a1a1a !important; /* 抽屉内所有元素背景为黑色 */
+  }
+
+  .dark-mode .el-drawer .user-card,
+  .dark-mode .el-drawer .user-card .description,
+  .dark-mode .el-drawer .user-card .button-container {
+    background-color: #1a1a1a !important; /* 强制用户卡片相关元素背景为黑色 */
+  }
+
+  /* 覆盖可能的Element Plus组件默认样式 */
+  .dark-mode .el-drawer .el-descriptions {
+    background-color: #1a1a1a !important;
+  }
+
+  .dark-mode .el-drawer .el-descriptions__cell {
+    background-color: #1a1a1a !important;
+  }
+
+  /* 修改地址页面深色模式样式 */
+  .dark-mode .address-container {
+    background-color: #1a1a1a !important; /* 地址容器背景为黑色 */
+  }
+
+  .dark-mode .address-container .address-header h2 {
+    color: #ffffff !important; /* 标题为白色 */
+  }
+
+  .dark-mode .address-container .address-list .address-item {
+    border-color: #333333 !important; /* 地址项边框为深灰色 */
+  }
+
+  .dark-mode .address-container .address-list .address-item:hover {
+    border-color: #409EFF !important; /* 悬停时边框为蓝色 */
+  }
+
+  .dark-mode .address-container .address-list .address-item.active {
+    background-color: #333333 !important; /* 激活项背景为深灰色 */
+    border-color: #409EFF !important; /* 激活项边框为蓝色 */
+  }
+
+  .dark-mode .address-container .address-list .address-item .user-info .name {
+    color: #ffffff !important; /* 用户名为白色 */
+  }
+
+  .dark-mode .address-container .address-list .address-item .user-info .phone {
+    color: rgba(255, 255, 255, 0.8) !important; /* 电话为浅白色 */
+  }
+
+  .dark-mode .address-container .address-list .address-item .address-detail {
+    color: rgba(255, 255, 255, 0.8) !important; /* 地址详情为浅白色 */
+  }
+
+  .dark-mode .address-container .address-list .address-item .address-detail .el-icon {
+    color: rgba(255, 255, 255, 0.6) !important; /* 位置图标为更浅的白色 */
+  }
+
+  .dark-mode .address-container .address-list .address-item .address-actions .action-btn {
+    color: rgba(255, 255, 255, 0.8) !important; /* 操作按钮为浅白色 */
+  }
+
+  .dark-mode .address-container .address-list .address-item .address-actions .action-btn:hover {
+    color: #409EFF !important; /* 悬停时操作按钮为蓝色 */
+  }
+
+  .dark-mode .address-container .address-list .address-item .address-actions .action-btn.delete:hover {
+    color: #3d8af5 !important; /* 删除按钮悬停时为红色 */
+  }
+
+  /* 修改地址对话框深色模式样式 */
+  .dark-mode .address-dialog .el-dialog {
+    background-color: #1a1a1a !important; /* 对话框背景为黑色 */
+  }
+
+  .dark-mode .address-dialog .el-dialog__header {
+    background-color: #1a1a1a !important; /* 对话框头部背景为黑色 */
+    border-bottom-color: #333333 !important; /* 头部边框为深灰色 */
+  }
+
+  .dark-mode .address-dialog .el-dialog__title {
+    color: #ffffff !important; /* 对话框标题为白色 */
+  }
+
+  .dark-mode .address-dialog .el-dialog__body {
+    background-color: #1a1a1a !important; /* 对话框内容背景为黑色 */
+  }
+
+  .dark-mode .address-dialog .el-dialog__footer {
+    background-color: #1a1a1a !important; /* 对话框底部背景为黑色 */
+    border-top-color: #333333 !important; /* 底部边框为深灰色 */
+  }
+
+  .dark-mode .address-form .form-item :deep(.el-form-item__label) {
+    color: #ffffff !important; /* 表单标签为白色 */
+  }
+
+  .dark-mode .address-form .form-item :deep(.el-input__wrapper) {
+    background-color: rgba(255, 255, 255, 0.1) !important; /* 输入框背景为半透明白色 */
+    border-color: rgba(255, 255, 255, 0.2) !important; /* 输入框边框为半透明白色 */
+  }
+
+  .dark-mode .address-form .form-item :deep(.el-input__inner) {
+    color: #ffffff !important; /* 输入框文字为白色 */
+  }
+
+  .dark-mode .address-form .form-item :deep(.el-textarea__inner) {
+    background-color: rgba(255, 255, 255, 0.1) !important; /* 文本域背景为半透明白色 */
+    border-color: rgba(255, 255, 255, 0.2) !important; /* 文本域边框为半透明白色 */
+    color: #ffffff !important; /* 文本域文字为白色 */
+  }
+
+  .dark-mode .address-form .form-item :deep(.el-input__wrapper:hover),
+  .dark-mode .address-form .form-item :deep(.el-input__wrapper:focus),
+  .dark-mode .address-form .form-item :deep(.el-textarea__inner:hover),
+  .dark-mode .address-form .form-item :deep(.el-textarea__inner:focus) {
+    border-color: #409EFF !important; /* 聚焦时边框为蓝色 */
+  }
+
+  /* 发布页面深色模式样式 */
+  .dark-mode .container {
+    background-color: #1a1a1a !important; /* 发布页面背景为黑色 */
+  }
+
+  .dark-mode .push-container {
+    background-color: #1a1a1a !important; /* 发布容器背景为黑色 */
+  }
+
+  .dark-mode .tab-container {
+    background-color: #1a1a1a !important; /* 标签容器背景为黑色 */
+  }
+
+  .dark-mode .tab-item {
+    color: #ffffff !important; /* 标签文字为白色 */
+  }
+
+  .dark-mode .tab-item.active {
+    color: #ffffff !important; /* 激活标签文字为白色 */
+    background-color: rgba(255, 255, 255, 0.1) !important; /* 激活标签背景为半透明白色 */
+  }
+
+  .dark-mode .content-type-container {
+    background-color: #1a1a1a !important; /* 内容类型容器背景为黑色 */
+  }
+
+  .dark-mode .content-type-item {
+    color: #ffffff !important; /* 内容类型项文字为白色 */
+  }
+
+  .dark-mode .content-type-item.active {
+    color: #ffffff !important; /* 激活内容类型项文字为白色 */
+    background-color: rgba(255, 255, 255, 0.1) !important; /* 激活内容类型项背景为半透明白色 */
+  }
+
+  .dark-mode .content-editor {
+    background-color: #1a1a1a !important; /* 内容编辑器背景为黑色 */
+  }
+
+  .dark-mode .cover-title {
+    color: #ffffff !important; /* 标题为白色 */
+  }
+
+  .dark-mode .push-content .input-title,
+  .dark-mode .push-content .input-content {
+    background-color: rgba(255, 255, 255, 0.1) !important; /* 输入框背景为半透明白色 */
+    border-color: rgba(255, 255, 255, 0.2) !important; /* 输入框边框为半透明白色 */
+    color: #ffffff !important; /* 输入框文字为白色 */
+  }
+
+  .dark-mode .push-content .input-title::placeholder,
+  .dark-mode .push-content .input-content::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important; /* 占位符文字为浅白色 */
+  }
+
+  .dark-mode .push-content .input-title:focus,
+  .dark-mode .push-content .input-content:focus {
+    border-color: #409EFF !important; /* 聚焦时边框为蓝色 */
+  }
+
+  .dark-mode .btns .css-fm44j {
+    background-color: rgba(255, 255, 255, 0.1) !important; /* 按钮背景为半透明白色 */
+    border-color: rgba(255, 255, 255, 0.2) !important; /* 按钮边框为半透明白色 */
+    color: #ffffff !important; /* 按钮文字为白色 */
+  }
+
+  .dark-mode .btns .css-fm44j:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important; /* 悬停时按钮背景为更亮的半透明白色 */
+  }
+
+  .dark-mode .related-products label {
+    color: #ffffff !important; /* 关联商品标签为白色 */
+  }
+
+  .dark-mode .products-container {
+    background-color: #1a1a1a !important; /* 商品容器背景为黑色 */
+  }
+
+  .dark-mode .product-card {
+    background-color: #2a2a2a !important; /* 商品卡片背景为深灰色 */
+    border-color: #333333 !important; /* 商品卡片边框为深灰色 */
+  }
+
+  .dark-mode .product-card .product-title {
+    color: #ffffff !important; /* 商品标题为白色 */
+  }
+
+  .dark-mode .product-card .product-price {
+    color: #ff2442 !important; /* 商品价格为红色 */
+  }
+
+  .dark-mode .add-product-btn {
+    background-color: rgba(255, 255, 255, 0.1) !important; /* 添加商品按钮背景为半透明白色 */
+    border-color: rgba(255, 255, 255, 0.2) !important; /* 添加商品按钮边框为半透明白色 */
+    color: #ffffff !important; /* 添加商品按钮文字为白色 */
+  }
+
+  .dark-mode .add-product-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important; /* 悬停时按钮背景为更亮的半透明白色 */
+  }
+
+  /* 发布页面表单样式 */
+  .dark-mode .form-item label {
+    color: #ffffff !important; /* 表单标签为白色 */
+  }
+
+  .dark-mode .form-item .el-input__wrapper {
+    background-color: rgba(255, 255, 255, 0.1) !important; /* 输入框背景为半透明白色 */
+    border-color: rgba(255, 255, 255, 0.2) !important; /* 输入框边框为半透明白色 */
+  }
+
+  .dark-mode .form-item .el-input__inner {
+    color: #ffffff !important; /* 输入框文字为白色 */
+  }
+
+  .dark-mode .form-item .el-textarea__inner {
+    background-color: rgba(255, 255, 255, 0.1) !important; /* 文本域背景为半透明白色 */
+    border-color: rgba(255, 255, 255, 0.2) !important; /* 文本域边框为半透明白色 */
+    color: #ffffff !important; /* 文本域文字为白色 */
+  }
+
+  .dark-mode .form-item .el-input__wrapper:hover,
+  .dark-mode .form-item .el-input__wrapper:focus,
+  .dark-mode .form-item .el-textarea__inner:hover,
+  .dark-mode .form-item .el-textarea__inner:focus {
+    border-color: #409EFF !important; /* 聚焦时边框为蓝色 */
+  }
+
+  .dark-mode .form-item .el-input__inner::placeholder,
+  .dark-mode .form-item .el-textarea__inner::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important; /* 占位符文字为浅白色 */
+  }
+
+  /* 发布页面按钮样式 */
+  .dark-mode .publishBtn {
+    background-color: #3d8af5 !important; /* 发布按钮背景为红色 */
+    color: #ffffff !important; /* 发布按钮文字为白色 */
+    border-color: #3d8af5 !important; /* 发布按钮边框为红色 */
+  }
+
+  .dark-mode .clearBtn {
+    background-color: transparent !important; /* 清除按钮背景为透明 */
+    color: #ffffff !important; /* 清除按钮文字为白色 */
+    border-color: rgba(255, 255, 255, 0.2) !important; /* 清除按钮边框为半透明白色 */
+  }
+
+  .dark-mode .clearBtn:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important; /* 悬停时清除按钮背景为半透明白色 */
+  }
+
+  /* 视频上传组件深色模式样式 */
+  .dark-mode .video-upload-container {
+    background-color: #1a1a1a !important; /* 视频上传容器背景为黑色 */
+  }
+
+  .dark-mode .video-upload-area {
+    background-color: #1a1a1a !important; /* 视频上传区域背景为黑色 */
+  }
+
+  .dark-mode .video-uploader .el-upload-dragger {
+    background-color: #1a1a1a !important; /* 拖拽上传区域背景为黑色 */
+    border-color: rgba(255, 255, 255, 0.2) !important; /* 拖拽上传区域边框为半透明白色 */
+  }
+
+  .dark-mode .video-uploader .el-upload-dragger:hover {
+    border-color: #409EFF !important; /* 悬停时边框为蓝色 */
+  }
+
+  .dark-mode .upload-placeholder {
+    background-color: #1a1a1a !important; /* 上传占位符背景为黑色 */
+  }
+
+  .dark-mode .upload-text {
+    color: #ffffff !important; /* 上传文字为白色 */
+  }
+
+  .dark-mode .upload-hint {
+    color: rgba(255, 255, 255, 0.6) !important; /* 上传提示为浅白色 */
+  }
+
+  .dark-mode .upload-btn {
+    background-color: #3d8af5 !important; /* 上传按钮背景为红色 */
+    color: #ffffff !important; /* 上传按钮文字为白色 */
+    border-color: #3d8af5 !important; /* 上传按钮边框为红色 */
+  }
+
+  .dark-mode .upload-btn:hover {
+    background-color: #3d8af5 !important; /* 悬停时上传按钮背景为深红色 */
+  }
+
+  /* 视频预览区域深色模式样式 */
+  .dark-mode .video-preview-container {
+    background-color: #1a1a1a !important; /* 视频预览容器背景为黑色 */
+  }
+
+  .dark-mode .video-content {
+    background-color: #1a1a1a !important; /* 视频内容背景为黑色 */
+  }
+
+  .dark-mode .video-wrapper {
+    background-color: #1a1a1a !important; /* 视频包装器背景为黑色 */
+  }
+
+  .dark-mode .cover-container {
+    background-color: #1a1a1a !important; /* 封面容器背景为黑色 */
+  }
+
+  .dark-mode .cover-title {
+    color: #ffffff !important; /* 封面标题为白色 */
+  }
+
+  .dark-mode .cover-content {
+    background-color: #1a1a1a !important; /* 封面内容背景为黑色 */
+  }
+
+  .dark-mode .cover-preview {
+    background-color: #2a2a2a !important; /* 封面预览背景为深灰色 */
+    border-color: #333333 !important; /* 封面预览边框为深灰色 */
+  }
+
+  .dark-mode .cover-empty {
+    background-color: #2a2a2a !important; /* 空封面背景为深灰色 */
+    border-color: #333333 !important; /* 空封面边框为深灰色 */
+  }
+
+  .dark-mode .loading-cover {
+    color: #ffffff !important; /* 加载封面文字为白色 */
+  }
+
+  .dark-mode .cover-actions .action-btn {
+    color: #ffffff !important; /* 封面操作按钮文字为白色 */
+  }
+
+  .dark-mode .cover-actions .action-btn:hover {
+    color: #409EFF !important; /* 悬停时封面操作按钮文字为蓝色 */
+  }
+
+  /* 视频上传头部深色模式样式 */
+  .dark-mode .header {
+    background-color: #1a1a1a !important; /* 头部背景为黑色 */
+  }
+
+  .dark-mode .header-title {
+    color: #ffffff !important; /* 头部标题为白色 */
+  }
+
+  .dark-mode .action-buttons .el-button {
+    color: #ffffff !important; /* 操作按钮文字为白色 */
+  }
+
+  .dark-mode .action-buttons .el-button:hover {
+    color: #409EFF !important; /* 悬停时操作按钮文字为蓝色 */
+  }
+
+  /* 图文上传组件深色模式样式 */
+  .dark-mode .image-upload-container {
+    background-color: #1a1a1a !important; /* 图文上传容器背景为黑色 */
+  }
+
+  .dark-mode .image-upload-area {
+    background-color: #1a1a1a !important; /* 图文上传区域背景为黑色 */
+  }
+
+  .dark-mode .image-uploader .el-upload-dragger {
+    background-color: #1a1a1a !important; /* 拖拽上传区域背景为黑色 */
+    border-color: rgba(255, 255, 255, 0.2) !important; /* 拖拽上传区域边框为半透明白色 */
+  }
+
+  .dark-mode .image-uploader .el-upload-dragger:hover {
+    border-color: #409EFF !important; /* 悬停时边框为蓝色 */
+  }
+
+  .dark-mode .upload-placeholder {
+    background-color: #1a1a1a !important; /* 上传占位符背景为黑色 */
+  }
+
+  .dark-mode .upload-text {
+    color: #ffffff !important; /* 上传文字为白色 */
+  }
+
+  .dark-mode .upload-tip {
+    color: rgba(255, 255, 255, 0.6) !important; /* 上传提示为浅白色 */
+  }
+
+  .dark-mode .upload-btn {
+    background-color: #3d8af5 !important; /* 上传按钮背景为红色 */
+    color: #ffffff !important; /* 上传按钮文字为白色 */
+    border-color: #3d8af5 !important; /* 上传按钮边框为红色 */
+  }
+
+  .dark-mode .upload-btn:hover {
+    background-color: #3d8af5 !important; /* 悬停时上传按钮背景为深红色 */
+  }
+
+  /* 图文上传信息区域深色模式样式 */
+  .dark-mode .upload-info {
+    background-color: #1a1a1a !important; /* 上传信息区域背景为黑色 */
+  }
+
+  .dark-mode .upload-info .info-item {
+    background-color: #1a1a1a !important; /* 信息项背景为黑色 */
+  }
+
+  .dark-mode .upload-info .info-item h4 {
+    color: #ffffff !important; /* 信息项标题为白色 */
+  }
+
+  .dark-mode .upload-info .info-item p {
+    color: rgba(255, 255, 255, 0.8) !important; /* 信息项内容为浅白色 */
+  }
+
+  .dark-mode .upload-info .vertical-divider {
+    background-color: rgba(255, 255, 255, 0.2) !important; /* 垂直分割线为半透明白色 */
+  }
+
+  /* 图文上传头部深色模式样式 */
+  .dark-mode .header {
+    background-color: #1a1a1a !important; /* 头部背景为黑色 */
+  }
+
+  .dark-mode .header-title {
+    color: #ffffff !important; /* 头部标题为白色 */
+  }
+
+  .dark-mode .image-count {
+    color: rgba(255, 255, 255, 0.6) !important; /* 图片计数为浅白色 */
+  }
+
+  .dark-mode .header-right .el-button {
+    color: #ffffff !important; /* 头部操作按钮文字为白色 */
+  }
+
+  .dark-mode .header-right .el-button:hover {
+    color: #409EFF !important; /* 悬停时头部操作按钮文字为蓝色 */
+  }
+
+  /* 图文列表深色模式样式 */
+  .dark-mode .img-list {
+    background-color: #1a1a1a !important; /* 图片列表背景为黑色 */
+  }
+
+  .dark-mode .img-list .header-title {
+    color: #ffffff !important; /* 图片列表标题为白色 */
+  }
+
+  .dark-mode .img-list .image-count {
+    color: rgba(255, 255, 255, 0.6) !important; /* 图片列表计数为浅白色 */
+  }
+
+  /* 图文上传卡片深色模式样式 */
+  .dark-mode .image-uploader .el-upload {
+    background-color: #2a2a2a !important; /* 上传卡片背景为深灰色 */
+    border-color: #333333 !important; /* 上传卡片边框为深灰色 */
+  }
+
+  .dark-mode .image-uploader .el-upload:hover {
+    border-color: #409EFF !important; /* 悬停时上传卡片边框为蓝色 */
+  }
+
+  .dark-mode .image-uploader .el-upload .el-icon {
+    color: #ffffff !important; /* 上传图标为白色 */
+  }
+
+  /* 图文预览对话框深色模式样式 */
+  .dark-mode .el-dialog {
+    background-color: #1a1a1a !important; /* 对话框背景为黑色 */
+  }
+
+  .dark-mode .el-dialog .el-dialog__header {
+    background-color: #1a1a1a !important; /* 对话框头部背景为黑色 */
+    border-bottom-color: #333333 !important; /* 头部边框为深灰色 */
+  }
+
+  .dark-mode .el-dialog .el-dialog__title {
+    color: #ffffff !important; /* 对话框标题为白色 */
+  }
+
+  .dark-mode .el-dialog .el-dialog__body {
+    background-color: #1a1a1a !important; /* 对话框内容背景为黑色 */
+  }
+
+  .dark-mode .preview-image {
+    background-color: #1a1a1a !important; /* 预览图片背景为黑色 */
+  }
+
+  /* 图文封面深色模式样式 */
+  .dark-mode .cover-container {
+    background-color: #1a1a1a !important; /* 封面容器背景为黑色 */
+  }
+
+  .dark-mode .cover-title {
+    color: #ffffff !important; /* 封面标题为白色 */
+  }
+
+  .dark-mode .cover-content {
+    background-color: #1a1a1a !important; /* 封面内容背景为黑色 */
+  }
+
+  .dark-mode .cover-preview {
+    background-color: #2a2a2a !important; /* 封面预览背景为深灰色 */
+    border-color: #333333 !important; /* 封面预览边框为深灰色 */
+  }
+
+  .dark-mode .cover-empty {
+    background-color: #2a2a2a !important; /* 空封面背景为深灰色 */
+    border-color: #333333 !important; /* 空封面边框为深灰色 */
+  }
+
+  .dark-mode .cover-actions .action-btn {
+    color: #ffffff !important; /* 封面操作按钮文字为白色 */
+  }
+
+  .dark-mode .cover-actions .action-btn:hover {
+    color: #409EFF !important; /* 悬停时封面操作按钮文字为蓝色 */
+  }
+
+  .dark-mode .badge-container span {
+    color: #ffffff !important; /* 导航标签内的文字为白色 */
+  }
+
+  /* 闲宝页面深色模式样式修复 */
+  .dark-mode .feeds-container .card .footer .price span {
+    color: #ff2442 !important; /* 闲宝页面价格为红色 */
+  }
+
+  .dark-mode .feeds-container .card .footer .author-wrapper .name {
+    color: rgba(255, 255, 255, 0.8) !important; /* 用户名为浅白色 */
+  }
+
+  .dark-mode .feeds-container .card .footer .author-wrapper span[style*="color: #9e9e9e"] {
+    color: #3d8af5 !important; /* 位置为蓝色，覆盖内联样式 */
+  }
+
+  .dark-mode .feeds-container .card .footer .post-type-tag.post-type-mail {
+    color: #ffffff !important; /* 邮寄标签：白色文字 */
+    background: #67c23a !important; /* 邮寄标签：绿色纯色背景 */
+    border: none !important;
+  }
+
+  .dark-mode .feeds-container .card .footer .post-type-tag.post-type-pickup {
+    color: #ffffff !important; /* 自提标签：白色文字 */
+    background: #e6a23c !important; /* 自提标签：橙色纯色背景 */
+    border: none !important;
+  }
+
+  /* 强制覆盖闲宝页面的内联样式 */
+  .dark-mode .feeds-container .card .footer .price span[style*="color: #ff2442"],
+  .dark-mode .feeds-container .card .footer .price span[style*="color: #ff5d50"] {
+    color: #ff2442 !important; /* 强制价格为红色 */
+  }
+
+  .dark-mode .feeds-container .card .footer .author-wrapper span[style*="color: #9e9e9e"] {
+    color: #3d8af5 !important; /* 强制位置为蓝色 */
+  }
+
+  .dark-mode .feeds-container .card .footer .post-type-tag.post-type-mail[style*="color: #ff9900"] {
+    color: #ffffff !important; /* 邮寄标签：白色文字 */
+    background: #67c23a !important; /* 邮寄标签：绿色纯色背景 */
+    border: none !important;
+  }
+
+  .dark-mode .feeds-container .card .footer .post-type-tag.post-type-pickup[style*="color: #ff9900"] {
+    color: #ffffff !important; /* 自提标签：白色文字 */
+    background: #e6a23c !important; /* 自提标签：橙色纯色背景 */
+    border: none !important;
+  }
+
+  /* 图文和视频上传区域深色模式样式 */
+  .dark-mode .image-upload-area {
+    background-color: #1a1a1a !important; /* 图文上传区域背景为黑色 */
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1) !important; /* 深色模式下的阴影 */
+  }
+
+  .dark-mode .video-upload-area {
+    background-color: #1a1a1a !important; /* 视频上传区域背景为黑色 */
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1) !important; /* 深色模式下的阴影 */
+  }
+
+  /* 深色模式下的聊天记录样式 */
+  .dark-mode .message-item .user-info a {
+    color: #ffffff !important; /* 用户名显示为白色 */
+  }
+
+  .dark-mode .message-item .interaction-hint {
+    color: rgba(255, 255, 255, 0.6) !important; /* 时间显示为浅白色 */
+  }
+
+  .dark-mode .message-item .interaction-content {
+    color: #ffffff !important; /* 消息内容显示为白色 */
+  }
+
+  .dark-mode .message-item .interaction-content span {
+    color: #ffffff !important; /* 消息内容文字为白色 */
+  }
+
+  .dark-mode .message-item .main {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; /* 分割线为半透明白色 */
+  }
+
+  .dark-mode .card-content {
+    background: #1a1a1a !important; /* 商品信息卡片背景为黑色 */
+    border: 1px solid rgba(255, 255, 255, 0.1) !important; /* 边框为半透明白色 */
+  }
+
+  .dark-mode .product-card {
+    background: #1a1a1a !important; /* 商品信息卡片背景为黑色 */
+    border: 1px solid rgba(255, 255, 255, 0.1) !important; /* 边框为半透明白色 */
+  }
+
+  /* 深色模式下的闲宝消息商品卡片样式 */
+  .dark-mode .product-info {
+    background: #1a1a1a !important; /* 商品信息卡片背景为黑色 */
+  }
+
+  .dark-mode .product-info .product-name {
+    color: #ffffff !important; /* 商品名称显示为白色 */
+  }
+
+  .dark-mode .product-info .product-price {
+    color: #ff4d4f !important; /* 价格保持红色，但确保可见性 */
+  }
+
+  /* 深色模式下的商品信息头部样式 */
+  .dark-mode .product-info-header {
+    background: #1a1a1a !important; /* 商品信息头部背景为黑色 */
+  }
+
+  .dark-mode .product-info-header .title {
+    color: #ffffff !important; /* 商品标题显示为白色 */
+  }
+
+  .dark-mode .product-info-header .price {
+    color: #ff5d50 !important; /* 价格保持红色 */
+  }
+
+  .dark-mode .product-info-header .post {
+    color: rgba(255, 255, 255, 0.6) !important; /* 发布信息显示为浅白色 */
+  }
+
+  .dark-mode .product-info-header .location {
+    color: rgba(255, 255, 255, 0.6) !important; /* 位置信息显示为浅白色 */
+  }
+
+  /* 深色模式下的赞和收藏页面样式 */
+  .dark-mode .agree-item .user-info a {
+    color: #ffffff !important; /* 用户名显示为白色 */
+  }
+
+  .dark-mode .agree-item .interaction-hint {
+    color: rgba(255, 255, 255, 0.8) !important; /* 交互提示文字显示为浅白色 */
+  }
+
+  .dark-mode .agree-item .interaction-hint .type-tag.note {
+    color: #3d8af5 !important; /* 笔记标签保持蓝色 */
+    background: rgba(61, 138, 245, 0.2) !important; /* 背景稍微透明 */
+  }
+
+  .dark-mode .agree-item .interaction-hint .type-tag.product {
+    color: #67c23a !important; /* 商品标签保持绿色 */
+    background: rgba(103, 194, 58, 0.2) !important; /* 背景稍微透明 */
+  }
+
+  .dark-mode .agree-item .quote-info {
+    color: rgba(255, 255, 255, 0.6) !important; /* 引用信息显示为浅白色 */
+  }
+
+  .dark-mode .agree-item .quote-info::before {
+    background: rgba(255, 255, 255, 0.2) !important; /* 引用标记为半透明白色 */
+  }
+
+  .dark-mode .agree-item .main {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; /* 分割线为半透明白色 */
+  }
+
+  /* 深色模式下的评论页面样式 */
+  .dark-mode .comment-item .user-info a {
+    color: #ffffff !important; /* 用户名显示为白色 */
+  }
+
+  .dark-mode .comment-item .interaction-hint {
+    color: rgba(255, 255, 255, 0.8) !important; /* 交互提示文字显示为浅白色 */
+  }
+
+  .dark-mode .comment-item .interaction-hint .type-tag.note {
+    color: #3d8af5 !important; /* 笔记标签保持蓝色 */
+    background: rgba(61, 138, 245, 0.2) !important; /* 背景稍微透明 */
+  }
+
+  .dark-mode .comment-item .interaction-hint .type-tag.product {
+    color: #67c23a !important; /* 商品标签保持绿色 */
+    background: rgba(103, 194, 58, 0.2) !important; /* 背景稍微透明 */
+  }
+
+  .dark-mode .comment-item .quote-info {
+    color: rgba(255, 255, 255, 0.6) !important; /* 引用信息显示为浅白色 */
+  }
+
+  .dark-mode .comment-item .quote-info::before {
+    background: rgba(255, 255, 255, 0.2) !important; /* 引用标记为半透明白色 */
+  }
+
+  .dark-mode .comment-item .main {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; /* 分割线为半透明白色 */
+  }
+
+  /* 深色模式下的关注页面样式 */
+  .dark-mode .follower-item .user-info a {
+    color: #ffffff !important; /* 用户名显示为白色 */
+  }
+
+  .dark-mode .follower-item .interaction-hint {
+    color: rgba(255, 255, 255, 0.8) !important; /* 交互提示文字显示为浅白色 */
+  }
+
+  .dark-mode .follower-item .quote-info {
+    color: rgba(255, 255, 255, 0.6) !important; /* 引用信息显示为浅白色 */
+  }
+
+  .dark-mode .follower-item .quote-info::before {
+    background: rgba(255, 255, 255, 0.2) !important; /* 引用标记为半透明白色 */
+  }
+
+  .dark-mode .follower-item .main {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; /* 分割线为半透明白色 */
+  }
+
+  /* 深色模式下的发布页面样式 */
+  .dark-mode .container {
+    background-color: #1a1a1a !important; /* 发布页面背景为黑色 */
+  }
+
+  .dark-mode .tab-container {
+    background-color: #1a1a1a !important; /* 标签容器背景为黑色 */
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important; /* 分割线为半透明白色 */
+  }
+
+  .dark-mode .tab-item {
+    color: #ffffff !important; /* 标签文字为白色 */
+  }
+
+  .dark-mode .tab-item.active {
+    color: #3d8af5 !important; /* 激活标签保持红色 */
+  }
+
+  .dark-mode .content-type-container {
+    background-color: #1a1a1a !important; /* 内容类型容器背景为黑色 */
+  }
+
+  .dark-mode .content-type-item {
+    color: #ffffff !important; /* 内容类型标签文字为白色 */
+    background-color: #2a2a2a !important; /* 内容类型标签背景为深灰色 */
+  }
+
+  .dark-mode .content-type-item.active {
+    color: #ffffff !important; /* 激活的内容类型标签文字为白色 */
+    background-color: #3d8af5 !important; /* 激活的内容类型标签背景为红色 */
+  }
+
+  /* 深色模式下的图片上传区域样式 */
+  .dark-mode .image-upload-area {
+    background: #1a1a1a !important; /* 上传区域背景为黑色 */
+    /* border: 1px solid rgba(255, 255, 255, 0.1) !important;  */
+  }
+
+  /* 深色模式下的上传卡片样式 */
+  .dark-mode .el-upload-dragger {
+    background: #1a1a1a !important; /* 上传拖拽区域背景为黑色 */
+    border: 2px dashed rgba(255, 255, 255, 0.3) !important; /* 虚线边框为半透明白色 */
+  }
+
+  .dark-mode .el-upload-dragger:hover {
+    border-color: #3d8af5 !important; /* 悬停时边框为红色 */
+  }
+
+  .dark-mode .el-upload-dragger.is-dragover {
+    border-color: #3d8af5 !important; /* 拖拽时边框为红色 */
+    background-color: rgba(255, 36, 66, 0.1) !important; /* 拖拽时背景为半透明红色 */
+  }
+
+  .dark-mode .upload-text {
+    color: #ffffff !important; /* 上传提示文字为白色 */
+  }
+
+  .dark-mode .upload-tip {
+    color: rgba(255, 255, 255, 0.6) !important; /* 上传提示信息为浅白色 */
+  }
+
+  .dark-mode .info-item h4 {
+    color: #ffffff !important; /* 信息标题为白色 */
+  }
+
+  .dark-mode .info-item p {
+    color: rgba(255, 255, 255, 0.6) !important; /* 信息内容为浅白色 */
+  }
+
+  .dark-mode .header-title {
+    color: #ffffff !important; /* 头部标题为白色 */
+  }
+
+  .dark-mode .image-count {
+    color: rgba(255, 255, 255, 0.6) !important; /* 图片数量为浅白色 */
+  }
+
+  .dark-mode .img-list {
+    background: #1a1a1a !important; /* 图片列表背景为黑色 */
+    border: 1px solid rgba(255, 255, 255, 0.1) !important; /* 边框为半透明白色 */
+  }
+
+  .dark-mode .cover-container {
+    background: #1a1a1a !important; /* 封面容器背景为黑色 */
+    border: 1px solid rgba(255, 255, 255, 0.1) !important; /* 边框为半透明白色 */
+  }
+
+  .dark-mode .cover-title {
+    color: #ffffff !important; /* 封面标题为白色 */
+  }
+
+  /* 深色模式下的内容编辑器样式 */
+  .dark-mode .content-editor {
+    background: #1a1a1a !important; /* 内容编辑器背景为黑色 */
+    border: 1px solid rgba(255, 255, 255, 0.1) !important; /* 边框为半透明白色 */
+  }
+
+  .dark-mode .btn-content {
+    color: #ffffff !important; /* 按钮内容为白色 */
+  }
+
+  .dark-mode .css-fm44j {
+    color: #ffffff !important; /* 按钮文字为白色 */
+    background-color: #2a2a2a !important; /* 按钮背景为深灰色 */
+  }
+
+  .dark-mode .css-fm44j:hover {
+    background-color: #3a3a3a !important; /* 按钮悬停背景为更浅的灰色 */
+  }
+
+  .dark-mode .publishBtn {
+    background: #3d8af5 !important; /* 发布按钮保持红色 */
+    color: #ffffff !important; /* 发布按钮文字为白色 */
+  }
+
+  .dark-mode .clearBtn {
+    background: #2a2a2a !important; /* 取消按钮背景为深灰色 */
+    color: #ffffff !important; /* 取消按钮文字为白色 */
+    border: 1px solid rgba(255, 255, 255, 0.2) !important; /* 边框为半透明白色 */
+  }
+
+  .dark-mode .clearBtn:hover {
+    background: #3a3a3a !important; /* 取消按钮悬停背景为更浅的灰色 */
+  }
+
+  /* 深色模式下的搜索弹窗样式 */
+  .dark-mode .sug-container-wrapper {
+    background-color: #1a1a1a !important; /* 搜索弹窗背景为黑色 */
+    box-shadow: 0 0.25rem 2rem 0 rgba(255, 255, 255, 0.1), 0 0.0625rem 0.25rem 0 rgba(255, 255, 255, 0.05) !important; /* 阴影为半透明白色 */
+  }
+
+  .dark-mode .sug-container .header {
+    color: rgba(255, 255, 255, 0.6) !important; /* 标题文字为浅白色 */
+  }
+
+  .dark-mode .sug-container .icon-group {
+    color: rgba(255, 255, 255, 0.8) !important; /* 图标组文字为浅白色 */
+  }
+
+  .dark-mode .sug-container .history-item {
+    color: rgba(255, 255, 255, 0.8) !important; /* 历史记录项文字为浅白色 */
+    background: rgba(255, 255, 255, 0.1) !important; /* 历史记录项背景为半透明白色 */
+  }
+
+  .dark-mode .sug-container .close-tag {
+    background-color: #1a1a1a !important; /* 关闭标签背景为黑色 */
+    color: rgba(255, 255, 255, 0.6) !important; /* 关闭标签文字为浅白色 */
+    border: 0.0625rem solid rgba(255, 255, 255, 0.2) !important; /* 边框为半透明白色 */
+  }
+
+  .dark-mode .sug-container .sug-item {
+    color: rgba(255, 255, 255, 0.6) !important; /* 建议项文字为浅白色 */
+  }
+
+  .dark-mode .sug-container .sug-item:hover {
+    background: rgba(255, 255, 255, 0.1) !important; /* 建议项悬停背景为半透明白色 */
+  }
+
+  .dark-mode .sug-container .sug-text {
+    color: rgba(255, 255, 255, 0.8) !important; /* 建议文字为浅白色 */
+  }
+
+  .dark-mode .sug-container .hotspot-item {
+    color: rgba(255, 255, 255, 0.6) !important; /* 热点项文字为浅白色 */
+  }
+
+  .dark-mode .sug-container .hotspot-item:first-child {
+    color: #3d8af5 !important; /* 第一个热点项保持红色 */
+  }
+
+  .dark-mode .sug-container .hotspot-item:nth-child(2) {
+    color: #3d8af5 !important; /* 第二个热点项保持紫色 */
+  }
+
+  .dark-mode .sug-container .hotspot-item:nth-child(3) {
+    color: #3d8af5 !important; /* 第三个热点项保持粉色 */
+  }
+
+  .dark-mode .sug-container .hotspot-title {
+    color: rgba(255, 255, 255, 0.8) !important; /* 热点标题为浅白色 */
+  }
+
+  .dark-mode .sug-container .hotspot-score {
+    color: rgba(255, 255, 255, 0.3) !important; /* 热点分数为更浅的白色 */
+  }
+
+  .dark-mode .sug-container .hotspots .header {
+    color: rgba(255, 255, 255, 0.6) !important; /* 热点标题为浅白色 */
+  }
+
+  /* 深色模式下的动态页面样式 */
+  .dark-mode .note-detail-mask {
+    background-color: #1a1a1a !important; /* 动态页面背景为黑色 */
+  }
+
+  .dark-mode .note-container {
+    background-color: #1a1a1a !important; /* 动态容器背景为黑色 */
+  }
+
+  .dark-mode .note-content {
+    color: #ffffff !important; /* 动态内容文字为白色 */
+  }
+
+  .dark-mode .note-content .title {
+    color: #ffffff !important; /* 动态标题为白色 */
+  }
+
+  .dark-mode .note-content .desc {
+    color: #ffffff !important; /* 动态描述为白色 */
+  }
+
+  .dark-mode .note-content .desc .tag {
+    color: #3d8af5 !important; /* 标签保持蓝色 */
+  }
+
+  .dark-mode .note-content .bottom-container .date,
+  .dark-mode .note-content .bottom-container .location {
+    color: rgba(255, 255, 255, 0.6) !important; /* 日期和位置为浅白色 */
+  }
+
+  .dark-mode .note-content .post-container .post,
+  .dark-mode .note-content .price-container .post {
+    color: rgba(255, 255, 255, 0.6) !important; /* 发布信息为浅白色 */
+  }
+
+  /* 笔记详情弹窗（main.vue）深色模式适配 */
+  .dark-mode .note-detail-mask .back-desk {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+  }
+
+  .dark-mode .note-detail-mask .close {
+    background-color: #2a2a2a !important;
+  }
+
+  .dark-mode .note-container {
+    background-color: #1a1a1a !important;
+    box-shadow: 0 8px 64px 0 rgba(255, 255, 255, 0.04), 0 1px 4px 0 rgba(255, 255, 255, 0.02) !important;
+  }
+
+  .dark-mode .note-container .media-container {
+    background: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  .dark-mode .note-container .interaction-container {
+    background-color: #1a1a1a !important;
+    border-left-color: #333333 !important;
+  }
+
+  .dark-mode .note-container .author-me .name {
+    color: rgba(255, 255, 255, 0.85) !important;
+  }
+
+  .dark-mode .note-container .note-content .desc {
+    color: #ffffff !important;
+  }
+
+  .dark-mode .note-container .note-content .desc .tag {
+    color: #3d8af5 !important;
+  }
+
+  .dark-mode .note-container .note-scroller .divider {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .dark-mode .note-container .interactions-footer {
+    background: #1a1a1a !important;
+    border-top-color: #333333 !important;
+  }
+
+  .dark-mode .note-container .interactions-footer .left,
+  .dark-mode .note-container .interactions-footer .left .chat-wrapper {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+  
+  /* 保持点赞和收藏图标的原有颜色（红心和黄星星） */
+  .dark-mode .note-container .interactions-footer .left .like-wrapper .count,
+  .dark-mode .note-container .interactions-footer .left .collect-wrapper .count {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  .dark-mode .note-container .related-products .product-card {
+    background-color: #2a2a2a !important;
+  }
+
+  .dark-mode .note-container .related-products .product-card:hover {
+    background-color: #333333 !important;
+  }
+
+  .dark-mode .note-container .related-products .product-title {
+    color: #ffffff !important;
+  }
+
+  .dark-mode .note-container .related-products .arrow-icon {
+    color: #bbbbbb !important;
+  }
+
+  /* 关闭按钮 X 强制为白色（覆盖内联颜色） */
+  .dark-mode .note-detail-mask .close-mask-white,
+  .dark-mode .note-detail-mask .close-mask-white svg,
+  .dark-mode .note-detail-mask .close-mask-white svg path {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+  }
+
+  /* 评论总数文本为白色 */
+  .dark-mode .comments-container .total {
+    color: #ffffff !important;
+  }
+
+  .dark-mode .product-card {
+    background-color: #2a2a2a !important; /* 商品卡片背景为深灰色 */
+  }
+
+  .dark-mode .product-card .product-title {
+    color: #ffffff !important; /* 商品标题为白色 */
+  }
+
+  .dark-mode .product-card .current-price {
+    color: #ff2442 !important; /* 商品价格保持红色 */
+  }
+
+  .dark-mode .product-card .original-price {
+    color: rgba(255, 255, 255, 0.6) !important; /* 原价为浅白色 */
+  }
+
+  .dark-mode .interactions-footer {
+    background: #1a1a1a !important; /* 交互底部背景为黑色 */
+  }
+
+  .dark-mode .interactions-footer .count {
+    color: #ffffff !important; /* 计数文字为白色 */
+  }
+
+  .dark-mode .interactions-footer .comment-input {
+    background: rgba(255, 255, 255, 0.1) !important; /* 评论输入框背景为半透明白色 */
+    color: #ffffff !important; /* 评论输入框文字为白色 */
+  }
+
+  .dark-mode .interactions-footer .comment-input::placeholder {
+    color: rgba(255, 255, 255, 0.3) !important; /* 评论输入框占位符为浅白色 */
+  }
+
+  .dark-mode .interactions-footer .input-buttons {
+    color: rgba(255, 255, 255, 0.3) !important; /* 输入按钮为浅白色 */
+  }
+
+  .dark-mode .close-mask-white {
+    color: rgba(255, 255, 255, 0.8) !important; /* 关闭按钮为浅白色 */
+  }
+
+  /* 深色模式下的笔记和闲置卡片文字样式 */
+  .dark-mode .feeds-container .card .footer .title {
+    color: #ffffff !important; /* 卡片标题为白色 */
+  }
+
+  .dark-mode .feeds-container .card .footer .price {
+    color: #ff2442 !important; /* 价格保持红色 */
+  }
+
+  /* 闲置卡片的价格和发货方式恢复原来的颜色 */
+  .dark-mode .idle-page .feeds-container .card .footer .price {
+    color: #ff2442 !important; /* 闲置价格保持红色 */
+  }
+
+  .dark-mode .idle-page .feeds-container .card .footer .post-type-tag {
+    color: #ff9900 !important; /* 闲置发货方式标签保持橙色 */
+    background: #fff !important; /* 标签背景恢复白色 */
+    border: 1px solid #ff9900 !important; /* 边框保持橙色 */
+  }
+
+  /* 强制覆盖所有闲置页面的价格和发货方式（排除 .price-info容器，否则会误伤动态页整段元数据） */
+  .dark-mode [class*="idle"] .card .footer .price,
+  .dark-mode [class*="idle"] [class*="card"] [class*="price"]:not(.price-info),
+  .dark-mode [class*="idle"] [class*="footer"] [class*="price"]:not(.price-info) {
+    color: #ff2442 !important; /* 强制闲置价格为红色 */
+  }
+
+  .dark-mode [class*="idle"] .card .footer .post-type-tag.post-type-mail,
+  .dark-mode [class*="idle"] [class*="card"] [class*="post-type-tag"].post-type-mail,
+  .dark-mode [class*="idle"] [class*="footer"] [class*="post-type-tag"].post-type-mail {
+    color: #ffffff !important; /* 邮寄标签：白色文字 */
+    background: #67c23a !important; /* 邮寄标签：绿色纯色背景 */
+    border: none !important;
+  }
+
+  .dark-mode [class*="idle"] .card .footer .post-type-tag.post-type-pickup,
+  .dark-mode [class*="idle"] [class*="card"] [class*="post-type-tag"].post-type-pickup,
+  .dark-mode [class*="idle"] [class*="footer"] [class*="post-type-tag"].post-type-pickup {
+    color: #ffffff !important; /* 自提标签：白色文字 */
+    background: #e6a23c !important; /* 自提标签：橙色纯色背景 */
+    border: none !important;
+  }
+
+  /* 特别针对闲置页面的所有价格和标签元素 */
+  .dark-mode .idle-page *[class*="price"]:not(.price-info) {
+    color: #ff2442 !important; /* 价格强制为红色 */
+  }
+
+  .dark-mode .idle-page *[class*="post-type-tag"].post-type-mail {
+    color: #ffffff !important; /* 邮寄标签：白色文字 */
+    background: #67c23a !important; /* 邮寄标签：绿色纯色背景 */
+    border: none !important;
+  }
+
+  .dark-mode .idle-page *[class*="post-type-tag"].post-type-pickup {
+    color: #ffffff !important; /* 自提标签：白色文字 */
+    background: #e6a23c !important; /* 自提标签：橙色纯色背景 */
+    border: none !important;
+  }
+
+  .dark-mode .feeds-container .card .footer .author-wrapper {
+    color: rgba(255, 255, 255, 0.8) !important; /* 作者信息为浅白色 */
+  }
+
+  .dark-mode .feeds-container .card .footer .author-wrapper .author-name {
+    color: rgba(255, 255, 255, 0.8) !important; /* 作者名称为浅白色 */
+  }
+
+  .dark-mode .feeds-container .card .footer .author-wrapper .time {
+    color: rgba(255, 255, 255, 0.6) !important; /* 时间信息为更浅的白色 */
+  }
+
+  /* 位置信息保持原来的颜色 */
+  .dark-mode .feeds-container .card .footer .author-wrapper .location,
+  .dark-mode .card .footer .author-wrapper .location,
+  .dark-mode [class*="card"] [class*="location"],
+  .dark-mode [class*="footer"] [class*="location"] {
+    color: #3d8af5 !important; /* 位置信息保持蓝色 */
+  }
+
+  /* 深色模式下的闲置页面卡片样式 */
+  .dark-mode .idle-page .feeds-container .card .footer .title {
+    color: #ffffff !important; /* 闲置卡片标题为白色 */
+  }
+
+  .dark-mode .idle-page .feeds-container .card .footer .price {
+    color: #ff2442 !important; /* 闲置价格保持红色 */
+  }
+
+  .dark-mode .idle-page .feeds-container .card .footer .post-type-tag.post-type-mail {
+    /* 邮寄样式（绿色纯色背景 + 白色文字） */
+    color: #ffffff !important;
+    background: #67c23a !important;
+    border: none !important;
+  }
+
+  .dark-mode .idle-page .feeds-container .card .footer .post-type-tag.post-type-pickup {
+    /* 自提样式（橙色纯色背景 + 白色文字） */
+    color: #ffffff !important;
+    background: #e6a23c !important;
+    border: none !important;
+  }
+
+  .dark-mode .idle-page .feeds-container .card .footer .author-wrapper {
+    color: rgba(255, 255, 255, 0.8) !important; /* 闲置作者信息为浅白色 */
+  }
+
+  /* 深色模式下的Product组件样式 */
+  .dark-mode .product-component .feeds-container .card .footer .title {
+    color: #ffffff !important; /* Product组件标题为白色 */
+  }
+
+  .dark-mode .product-component .feeds-container .card .footer .price {
+    color: #ff2442 !important; /* Product组件价格保持红色 */
+  }
+
+  .dark-mode .product-component .feeds-container .card .footer .post-type-tag.post-type-mail {
+    /* 邮寄样式（绿色纯色背景 + 白色文字） */
+    color: #ffffff !important;
+    background: #67c23a !important;
+    border: none !important;
+  }
+
+  .dark-mode .product-component .feeds-container .card .footer .post-type-tag.post-type-pickup {
+    /* 自提样式（橙色纯色背景 + 白色文字） */
+    color: #ffffff !important;
+    background: #e6a23c !important;
+    border: none !important;
+  }
+
+  .dark-mode .product-component .feeds-container .card .footer .author-wrapper {
+    color: rgba(255, 255, 255, 0.8) !important; /* Product组件作者信息为浅白色 */
+  }
+
+  /* 强制覆盖所有卡片中的文字样式 */
+  .dark-mode .card .footer .title,
+  .dark-mode .card .footer .author-wrapper .name,
+  .dark-mode .card .footer .author-wrapper .author .name {
+    color: #ffffff !important; /* 强制所有卡片标题和用户名为白色 */
+  }
+
+  .dark-mode .card .footer .author-wrapper,
+  .dark-mode .card .footer .author-wrapper .author {
+    color: rgba(255, 255, 255, 0.8) !important; /* 强制所有作者信息为浅白色 */
+  }
+
+  /* 强制覆盖Note组件中的文字 */
+  .dark-mode .note-component .footer .title {
+    color: #ffffff !important; /* Note组件标题为白色 */
+  }
+
+  .dark-mode .note-component .footer .author-wrapper {
+    color: rgba(255, 255, 255, 0.8) !important; /* Note组件作者信息为浅白色 */
+  }
+
+  .dark-mode .note-component .footer .author-wrapper .name {
+    color: rgba(255, 255, 255, 0.8) !important; /* Note组件用户名为浅白色 */
+  }
+
+  /* 强制覆盖所有可能的文字元素 */
+  .dark-mode [class*="card"] [class*="title"],
+  .dark-mode [class*="card"] [class*="name"],
+  .dark-mode [class*="card"] [class*="author"] {
+    color: #ffffff !important; /* 强制所有卡片中的标题、名称、作者为白色 */
+  }
+
+  .dark-mode [class*="footer"] [class*="title"],
+  .dark-mode [class*="footer"] [class*="name"],
+  .dark-mode [class*="footer"] [class*="author"] {
+    color: #ffffff !important; /* 强制所有footer中的标题、名称、作者为白色 */
+  }
+
+  /* 强制覆盖所有可能的文字颜色设置 */
+  .dark-mode *[style*="color: #333"],
+  .dark-mode *[style*="color:#333"],
+  .dark-mode *[style*="color: rgb(51, 51, 51)"],
+  .dark-mode *[style*="color:rgba(51, 51, 51"] {
+    color: #ffffff !important; /* 强制覆盖所有内联样式中的深色文字 */
+  }
+
+  /* 强制覆盖所有可能的文字元素，但排除价格元素 */
+  .dark-mode .card *:not([class*="price"]):not(.price),
+  .dark-mode .footer *:not([class*="price"]):not(.price),
+  .dark-mode [class*="card"] *:not([class*="price"]):not(.price),
+  .dark-mode [class*="footer"] *:not([class*="price"]):not(.price) {
+    color: inherit !important; /* 让子元素继承父元素的白色，但排除价格 */
+  }
+
+  /* 瀑布流/卡片内已点赞红心：继承规则 specificity 高于 .like-wrapper 下的规则，需单独抬高 */
+  .dark-mode .card .footer .author-wrapper .like-wrapper .iconfont.icon-follow-fill,
+  .dark-mode [class*="feeds-container"] .card .footer .author-wrapper .like-wrapper .iconfont.icon-follow-fill,
+  .dark-mode .card .footer .like-wrapper .iconfont.icon-follow-fill {
+    color: #ff2442 !important;
+  }
+
+  /* 特别针对用户名称和标题 */
+  .dark-mode .card .footer .title,
+  .dark-mode .card .footer .author-wrapper .name,
+  .dark-mode .card .footer .author-wrapper .author .name,
+  .dark-mode .card .footer .author-wrapper .author,
+  .dark-mode .card .footer .author-wrapper {
+    color: #ffffff !important; /* 特别强制用户名称和标题为白色 */
+  }
+
+  /* 确保闲置页面价格保持红色，不被通用规则覆盖 */
+  .dark-mode .idle-page .card .footer .price,
+  .dark-mode .idle-page [class*="card"] [class*="price"]:not(.price-info),
+  .dark-mode .idle-page [class*="footer"] [class*="price"]:not(.price-info),
+  .dark-mode .idle-page .feeds-container .card .footer .price,
+  .dark-mode .idle-page .feeds-container [class*="card"] [class*="price"]:not(.price-info),
+  .dark-mode .idle-page .feeds-container [class*="footer"] [class*="price"]:not(.price-info) {
+    color: #ff2442 !important; /* 强制闲置页面所有价格元素为红色 */
+  }
+
+  /* 只针对价格元素强制红色，不影响其他元素 */
+  .dark-mode .idle-page .card .footer .price,
+  .dark-mode .idle-page .feeds-container .card .footer .price,
+  .dark-mode [class*="idle"] .card .footer .price,
+  .dark-mode [class*="idle"] [class*="card"] [class*="footer"] [class*="price"] {
+    color: #ff2442 !important; /* 只强制价格为红色 */
+  }
+
+  /* 闲置页面卡片恢复原来的文字颜色 */
+  .dark-mode .idle-page .card .footer .title,
+  .dark-mode .idle-page .feeds-container .card .footer .title {
+    color: #333333 !important; /* 标题恢复原来的深色 */
+  }
+
+  .dark-mode .idle-page .card .footer .author-wrapper,
+  .dark-mode .idle-page .feeds-container .card .footer .author-wrapper {
+    color: rgba(51, 51, 51, 0.8) !important; /* 作者信息恢复原来的深色 */
+  }
+
+  .dark-mode .idle-page .card .footer .author-wrapper .name,
+  .dark-mode .idle-page .feeds-container .card .footer .author-wrapper .name {
+    color: rgba(51, 51, 51, 0.8) !important; /* 用户名恢复原来的深色 */
+  }
+
+  .dark-mode .idle-page .card .footer .author-wrapper .time,
+  .dark-mode .idle-page .feeds-container .card .footer .author-wrapper .time {
+    color: rgba(51, 51, 51, 0.6) !important; /* 时间恢复原来的深色 */
+  }
+
+  .dark-mode .idle-page .card .footer .author-wrapper .location,
+  .dark-mode .idle-page .feeds-container .card .footer .author-wrapper .location {
+    color: #3d8af5 !important; /* 位置保持蓝色 */
+  }
+
+  .dark-mode .idle-page .card .footer .post-type-tag.post-type-mail,
+  .dark-mode .idle-page .feeds-container .card .footer .post-type-tag.post-type-mail {
+    color: #ffffff !important; /* 邮寄标签：白色文字 */
+    background: #67c23a !important; /* 邮寄标签：绿色纯色背景 */
+    border: none !important;
+  }
+
+  .dark-mode .idle-page .card .footer .post-type-tag.post-type-pickup,
+  .dark-mode .idle-page .feeds-container .card .footer .post-type-tag.post-type-pickup {
+    color: #ffffff !important; /* 自提标签：白色文字 */
+    background: #e6a23c !important; /* 自提标签：橙色纯色背景 */
+    border: none !important;
+  }
+
+  /* 强制覆盖闲置页面内联样式 */
+  .dark-mode .idle-page .card .footer .price span,
+  .dark-mode .idle-page .feeds-container .card .footer .price span {
+    color: #ff2442 !important; /* 强制价格为红色，覆盖内联样式 */
+  }
+
+  .dark-mode .idle-page .card .footer .author-wrapper .name,
+  .dark-mode .idle-page .feeds-container .card .footer .author-wrapper .name {
+    color: rgba(51, 51, 51, 0.8) !important; /* 强制用户名为原来的深色 */
+  }
+
+  .dark-mode .idle-page .card .footer .author-wrapper span[style*="color: #9e9e9e"],
+  .dark-mode .idle-page .feeds-container .card .footer .author-wrapper span[style*="color: #9e9e9e"] {
+    color: #3d8af5 !important; /* 强制位置为蓝色，覆盖内联样式 */
+  }
+
+  .dark-mode .idle-page .card .footer .post-type-tag.post-type-mail[style*="color: #ff9900"],
+  .dark-mode .idle-page .feeds-container .card .footer .post-type-tag.post-type-mail[style*="color: #ff9900"] {
+    color: #ffffff !important; /* 邮寄标签：白色文字 */
+    background: #67c23a !important; /* 邮寄标签：绿色纯色背景 */
+    border: none !important;
+  }
+
+  .dark-mode .idle-page .card .footer .post-type-tag.post-type-pickup[style*="color: #ff9900"],
+  .dark-mode .idle-page .feeds-container .card .footer .post-type-tag.post-type-pickup[style*="color: #ff9900"] {
+    color: #ffffff !important; /* 自提标签：白色文字 */
+    background: #e6a23c !important; /* 自提标签：橙色纯色背景 */
+    border: none !important;
+  }
+
+  /* 深色模式下的用户页面样式 */
+  .dark-mode .user-page {
+    background: #1a1a1a !important; /* 用户页面背景为黑色 */
+  }
+
+  .dark-mode .user-page .user-info {
+    background: #1a1a1a !important; /* 用户信息区域背景为黑色 */
+  }
+
+  .dark-mode .user-page .user-info .info-part .info .basic-info .user-basic .user-nickname .user-name {
+    color: #ffffff !important; /* 用户名为白色 */
+  }
+
+  .dark-mode .user-page .user-info .info-part .info .basic-info .user-basic .user-content {
+    color: rgba(255, 255, 255, 0.8) !important; /* 用户信息为浅白色 */
+  }
+
+  .dark-mode .user-page .user-info .info-part .info .user-desc {
+    color: #ffffff !important; /* 用户描述为白色 */
+  }
+
+  .dark-mode .user-page .user-info .info-part .info .data-info .user-interactions .count {
+    color: #ffffff !important; /* 数据统计数字为白色 */
+  }
+
+  .dark-mode .user-page .user-info .info-part .info .data-info .user-interactions .shows {
+    color: rgba(255, 255, 255, 0.8) !important; /* 数据统计标签为浅白色 */
+  }
+
+  /* 深色模式下的用户标签样式 */
+  .dark-mode .user-page .user-info .info-part .info .user-tags .el-tag {
+    background: #2a2a2a !important; /* 标签背景为深灰色 */
+    color: #ffffff !important; /* 标签文字为白色 */
+    border: 1px solid rgba(255, 255, 255, 0.2) !important; /* 标签边框为半透明白色 */
+  }
+
+  .dark-mode .user-page .user-info .info-part .info .user-tags .no-tags {
+    color: rgba(255, 255, 255, 0.6) !important; /* 无标签提示为浅白色 */
+  }
+
+  button, input, optgroup, select, textarea {
+    font-family: inherit;
+    font-size: 100%;
+    line-height: 1.15;
+    margin: 0;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+li{
+    list-style: none;
+}
+
+
+button, input {
+    overflow: visible;
+}
+
+button, input {
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    border: none;
+    background: none;
+    padding: 0;
+}
+
+/* 笔记详情页面暗色模式样式 */
+.note-detail-mask {
+    transition: background-color 0.4s ease;
+    background-color: hsla(0, 0%, 100%, 0.98);
+}
+
+.dark-mode .note-detail-mask {
+    background-color: #1a1a1a !important;
+}
+
+.dark-mode .interaction-container {
+    background-color: #1a1a1a !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #e0e0e0 !important;
+}
+
+.dark-mode .interaction-container .author-me .info .name {
+    color: #e0e0e0 !important;
+}
+
+.dark-mode .note-content .title {
+    color: #e0e0e0 !important;
+}
+
+.dark-mode .note-content .desc {
+    color: #b0b0b0 !important;
+}
+
+.dark-mode .note-content .bottom-container .date {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.dark-mode .note-scroller .divider {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark-mode .comment-input {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #e0e0e0 !important;
+    caret-color: #e0e0e0 !important;
+}
+
+.dark-mode .comment-input::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* 移动端笔记详情页面暗色模式样式 */
+@media screen and (max-width: 695px) {
+    .dark-mode .note-detail-mask {
+        background-color: #1a1a1a !important;
+    }
+    
+    .dark-mode .note-container {
+        background-color: #1a1a1a !important;
+        background: #1a1a1a !important;
+    }
+    
+    .dark-mode .interaction-container {
+        background-color: #1a1a1a !important;
+    }
+    
+    .dark-mode .note-scroller {
+        background: #1a1a1a !important;
+    }
+    
+    .dark-mode .note-content {
+        background: #1a1a1a !important;
+    }
+    
+    .dark-mode .note-content .title {
+        color: #e0e0e0 !important;
+    }
+    
+    .dark-mode .note-content .desc {
+        color: #b0b0b0 !important;
+    }
+    
+    .dark-mode .author-container {
+        background-color: #1a1a1a !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .dark-mode .author-me {
+        background: #1a1a1a !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .dark-mode .author-me .info .name {
+        color: #e0e0e0 !important;
+    }
+    
+    .dark-mode .author-container .author-info .author-name {
+        color: #e0e0e0 !important;
+    }
+    
+    .dark-mode .interactions-footer {
+        background-color: #1a1a1a !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .dark-mode .bottom-container .date {
+        color: rgba(255, 255, 255, 0.6) !important;
+    }
+}
+

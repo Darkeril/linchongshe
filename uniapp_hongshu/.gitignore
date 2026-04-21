@@ -1,0 +1,50 @@
+# 依赖
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 构建输出
+dist/
+unpackage/dist/
+
+# 保留 App 图标
+!unpackage/res/
+
+# 开发工具
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 日志
+*.log
+
+# 临时文件
+*.tmp
+*.temp
+
+# 环境变量（.env.js 含服务器IP，用 .env.js.example 作模板）
+.env
+.env.js
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 缓存
+.cache/
+.parcel-cache/
+
+# 覆盖率报告
+coverage/
+
+# ESLint缓存
+.eslintcache
+
+# Prettier缓存
+.prettiercache

@@ -1,0 +1,52 @@
+package com.hongshu.ai.common.constant;
+
+/**
+ * 缓存的key 常量
+ *
+ * @author: myj
+ * @date: 2024/4/1
+ * @version: 1.0.0
+ */
+public class RedisConstants implements RedisConstant {
+
+    /**
+     * 登录用户 redis key
+     */
+    public static final String LOGIN_TOKEN_KEY = "login_tokens:";
+
+    /**
+     * 验证码 redis key
+     */
+    public static final String CAPTCHA_CODE_KEY = "captcha_codes:";
+
+    /**
+     * 参数管理 cache key
+     */
+    public static final String SYS_CONFIG_KEY = "sys_config:";
+
+    /**
+     * 字典管理 cache key
+     */
+    public static final String SYS_DICT_KEY = "sys_dict:";
+
+    /**
+     * 防重提交 redis key
+     */
+    public static final String REPEAT_SUBMIT_KEY = "repeat_submit:";
+
+    /**
+     * 限流 redis key
+     */
+    public static final String RATE_LIMIT_KEY = "rate_limit:";
+
+    /**
+     * 手机验证码 redis key
+     */
+    public static final String TEL_CODE = "tel:sms:";
+
+    /**
+     * 大模型 token
+     */
+    public static final String CHAT_MODEL = "chat_model";
+
+}

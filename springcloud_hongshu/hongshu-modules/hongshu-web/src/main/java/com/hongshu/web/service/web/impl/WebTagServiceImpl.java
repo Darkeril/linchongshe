@@ -1,0 +1,63 @@
+package com.hongshu.web.service.web.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hongshu.web.domain.entity.WebTag;
+import com.hongshu.web.domain.vo.NoteVo;
+import com.hongshu.web.mapper.web.WebTagMapper;
+import com.hongshu.web.service.web.IWebTagService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+/**
+ * 标签
+ *
+ * @author: hongshu
+ */
+@Service
+public class WebTagServiceImpl extends ServiceImpl<WebTagMapper, WebTag> implements IWebTagService {
+
+
+    /**
+     * 获取热门标签
+     * @return
+     */
+    @Override
+    public Page<WebTag> getHotTagList(long currentPage, long pageSize) {
+        QueryWrapper<WebTag> queryWrapper = new QueryWrapper<>();
+
+        queryWrapper.orderByDesc("like_count");
+        return this.page(new Page<WebTag>((int) currentPage, (int) pageSize), queryWrapper);
+    }
+
+    /**
+     * 根据标签ID获取图片信息
+     *
+     * @param currentPage 当前页
+     * @param pageSize    分页数
+     * @param tagId       标签id
+     * @param type        类型
+     */
+    @Override
+    public Page<NoteVo> getNoteByTagId(long currentPage, long pageSize, String tagId, Integer type) {
+        return null;
+    }
+
+    /**
+     * 根据关键词获取标签
+     *
+     * @param currentPage 当前页
+     * @param pageSize    分页数
+     * @param keyword     关键词
+     */
+    @Override
+    public Page<WebTag> getTagByKeyword(long currentPage, long pageSize, String keyword) {
+        QueryWrapper<WebTag> queryWrapper = new QueryWrapper<>();
+        if (StringUtils.isNotBlank(keyword)) {
+            queryWrapper.like("title", keyword);
+        }
+        queryWrapper.orderByDesc("like_count");
+        return this.page(new Page<WebTag>((int) currentPage, (int) pageSize), queryWrapper);
+    }
+}

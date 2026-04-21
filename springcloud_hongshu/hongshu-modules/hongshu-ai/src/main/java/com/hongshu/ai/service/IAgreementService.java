@@ -1,0 +1,77 @@
+package com.hongshu.ai.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.hongshu.ai.common.IPageInfo;
+import com.hongshu.ai.common.Query;
+import com.hongshu.ai.domain.command.AgreementCommand;
+import com.hongshu.ai.domain.entity.Agreement;
+import com.hongshu.ai.domain.vo.AgreementVO;
+import com.hongshu.common.core.enums.ResponseInfo;
+
+import java.util.List;
+
+/**
+ * 内容管理 服务类
+ *
+ * @author: myj
+ * @date: 2023-04-28
+ */
+public interface IAgreementService extends IService<Agreement> {
+
+    /**
+     * 查询内容管理分页列表
+     *
+     * @param query 查询条件
+     * @return 内容管理集合
+     */
+    ResponseInfo<IPageInfo<AgreementVO>> pageContent(Query query);
+
+    /**
+     * 查询内容管理列表
+     *
+     * @param query 查询条件
+     * @return 内容管理集合
+     */
+    ResponseInfo<List<AgreementVO>> listContent(Query query);
+
+    /**
+     * 根据主键查询内容管理
+     *
+     * @param id 内容管理主键
+     * @return 内容管理
+     */
+    ResponseInfo<AgreementVO> getContentById(Long id);
+
+    /**
+     * 新增内容管理
+     *
+     * @param command 内容管理
+     * @return 结果
+     */
+    ResponseInfo saveContent(AgreementCommand command);
+
+    /**
+     * 修改内容管理
+     *
+     * @param command 内容管理
+     * @return 结果
+     */
+    ResponseInfo updateContent(AgreementCommand command);
+
+    /**
+     * 批量删除内容管理
+     *
+     * @param ids 需要删除的内容管理主键集合
+     * @return 结果
+     */
+    ResponseInfo removeContentByIds(List<Long> ids);
+
+    /**
+     * 删除内容管理信息
+     *
+     * @param id 内容管理主键
+     * @return 结果
+     */
+    ResponseInfo removeContentById(Long id);
+
+}

@@ -1,0 +1,85 @@
+package com.hongshu.ai.service;
+
+import com.hongshu.ai.domain.command.GptCommand;
+import com.hongshu.ai.domain.dto.ChatMessageDTO;
+import com.hongshu.ai.domain.vo.ChatMessageVO;
+import com.hongshu.ai.domain.vo.ModelVO;
+import com.hongshu.common.core.enums.ResponseInfo;
+
+import java.util.List;
+
+/**
+ * chatgpt接口
+ *
+ * @author: myj
+ * @date: 2023/5/5
+ * @version: Copyright
+ */
+public interface IGptService {
+
+    /**
+     * 根据模型名称获取模型信息
+     *
+     * @param model
+     * @return
+     */
+    ResponseInfo<ModelVO> getModel(String model);
+
+    /**
+     * 提问
+     *
+     * @param command 提问内容
+     * @return 返回json
+     */
+    ResponseInfo<ChatMessageVO> chat(GptCommand command);
+
+    /**
+     * 根据对话id 获取对话内容
+     *
+     * @param conversationId
+     * @return
+     */
+    ChatMessageDTO getMessageByConverstationId(String conversationId);
+
+    /**
+     * 根据对话id 获取上下文内容 最多10条
+     *
+     * @param context        是否开启上下文
+     * @param conversationId 对话id
+     * @return
+     */
+    List<ChatMessageDTO> listMessageByConverstationId(Long userId, String conversationId);
+
+    /**
+     * 校验账户余额
+     *
+     * @param userId
+     */
+    void validateUser(Long userId);
+
+    /**
+     * 恢复账户余额
+     *
+     * @param userId
+     */
+    void restoreNum(Long userId);
+
+    /**
+     * 修改对话状态
+     *
+     * @param messageId 消息id
+     * @param status    状态
+     * @return 结果
+     */
+    void updateMessageStatus(String messageId, Integer status);
+
+    /**
+     * 更新对话使用token数
+     *
+     * @param messageId  消息id
+     * @param usedTokens 使用token数
+     * @return
+     */
+    void updateMessageUsedTokens(String messageId, Long usedTokens);
+
+}

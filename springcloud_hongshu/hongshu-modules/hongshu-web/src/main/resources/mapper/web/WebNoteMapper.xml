@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hongshu.web.mapper.web.WebNoteMapper">
+
+    <select id="sumInteractionGroupByDay" resultType="java.util.HashMap">
+        SELECT DATE(n.create_time) AS d,
+               COALESCE(SUM(n.like_count), 0)    AS likes,
+               COALESCE(SUM(n.comment_count), 0) AS comments,
+               COALESCE(SUM(n.view_count), 0)    AS views
+        FROM web_note n
+        WHERE n.deleted = 0
+          AND n.audit_status = #{auditStatus}
+          AND n.create_time &gt;= #{startTime}
+          AND n.create_time &lt; #{endTime}
+        GROUP BY DATE(n.create_time)
+        ORDER BY d
+    </select>
+
+    <select id="sumInteractionInRange" resultType="java.util.HashMap">
+        SELECT COALESCE(SUM(n.like_count), 0)       AS likes,
+               COALESCE(SUM(n.comment_count), 0)    AS comments,
+               COALESCE(SUM(n.collection_count), 0) AS collects,
+               COALESCE(SUM(n.view_count), 0)       AS views,
+               COUNT(*)                             AS noteCount
+        FROM web_note n
+        WHERE n.deleted = 0
+          AND n.audit_status = #{auditStatus}
+          AND n.create_time &gt;= #{startTime}
+          AND n.create_time &lt; #{endTime}
+    </select>
+
+    <!--
+      内容维度：优先二级分类名 → 一级分类名 → 笔记类型文案。
+      解决 cid 与分类表 id 类型不一致（varchar/bigint）导致 JOIN 不上、以及未填 cid 时仅显示「未分类」的问题。
+    -->
+    <select id="topCategoryPublishInRange" resultType="java.util.HashMap">
+        SELECT grp.name AS name,
+               COUNT(*) AS cnt
+        FROM (
+                 SELECT COALESCE(
+                                NULLIF(TRIM(c2.title), ''),
+                                NULLIF(TRIM(cp.title), ''),
+                                CASE TRIM(IFNULL(n.note_type, ''))
+                                    WHEN '0' THEN '图文'
+                                    WHEN '1' THEN '视频'
+                                    WHEN '2' THEN '视频'
+                                    WHEN '3' THEN 'Live图'
+                                    ELSE '其他'
+                                    END
+                        ) AS name
+                 FROM web_note n
+                          LEFT JOIN web_category c2
+                                    ON TRIM(IFNULL(n.cid, '')) != ''
+                                        AND CONCAT(c2.id, '') = TRIM(n.cid)
+                          LEFT JOIN web_category cp
+                                    ON TRIM(IFNULL(n.cpid, '')) != ''
+                                        AND CONCAT(cp.id, '') = TRIM(n.cpid)
+                 WHERE n.deleted = 0
+                   AND n.audit_status = #{auditStatus}
+                   AND n.create_time &gt;= #{startTime}
+                   AND n.create_time &lt; #{endTime}
+             ) grp
+        GROUP BY grp.name
+        ORDER BY cnt DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectNotesWithUserInfo" resultType="com.hongshu.common.core.domain.NoteSearchVo">
+        SELECT n.id,
+               n.title,
+               n.content,
+               n.note_cover        as noteCover,
+               n.note_cover_height as noteCoverHeight,
+               n.cid,
+               n.cpid,
+               n.uid,
+               n.urls,
+               n.tags,
+               n.pinned,
+               n.audit_status      as auditStatus,
+               n.note_type         as noteType,
+               n.status,
+               n.like_count        as likeCount,
+               n.view_count        as viewCount,
+               n.time,
+               n.province,
+               n.city,
+               n.district,
+               n.address,
+               u.username,
+               u.avatar
+        FROM web_note n
+                 LEFT JOIN web_user u ON n.uid = u.id
+        WHERE n.audit_status = #{auditStatus}
+          AND n.deleted = 0
+          AND (n.city LIKE CONCAT('%', #{cityName}, '%') OR n.address LIKE CONCAT('%', #{cityName}, '%'))
+        ORDER BY n.update_time DESC
+    </select>
+</mapper>

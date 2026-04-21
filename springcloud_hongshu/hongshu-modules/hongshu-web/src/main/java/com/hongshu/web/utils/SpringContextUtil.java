@@ -1,0 +1,67 @@
+package com.hongshu.web.utils;
+
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
+
+/**
+ * Spring 上下文工具类
+ * 用于在非Spring管理的类中获取Bean
+ *
+ * @author: hongshu
+ */
+@Component
+public class SpringContextUtil implements ApplicationContextAware {
+
+    private static ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(ApplicationContext context) throws BeansException {
+        applicationContext = context;
+    }
+
+    /**
+     * 获取 ApplicationContext
+     *
+     * @return ApplicationContext
+     */
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    /**
+     * 通过 Bean 名称获取 Bean
+     *
+     * @param name Bean名称
+     * @return Bean对象
+     */
+    public static Object getBean(String name) {
+        return getApplicationContext().getBean(name);
+    }
+
+    /**
+     * 通过 Class 获取 Bean
+     *
+     * @param clazz Bean类型
+     * @param <T>   泛型
+     * @return Bean对象
+     */
+    public static <T> T getBean(Class<T> clazz) {
+        return getApplicationContext().getBean(clazz);
+    }
+
+    /**
+     * 通过名称和类型获取 Bean
+     *
+     * @param name  Bean名称
+     * @param clazz Bean类型
+     * @param <T>   泛型
+     * @return Bean对象
+     */
+    public static <T> T getBean(String name, Class<T> clazz) {
+        return getApplicationContext().getBean(name, clazz);
+    }
+}
+
+

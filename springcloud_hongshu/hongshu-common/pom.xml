@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.hongshu</groupId>
+        <artifactId>hongshu</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <modules>
+        <module>hongshu-common-log</module>
+        <module>hongshu-common-core</module>
+        <module>hongshu-common-redis</module>
+        <module>hongshu-common-seata</module>
+        <module>hongshu-common-swagger</module>
+        <module>hongshu-common-security</module>
+        <module>hongshu-common-sensitive</module>
+        <module>hongshu-common-datascope</module>
+        <module>hongshu-common-datasource</module>
+        <module>hongshu-common-audit</module>
+    </modules>
+
+    <artifactId>hongshu-common</artifactId>
+    <packaging>pom</packaging>
+
+    <description>
+        hongshu-common通用模块
+    </description>
+
+</project>

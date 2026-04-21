@@ -1,0 +1,8 @@
+com.hongshu.system.api.factory.RemoteUserFallbackFactory
+com.hongshu.system.api.factory.RemoteLogFallbackFactory
+com.hongshu.system.api.factory.RemoteFileFallbackFactory
+com.hongshu.system.api.factory.RemoteSystemFallbackFactory
+com.hongshu.system.api.factory.RemoteIdleFallbackFactory
+com.hongshu.system.api.factory.RemoteWebFallbackFactory
+com.hongshu.system.api.factory.RemoteChatFallbackFactory
+com.hongshu.system.api.factory.RemoteNoticeFallbackFactory

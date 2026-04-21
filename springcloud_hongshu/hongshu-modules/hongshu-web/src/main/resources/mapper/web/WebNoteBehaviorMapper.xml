@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hongshu.web.mapper.web.WebNoteBehaviorMapper">
+
+    <!-- 统计某创作者在时间范围内的曝光数（按 nid 去重） -->
+    <select id="countExposureByCreatorAndTimeRange" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM web_note_behavior b
+        INNER JOIN web_note n ON b.nid = n.id AND n.deleted = 0
+        WHERE n.uid = #{creatorUid}
+          AND b.event_type = 'exposure'
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+    </select>
+
+    <!-- 统计某创作者在时间范围内的观看数 -->
+    <select id="countViewByCreatorAndTimeRange" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM web_note_behavior b
+        INNER JOIN web_note n ON b.nid = n.id AND n.deleted = 0
+        WHERE n.uid = #{creatorUid}
+          AND b.event_type = 'view'
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+    </select>
+
+    <!-- 按来源统计观看数 -->
+    <select id="countViewByScene" resultType="java.util.HashMap">
+        SELECT IFNULL(b.scene, 'other') AS scene, COUNT(*) AS cnt
+        FROM web_note_behavior b
+        INNER JOIN web_note n ON b.nid = n.id AND n.deleted = 0
+        WHERE n.uid = #{creatorUid}
+          AND b.event_type = 'view'
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+        GROUP BY IFNULL(b.scene, 'other')
+    </select>
+
+    <!-- 按小时统计观看数（0-23） -->
+    <select id="countViewByHour" resultType="java.util.HashMap">
+        SELECT HOUR(b.create_time) AS hour, COUNT(*) AS cnt
+        FROM web_note_behavior b
+        INNER JOIN web_note n ON b.nid = n.id AND n.deleted = 0
+        WHERE n.uid = #{creatorUid}
+          AND b.event_type = 'view'
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+        GROUP BY HOUR(b.create_time)
+    </select>
+
+    <!-- 观看时长与完播：总时长(秒)、次数、完播次数 -->
+    <select id="sumDurationAndCompletion" resultType="java.util.HashMap">
+        SELECT
+            IFNULL(SUM(b.duration_sec), 0) AS totalDurationSec,
+            COUNT(*) AS watchCount,
+            IFNULL(SUM(IFNULL(b.completed, 0)), 0) AS completedCount
+        FROM web_note_behavior b
+        INNER JOIN web_note n ON b.nid = n.id AND n.deleted = 0
+        WHERE n.uid = #{creatorUid}
+          AND b.event_type = 'watch'
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+    </select>
+
+    <!-- 按自然日统计观看数（趋势图） -->
+    <select id="countViewByDay" resultType="java.util.HashMap">
+        SELECT DATE_FORMAT(b.create_time, '%Y-%m-%d') AS date, COUNT(*) AS cnt
+        FROM web_note_behavior b
+        INNER JOIN web_note n ON b.nid = n.id AND n.deleted = 0
+        WHERE n.uid = #{creatorUid}
+          AND b.event_type = 'view'
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+        GROUP BY DATE_FORMAT(b.create_time, '%Y-%m-%d')
+    </select>
+
+    <!-- 统计某创作者在时间范围内某类行为条数（如 share） -->
+    <select id="countEventByCreatorAndTimeRange" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM web_note_behavior b
+        INNER JOIN web_note n ON b.nid = n.id AND n.deleted = 0
+        WHERE n.uid = #{creatorUid}
+          AND b.event_type = #{eventType}
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+    </select>
+
+    <!-- 按自然日统计某类行为（创作者维度） -->
+    <select id="countEventByDay" resultType="java.util.HashMap">
+        SELECT DATE_FORMAT(b.create_time, '%Y-%m-%d') AS date, COUNT(*) AS cnt
+        FROM web_note_behavior b
+        INNER JOIN web_note n ON b.nid = n.id AND n.deleted = 0
+        WHERE n.uid = #{creatorUid}
+          AND b.event_type = #{eventType}
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+        GROUP BY DATE_FORMAT(b.create_time, '%Y-%m-%d')
+    </select>
+
+    <!-- ========== 按单条笔记 nid 统计 ========== -->
+    <select id="countExposureByNidAndTimeRange" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM web_note_behavior b
+        WHERE b.nid = #{nid}
+          AND b.event_type = 'exposure'
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+    </select>
+
+    <select id="countViewByNidAndTimeRange" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM web_note_behavior b
+        WHERE b.nid = #{nid}
+          AND b.event_type = 'view'
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+    </select>
+
+    <select id="countViewBySceneByNid" resultType="java.util.HashMap">
+        SELECT IFNULL(b.scene, 'other') AS scene, COUNT(*) AS cnt
+        FROM web_note_behavior b
+        WHERE b.nid = #{nid}
+          AND b.event_type = 'view'
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+        GROUP BY IFNULL(b.scene, 'other')
+    </select>
+
+    <select id="countViewByHourByNid" resultType="java.util.HashMap">
+        SELECT HOUR(b.create_time) AS hour, COUNT(*) AS cnt
+        FROM web_note_behavior b
+        WHERE b.nid = #{nid}
+          AND b.event_type = 'view'
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+        GROUP BY HOUR(b.create_time)
+    </select>
+
+    <select id="sumDurationAndCompletionByNid" resultType="java.util.HashMap">
+        SELECT
+            IFNULL(SUM(b.duration_sec), 0) AS totalDurationSec,
+            COUNT(*) AS watchCount,
+            IFNULL(SUM(IFNULL(b.completed, 0)), 0) AS completedCount
+        FROM web_note_behavior b
+        WHERE b.nid = #{nid}
+          AND b.event_type = 'watch'
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+    </select>
+
+    <select id="countShareByNidAndTimeRange" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM web_note_behavior b
+        WHERE b.nid = #{nid}
+          AND b.event_type = 'share'
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+    </select>
+
+    <select id="countWatchExitWithinSecByNid" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM web_note_behavior b
+        WHERE b.nid = #{nid}
+          AND b.event_type = 'watch'
+          AND IFNULL(b.duration_sec, 0) &lt;= #{sec}
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+    </select>
+
+    <!-- 批量按笔记维度聚合行为特征（推荐重排） -->
+    <select id="aggregateNoteFeaturesByNids" resultType="java.util.HashMap">
+        SELECT
+            b.nid AS nid,
+            SUM(CASE WHEN b.event_type = 'exposure' THEN 1 ELSE 0 END) AS exposure,
+            SUM(CASE WHEN b.event_type = 'view' THEN 1 ELSE 0 END) AS views,
+            SUM(CASE WHEN b.event_type = 'share' THEN 1 ELSE 0 END) AS shares,
+            SUM(CASE WHEN b.event_type = 'watch' THEN IFNULL(b.duration_sec, 0) ELSE 0 END) AS totalDurationSec,
+            SUM(CASE WHEN b.event_type = 'watch' THEN 1 ELSE 0 END) AS watchCount,
+            SUM(CASE WHEN b.event_type = 'watch' THEN IFNULL(b.completed, 0) ELSE 0 END) AS completedCount
+        FROM web_note_behavior b
+        WHERE b.nid IN
+        <foreach collection="nids" item="nid" open="(" separator="," close=")">
+            #{nid}
+        </foreach>
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+        GROUP BY b.nid
+    </select>
+
+    <select id="countViewByDayByNid" resultType="java.util.HashMap">
+        SELECT DATE_FORMAT(b.create_time, '%Y-%m-%d') AS date, COUNT(*) AS cnt
+        FROM web_note_behavior b
+        WHERE b.nid = #{nid}
+          AND b.event_type = 'view'
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+        GROUP BY DATE_FORMAT(b.create_time, '%Y-%m-%d')
+    </select>
+
+    <select id="countExposureByDayByNid" resultType="java.util.HashMap">
+        SELECT DATE_FORMAT(b.create_time, '%Y-%m-%d') AS date, COUNT(*) AS cnt
+        FROM web_note_behavior b
+        WHERE b.nid = #{nid}
+          AND b.event_type = 'exposure'
+          AND b.create_time &gt;= #{startTime}
+          AND b.create_time &lt;= #{endTime}
+        GROUP BY DATE_FORMAT(b.create_time, '%Y-%m-%d')
+    </select>
+</mapper>

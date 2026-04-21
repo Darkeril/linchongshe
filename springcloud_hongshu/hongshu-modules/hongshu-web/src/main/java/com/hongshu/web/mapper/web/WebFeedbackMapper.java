@@ -1,0 +1,15 @@
+package com.hongshu.web.mapper.web;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.hongshu.web.domain.entity.WebFeedback;
+import org.apache.ibatis.annotations.Mapper;
+
+/**
+ * 反馈Mapper
+ *
+ * @author: hongshu
+ */
+@Mapper
+public interface WebFeedbackMapper extends BaseMapper<WebFeedback> {
+}
+

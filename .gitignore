@@ -1,50 +1,48 @@
 # 依赖
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+**/node_modules/
+**/npm-debug.log*
+**/yarn-debug.log*
 
 # 构建输出
-dist/
-unpackage/dist/
+**/dist/
+**/target/
+**/unpackage/dist/
 
 # 保留 App 图标
-!unpackage/res/
+!**/unpackage/res/
 
 # 开发工具
-.vscode/
-.idea/
-*.swp
-*.swo
+**/.vscode/
+**/.idea/
+**/*.swp
+**/*.swo
 
 # 系统文件
-.DS_Store
-Thumbs.db
+**/.DS_Store
+**/Thumbs.db
 
 # 日志
-*.log
+**/*.log
 
 # 临时文件
-*.tmp
-*.temp
+**/*.tmp
+**/*.temp
 
-# 环境变量（.env.js 含服务器IP，用 .env.js.example 作模板）
+# 环境变量 / 敏感配置
 .env
-.env.js
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+**/.env.js
+**/.env.local
+**/.env.*.local
+
+# Java / Maven
+**/*.class
+**/*.jar
+!**/lib/*.jar
+
+# 大文件（超过 GitHub 100MB 限制）
+**/*.sql
 
 # 缓存
-.cache/
-.parcel-cache/
-
-# 覆盖率报告
-coverage/
-
-# ESLint缓存
-.eslintcache
-
-# Prettier缓存
-.prettiercache
+**/.cache/
+**/.parcel-cache/
+**/.eslintcache

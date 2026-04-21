@@ -1,0 +1,41 @@
+# Tomcat
+server:
+  port: 9004
+  tomcat:
+    max-swallow-size: -1           # 允许吞吐大请求体
+    max-http-form-post-size: 200MB # 表单POST大小上限
+    connection-timeout: 300000       # 连接超时 300s
+
+# Spring
+spring:
+  application:
+    # 应用名称
+    name: hongshu-file
+  profiles:
+    # 环境配置
+    active: dev
+  config:
+    import:
+      - optional:nacos:application-${spring.profiles.active}.yml?group=DEFAULT_GROUP&refresh=true
+      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yml?group=DEFAULT_GROUP&refresh=true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 200MB      # 单文件最大 200MB（支持视频）
+      max-request-size: 500MB   # 单次请求总大小 500MB
+  cloud:
+    nacos:
+      discovery:
+        # 服务注册地址
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+      config:
+        # 配置中心地址
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        # 配置文件格式
+        file-extension: yml
+        # 共享配置
+        shared-configs:
+          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+    mvc:
+      async:
+        request-timeout: 300000    # 异步请求超时 300s
