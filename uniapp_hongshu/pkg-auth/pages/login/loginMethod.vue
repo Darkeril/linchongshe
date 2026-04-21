@@ -1,49 +1,100 @@
 <template>
-  <view class="login-method-container">
-    <view class="content">
-      <!-- Logo -->
-      <view class="logo-wrapper">
-        <image :src="logoImage" class="logo" mode="aspectFit"></image>
+  <view class="login-method-container" style="background-color: #F4EDE2;">
+    <!-- 顶部径向渐变装饰 -->
+    <view class="bg-radial"></view>
+
+    <!-- 浮动宠物头像群（装饰） -->
+    <view class="pet-avatars-float">
+      <image
+        class="pet-float pet-dog"
+        src="/static/pet-avatars/dog.svg"
+        mode="aspectFit"
+      ></image>
+      <image
+        class="pet-float pet-cat"
+        src="/static/pet-avatars/cat.svg"
+        mode="aspectFit"
+      ></image>
+      <image
+        class="pet-float pet-mochi"
+        src="/static/pet-avatars/mochi.svg"
+        mode="aspectFit"
+      ></image>
+      <image
+        class="pet-float pet-puppy"
+        src="/static/pet-avatars/puppy.svg"
+        mode="aspectFit"
+      ></image>
+      <!-- 装饰小爪印 -->
+      <image
+        class="paw-deco-login"
+        src="/static/icons/paw-primary.svg"
+        mode="aspectFit"
+      ></image>
+    </view>
+
+    <!-- Logo + 品牌名 -->
+    <view class="brand-area">
+      <view class="logo-circle">
+        <image
+          src="/static/icons/paw-white.svg"
+          class="logo-paw"
+          mode="aspectFit"
+        ></image>
       </view>
+      <text class="brand-name">爱宠社</text>
+    </view>
 
-      <!-- 欢迎文字 -->
-      <!-- <view class="welcome-text">
-				<text>欢迎来到爱宠社</text>
-			</view> -->
-
-      <!-- 登录按钮 -->
-      <view class="login-buttons">
-        <!-- 微信一键登录：仅微信小程序端显示 -->
-        <!-- #ifdef MP-WEIXIN -->
-        <button
-          class="wechat-login-btn"
-          open-type="getPhoneNumber"
-          @getphonenumber="handleGetPhoneNumber"
-        >
-          <text>微信一键登录</text>
-        </button>
-        <!-- #endif -->
-
-        <!-- 手机号登录 -->
-        <button class="phone-login-btn" @click="handlePhoneLogin">
-          <text>手机号登录</text>
-        </button>
+    <!-- 欢迎文案 -->
+    <view class="welcome-area">
+      <text class="welcome-title">欢迎回来</text>
+      <view class="welcome-desc">
+        <text class="welcome-line">宠友都在这里，等你一起分享</text>
+        <text class="welcome-line">萌瞬间、闲置好物和日常治愈</text>
       </view>
+    </view>
 
-      <!-- 用户协议 -->
-      <view class="agreement-container">
-        <view class="checkbox-wrapper" @click="toggleAgreement">
-          <view :class="['checkbox', agreementChecked ? 'checked' : '']">
-            <text v-if="agreementChecked" class="check-icon">✓</text>
-          </view>
+    <!-- 登录按钮组 -->
+    <view class="login-buttons">
+      <!-- 微信一键登录：仅微信小程序端显示 -->
+      <!-- #ifdef MP-WEIXIN -->
+      <button
+        class="btn-primary"
+        open-type="getPhoneNumber"
+        @getphonenumber="handleGetPhoneNumber"
+      >
+        <text class="btn-primary-text">微信一键登录</text>
+      </button>
+      <!-- #endif -->
+
+      <!-- #ifndef MP-WEIXIN -->
+      <!-- 非小程序端：手机号登录作为主按钮 -->
+      <button class="btn-primary" @click="handlePhoneLogin">
+        <text class="btn-primary-text">手机号登录 / 注册</text>
+      </button>
+      <!-- #endif -->
+
+      <!-- #ifdef MP-WEIXIN -->
+      <!-- 小程序端：手机号作为次按钮 -->
+      <button class="btn-secondary" @click="handlePhoneLogin">
+        <text class="btn-secondary-text">手机号登录 / 注册</text>
+      </button>
+      <!-- #endif -->
+    </view>
+
+    <!-- 底部用户协议 -->
+    <view class="agreement-area">
+      <view class="checkbox-wrapper" @click="toggleAgreement">
+        <view :class="['agreement-checkbox', agreementChecked ? 'checked' : '']">
+          <text v-if="agreementChecked" class="check-icon">✓</text>
         </view>
-        <text class="agreement-text">
-          我已阅读
-          <text class="link-text" @click.stop="handleUserManual">用户手册</text>
-          和
-          <text class="link-text" @click.stop="handlePrivacyPolicy">隐私政策</text>
-        </text>
       </view>
+      <text class="agreement-text">
+        已阅读并同意
+        <text class="link-text" @click.stop="handleUserManual"> 用户协议 </text>
+        和
+        <text class="link-text" @click.stop="handlePrivacyPolicy"> 隐私政策</text>
+      </text>
     </view>
   </view>
 </template>
@@ -56,60 +107,67 @@ export default {
     return {
       logoImage: '/static/logoImage.png',
       agreementChecked: false,
-      isLogging: false, // 登录中状态
-      phoneCode: null // 手机号授权code
+      isLogging: false,
+      phoneCode: null
     };
   },
   methods: {
-    // 切换协议勾选状态
+    fixPageBackground() {
+      // #ifdef H5
+      this.$nextTick(() => {
+        // UniApp H5 的页面容器元素，强制设置背景色防止刷新丢失
+        const selectors = ['uni-page-body', 'uni-page-wrapper', 'uni-page'];
+        selectors.forEach(tag => {
+          const el = document.querySelector(tag);
+          if (el) {
+            el.style.backgroundColor = '#F4EDE2';
+          }
+        });
+        // 也设置 body 兜底
+        document.body.style.backgroundColor = '#F4EDE2';
+      });
+      // #endif
+    },
+
     toggleAgreement() {
       this.agreementChecked = !this.agreementChecked;
     },
 
-    // 处理获取手机号（微信小程序）
     async handleGetPhoneNumber(e) {
       if (!this.agreementChecked) {
         uni.showToast({
-          title: '请先阅读并同意用户手册和隐私政策',
+          title: '请先阅读并同意用户协议和隐私政策',
           icon: 'none',
           duration: 2000
         });
         return;
       }
 
-      // 防止重复点击
       if (this.isLogging) {
         return;
       }
 
-      // 检查是否获取到手机号授权
       if (e.detail.errMsg && e.detail.errMsg !== 'getPhoneNumber:ok') {
         console.warn('用户拒绝授权手机号:', e.detail.errMsg);
-        // 用户拒绝授权手机号，仍然可以登录，只是没有手机号
         this.phoneCode = null;
         await this.wechatMiniProgramLogin();
         return;
       }
 
-      // 保存手机号授权code
       this.phoneCode = e.detail.code;
-
-      // 继续登录流程
       await this.wechatMiniProgramLogin();
     },
 
-    // 处理微信登录（非小程序环境或没有手机号授权时）
     async handleWechatLogin() {
       if (!this.agreementChecked) {
         uni.showToast({
-          title: '请先阅读并同意用户手册和隐私政策',
+          title: '请先阅读并同意用户协议和隐私政策',
           icon: 'none',
           duration: 2000
         });
         return;
       }
 
-      // 防止重复点击
       if (this.isLogging) {
         return;
       }
@@ -118,12 +176,10 @@ export default {
 
       try {
         // #ifdef MP-WEIXIN
-        // 微信小程序环境（这种情况不应该发生，因为小程序应该使用getPhoneNumber）
         await this.wechatMiniProgramLogin();
         // #endif
 
         // #ifdef H5
-        // H5环境（微信H5网页授权）
         uni.showToast({
           title: 'H5环境暂不支持微信登录',
           icon: 'none'
@@ -132,7 +188,6 @@ export default {
         // #endif
 
         // #ifdef APP-PLUS
-        // App环境（微信开放平台SDK）
         uni.showToast({
           title: 'App环境暂不支持微信登录',
           icon: 'none'
@@ -145,15 +200,13 @@ export default {
       }
     },
 
-    // 微信小程序登录
     async wechatMiniProgramLogin() {
       try {
-        // 1. 先获取用户信息（必须在用户点击事件的同步代码中调用）
         let userInfo = null;
         try {
           const userProfileRes = await new Promise((resolve, reject) => {
             uni.getUserProfile({
-              desc: '用于完善用户资料', // 声明获取用户个人信息后的用途
+              desc: '用于完善用户资料',
               success: resolve,
               fail: reject
             });
@@ -169,10 +222,8 @@ export default {
           };
         } catch (err) {
           console.warn('用户拒绝授权或获取用户信息失败:', err);
-          // 用户拒绝授权时，仍然可以使用code登录，但无法获取用户信息
         }
 
-        // 2. 获取微信登录code
         const loginRes = await new Promise((resolve, reject) => {
           uni.login({
             provider: 'weixin',
@@ -185,7 +236,6 @@ export default {
           throw new Error('获取微信登录code失败');
         }
 
-        // 3. 调用后端登录接口
         uni.showLoading({
           title: '登录中...',
           mask: true
@@ -194,22 +244,16 @@ export default {
         const res = await wechatMiniProgramLogin({
           code: loginRes.code,
           userInfo: userInfo,
-          phoneCode: this.phoneCode // 传递手机号授权code
+          phoneCode: this.phoneCode
         });
 
-        // 登录成功后清空phoneCode
         this.phoneCode = null;
 
         uni.hideLoading();
 
         if (res.code === 200) {
-          // 登录成功
           const { userInfo: userData, accessToken, refreshToken } = res.data;
 
-          console.log('微信登录成功，AccessToken:', accessToken ? '存在' : '不存在');
-          console.log('微信登录成功，RefreshToken:', refreshToken ? '存在' : '不存在');
-
-          // 验证 token 是否有效
           if (
             !accessToken ||
             accessToken === '' ||
@@ -220,7 +264,6 @@ export default {
             throw new Error('登录失败：Token无效');
           }
 
-          // 保存用户信息和token
           const userInfoData = {
             avatarUrl: userData.avatar || userInfo?.avatarUrl || '',
             nickname: userData.username || userInfo?.nickName || '微信用户',
@@ -236,15 +279,13 @@ export default {
             area: userData.address || '',
             phoneNumber: userData.phone || '',
             tags: userData.tags ? JSON.parse(userData.tags) : [],
-            openid: userData.openId || userData.openid || null // 保存openid，用于小程序支付
+            openid: userData.openId || userData.openid || null
           };
 
           try {
-            // 持久化存储用户信息、accessToken 和 refreshToken
             uni.setStorageSync('userInfo', userInfoData);
             uni.setStorageSync('uniapp_token', accessToken);
 
-            // 保存 refreshToken（如果存在）
             if (
               refreshToken &&
               refreshToken !== '' &&
@@ -252,15 +293,10 @@ export default {
               refreshToken !== 'null'
             ) {
               uni.setStorageSync('uniapp_refresh_token', refreshToken);
-              console.log('RefreshToken已保存');
             }
 
-            // 验证存储是否成功
             const savedToken = uni.getStorageSync('uniapp_token');
             const savedUserInfo = uni.getStorageSync('userInfo');
-
-            console.log('Token存储验证:', savedToken === accessToken ? '成功' : '失败');
-            console.log('用户信息存储验证:', savedUserInfo ? '成功' : '失败');
 
             if (savedToken !== accessToken || !savedUserInfo) {
               throw new Error('Token或用户信息存储失败');
@@ -272,7 +308,6 @@ export default {
               duration: 1500
             });
 
-            // 延迟跳转，确保toast显示
             setTimeout(() => {
               this.isLogging = false;
               uni.reLaunch({
@@ -298,11 +333,10 @@ export default {
       }
     },
 
-    // 处理手机号登录
     handlePhoneLogin() {
       if (!this.agreementChecked) {
         uni.showToast({
-          title: '请先阅读并同意用户手册和隐私政策',
+          title: '请先阅读并同意用户协议和隐私政策',
           icon: 'none',
           duration: 2000
         });
@@ -314,162 +348,312 @@ export default {
       });
     },
 
-    // 查看用户手册
     handleUserManual() {
       uni.showToast({
         title: '用户手册',
         icon: 'none'
       });
-      // TODO: 跳转到用户手册页面
     },
 
-    // 查看隐私政策
     handlePrivacyPolicy() {
       uni.showToast({
         title: '隐私政策',
         icon: 'none'
       });
-      // TODO: 跳转到隐私政策页面
     }
   },
 
+  onLoad() {
+    this.fixPageBackground();
+  },
+
   onShow() {
+    this.fixPageBackground();
     const t = uni.getStorageSync('uniapp_token');
     if (t && t !== '' && t !== 'undefined' && t !== 'null') {
       uni.reLaunch({ url: '/pages/index/index' });
     }
+  },
+
+  mounted() {
+    this.fixPageBackground();
   }
 };
 </script>
 
+<!-- 非 scoped：设置 UniApp page 元素背景，防止刷新后闪白 -->
+<style>
+page {
+  background-color: #F4EDE2 !important;
+}
+uni-page-body {
+  background-color: #F4EDE2 !important;
+}
+</style>
+
 <style scoped>
+/* ─── 整体容器 ─── */
 .login-method-container {
   width: 100%;
-  height: 100vh;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-height: 100vh;
+  background: var(--acs-bg, #F4EDE2);
+  position: relative;
+  overflow: hidden;
 }
 
-.content {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 60rpx;
-  margin-top: -10vh;
+/* ─── 顶部径向渐变装饰（设计稿 radial-gradient） ─── */
+.bg-radial {
+  position: absolute;
+  top: -120rpx;
+  left: -80rpx;
+  right: -80rpx;
+  height: 680rpx;
+  background: radial-gradient(ellipse at 50% 60%, #EFCFB0 0%, #F4EDE2 70%);
+  pointer-events: none;
 }
 
-.logo-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 80rpx;
+/* ─── 浮动宠物头像群（设计稿 LoginScreen） ─── */
+.pet-avatars-float {
+  position: absolute;
+  top: 140rpx;
+  left: 0;
+  right: 0;
+  height: 560rpx;
+  pointer-events: none;
 }
 
-.logo {
-  width: 200rpx;
-  height: 200rpx;
-}
-
-.welcome-text {
-  font-size: 48rpx;
-  color: #333333;
-  font-weight: 600;
-  margin-bottom: 120rpx;
-}
-
-.login-buttons {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 30rpx;
-  margin-bottom: 80rpx;
-}
-
-.wechat-login-btn {
-  width: 100%;
-  height: 100rpx;
-  line-height: 100rpx;
-  background: #3d8af5;
-  color: #ffffff;
-  border-radius: 50rpx;
-  font-size: 32rpx;
-  font-weight: 500;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.wechat-login-btn::after {
-  border: none;
-}
-
-.phone-login-btn {
-  width: 100%;
-  height: 100rpx;
-  line-height: 100rpx;
-  background: #ffffff;
-  color: #3d8af5;
-  border: 2rpx solid #3d8af5;
-  border-radius: 50rpx;
-  font-size: 32rpx;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.phone-login-btn::after {
-  border: none;
-}
-
-.agreement-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24rpx;
-  color: #999999;
-}
-
-.checkbox-wrapper {
-  margin-right: 10rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.checkbox {
-  width: 32rpx;
-  height: 32rpx;
-  border: 2rpx solid #cccccc;
+.pet-float {
+  position: absolute;
   border-radius: 50%;
+}
+
+/* 设计稿: top: 30, left: 40, rotate(-10deg), size 56 */
+.pet-dog {
+  width: 112rpx;
+  height: 112rpx;
+  top: 60rpx;
+  left: 80rpx;
+  transform: rotate(-10deg);
+}
+
+/* 设计稿: top: 10, right: 50, rotate(12deg), size 64 */
+.pet-cat {
+  width: 128rpx;
+  height: 128rpx;
+  top: 20rpx;
+  right: 100rpx;
+  transform: rotate(12deg);
+}
+
+/* 设计稿: top: 140, left: 20, rotate(-5deg), size 44 */
+.pet-mochi {
+  width: 88rpx;
+  height: 88rpx;
+  top: 280rpx;
+  left: 40rpx;
+  transform: rotate(-5deg);
+}
+
+/* 设计稿: top: 150, right: 30, rotate(8deg), size 48 */
+.pet-puppy {
+  width: 96rpx;
+  height: 96rpx;
+  top: 300rpx;
+  right: 60rpx;
+  transform: rotate(8deg);
+}
+
+/* 设计稿: top: 110, left: 40%, opacity 0.35, rotate(-20deg), size 22 */
+.paw-deco-login {
+  position: absolute;
+  width: 44rpx;
+  height: 44rpx;
+  top: 220rpx;
+  left: 40%;
+  opacity: 0.35;
+  transform: rotate(-20deg);
+}
+
+/* ─── Logo + 品牌名（设计稿: top: 210） ─── */
+.brand-area {
+  position: absolute;
+  top: 420rpx;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24rpx;
+  z-index: 2;
+}
+
+/* 设计稿: 72x72 圆形，gradient 135deg primary→primaryInk */
+.logo-circle {
+  width: 144rpx;
+  height: 144rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #C97B4A, #8A4A1F);
+  box-shadow: 0 20rpx 56rpx rgba(201, 123, 74, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-paw {
+  width: 68rpx;
+  height: 68rpx;
+}
+
+/* 设计稿: fontSize 28, fontWeight 700, letterSpacing 1.5 */
+.brand-name {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: var(--acs-ink, #231710);
+  letter-spacing: 3rpx;
+}
+
+/* ─── 欢迎文案（设计稿: top: 360） ─── */
+.welcome-area {
+  position: absolute;
+  top: 720rpx;
+  left: 64rpx;
+  right: 64rpx;
+  text-align: center;
+}
+
+/* 设计稿: fontSize 22, fontWeight 700 */
+.welcome-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: var(--acs-ink, #231710);
+  letter-spacing: 1rpx;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.welcome-desc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+}
+
+/* 设计稿: fontSize 14, color inkSoft, lineHeight 1.6 */
+.welcome-line {
+  font-size: 28rpx;
+  color: var(--acs-ink-soft, #63463A);
+  line-height: 1.6;
+}
+
+/* ─── 按钮组（设计稿: top: 470, left/right: 28） ─── */
+.login-buttons {
+  position: absolute;
+  top: 940rpx;
+  left: 56rpx;
+  right: 56rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+/* 设计稿: height 52, borderRadius radius*1.6, gradient primary→primaryInk */
+.btn-primary {
+  width: 100%;
+  height: 104rpx;
+  line-height: 104rpx;
+  border-radius: 35rpx;
+  background: linear-gradient(135deg, #C97B4A, #8A4A1F);
+  box-shadow: 0 16rpx 40rpx rgba(201, 123, 74, 0.35),
+              inset 0 2rpx 0 rgba(255, 255, 255, 0.3);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+}
+
+.btn-primary::after {
+  border: none;
+}
+
+.btn-primary-text {
+  color: #ffffff;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+/* 设计稿: height 52, bg surface, color primary, border 1.5px solid primarySoft */
+.btn-secondary {
+  width: 100%;
+  height: 104rpx;
+  line-height: 104rpx;
+  border-radius: 35rpx;
+  background: var(--acs-surface, #FFFFFF);
+  border: 3rpx solid var(--acs-primary-soft, #EFCFB0);
+  box-shadow: 0 8rpx 24rpx rgba(201, 123, 74, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-secondary::after {
+  border: none;
+}
+
+.btn-secondary-text {
+  color: var(--acs-primary, #C97B4A);
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+/* ─── 底部协议（设计稿: bottom: 40） ─── */
+.agreement-area {
+  position: absolute;
+  bottom: 80rpx;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+}
+
+/* 设计稿: 14x14 圆形 checkbox */
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.agreement-checkbox {
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 50%;
+  border: 3rpx solid var(--acs-ink-faint, #C4AC95);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s;
 }
 
-.checkbox.checked {
-  background: #3d8af5;
-  border-color: #3d8af5;
+.agreement-checkbox.checked {
+  background: var(--acs-primary, #C97B4A);
+  border-color: var(--acs-primary, #C97B4A);
 }
 
 .check-icon {
   color: #ffffff;
-  font-size: 20rpx;
+  font-size: 18rpx;
   font-weight: bold;
 }
 
+/* 设计稿: fontSize 11, color inkMuted */
 .agreement-text {
-  font-size: 24rpx;
-  color: #999999;
+  font-size: 22rpx;
+  color: var(--acs-ink-muted, #8F7260);
 }
 
 .link-text {
-  color: #3d8af5;
+  color: var(--acs-primary, #C97B4A);
 }
 </style>

@@ -332,6 +332,8 @@ export default {
 <style lang="scss">
 /* 注意要写在第一行，同时给style标签加入lang="scss"属性 */
 @import '@/uni_modules/uview-ui/index.scss';
+/* 爱宠社设计系统主题变量 */
+@import '@/static/styles/theme.scss';
 
 /* 全局优化"到底了"提示样式 */
 .u-loadmore__nomore-text,

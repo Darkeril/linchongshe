@@ -6,7 +6,7 @@
         <image :src="logoImage" class="logo-img"></image>
       </view>
       <view class="title">
-        <view class="subtitle">你的生活兴趣社区</view>
+        <view class="subtitle">爱宠社</view>
       </view>
       <!-- 登录方式切换 -->
       <view class="login-type-switch">
@@ -687,17 +687,20 @@ export default {
 
 .header image,
 .header .logo-img {
-  width: 180rpx;
-  height: 80rpx;
+  width: 144rpx;
+  height: 144rpx;
   margin-left: 0;
+  border-radius: 50%;
 }
 
 .subtitle {
-  color: #6a6a6a;
-  margin-top: 22rpx;
+  color: #231710;
+  margin-top: 8rpx;
   text-align: center;
-  font-size: 28rpx;
-  opacity: 0.8;
+  font-size: 44rpx;
+  font-weight: 700;
+  letter-spacing: 2rpx;
+  opacity: 1;
 }
 
 .title {
@@ -713,15 +716,15 @@ export default {
 .switch-btn {
   margin: 0 15rpx;
   font-size: 30rpx;
-  color: #999;
+  color: #8F7260;
   font-weight: 500;
   padding-bottom: 6rpx;
   transition: color 0.2s;
 }
 
 .switch-btn.active {
-  color: #3d8af5;
-  border-bottom: 4rpx solid #3d8af5;
+  color: #C97B4A;
+  border-bottom: 4rpx solid #C97B4A;
   font-weight: bold;
 }
 
@@ -738,23 +741,23 @@ export default {
   /* margin-left: 10rpx; */
   height: 80rpx;
   line-height: 80rpx;
-  background: #3d8af5;
+  background: #C97B4A;
   color: #fff;
   border-radius: 55rpx;
   padding: 0 30rpx;
   font-size: 22rpx;
-  box-shadow: 0 2rpx 8rpx rgba(255, 36, 66, 0.1);
+  box-shadow: 0 2rpx 8rpx rgba(201, 123, 74, 0.1);
 }
 
 .wbutton {
   border-radius: 40rpx !important;
   margin-top: 50rpx;
-  /* box-shadow: 0 8rpx 32rpx rgba(255, 36, 66, 0.15); */
+  /* box-shadow: 0 8rpx 32rpx rgba(201, 123, 74, 0.15); */
 }
 
 .footer {
   margin-top: 70rpx;
-  color: #bbb;
+  color: #C4AC95;
   font-size: 26rpx;
   text-align: center;
   letter-spacing: 2rpx;
@@ -767,7 +770,7 @@ export default {
 
 .demo-btn {
   background: transparent;
-  border: 1rpx solid #3d8af5;
+  border: 1rpx solid #C97B4A;
   border-radius: 50rpx;
   padding: 1rpx 32rpx;
   display: inline-flex;
@@ -777,23 +780,23 @@ export default {
 }
 
 .demo-btn:active {
-  background: #3d8af5;
+  background: #C97B4A;
   transform: scale(0.95);
 }
 
 .reds-icon {
-  fill: #3d8af5;
+  fill: #C97B4A;
 }
 
 .demo-icon {
   font-size: 28rpx;
   margin-right: 8rpx;
-  color: #3d8af5;
+  color: #C97B4A;
   font-weight: bold;
 }
 
 .demo-text {
-  color: #3d8af5;
+  color: #C97B4A;
   font-size: 28rpx;
   font-weight: bold;
 }
@@ -803,6 +806,9 @@ export default {
 }
 
 page {
-  background: #fafbfc;
+  background-color: #F4EDE2 !important;
+}
+uni-page-body {
+  background-color: #F4EDE2 !important;
 }
 </style>

@@ -38,7 +38,7 @@
 			bgColor:{
 				//按钮背景颜色
 				type: String,
-				default: "linear-gradient(to right, #3d8af5, #3d8af5)",
+				default: "linear-gradient(135deg, #C97B4A, #8A4A1F)",
 			},
 			fontColor:{
 				//按钮字体颜色

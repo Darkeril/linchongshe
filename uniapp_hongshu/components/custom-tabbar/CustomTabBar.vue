@@ -3,13 +3,26 @@
 		<view class="tabbar">
 			<view v-for="(item, index) in tabList" :key="index" class="tabbar-item"
 				:class="{ active: current === index }" @click="handleClick(item, index)">
+				<!-- 中间发布按钮 -->
 				<view v-if="item.midButton" class="mid-button-wrapper" @click.stop="onMidButton">
-					<image class="mid-icon" :src="midButton.iconPath" />
+					<view class="mid-button">
+						<image class="mid-icon" src="/static/icons/tab-plus.svg" mode="aspectFit" />
+					</view>
 				</view>
-				<view v-else>
-					<text class="tabbar-text">{{ item.text }}</text>
-					<view v-if="Number(item.badge) > 0" class="tabbar-badge">
-						{{ item.badgeText || (Number(item.badge) > 99 ? '99+' : String(Number(item.badge))) }}</view>
+				<!-- 普通 Tab -->
+				<view v-else class="tab-content">
+					<view class="tab-icon-wrapper">
+						<image
+							class="tab-icon"
+							:src="current === index ? item.activeIcon : item.icon"
+							mode="aspectFit"
+						/>
+						<!-- 徽标 -->
+						<view v-if="Number(item.badge) > 0" class="tabbar-badge">
+							{{ item.badgeText || (Number(item.badge) > 99 ? '99+' : String(Number(item.badge))) }}
+						</view>
+					</view>
+					<text :class="['tab-label', current === index ? 'tab-label-active' : '']">{{ item.text }}</text>
 				</view>
 			</view>
 		</view>
@@ -28,11 +41,15 @@
 			return {
 				tabList: [{
 						pagePath: 'pages/index/index',
-						text: '首页'
+						text: '首页',
+						icon: '/static/icons/tab-home.svg',
+						activeIcon: '/static/icons/tab-home-active.svg'
 					},
 					{
 						pagePath: 'pkg-main/pages/idle/idle',
-						text: '市集'
+						text: '市集',
+						icon: '/static/icons/tab-bag.svg',
+						activeIcon: '/static/icons/tab-bag-active.svg'
 					},
 					{
 						midButton: true
@@ -40,17 +57,21 @@
 					{
 						pagePath: 'pkg-main/pages/message/message',
 						text: '消息',
+						icon: '/static/icons/tab-msg.svg',
+						activeIcon: '/static/icons/tab-msg-active.svg',
 						badge: 0
 					},
 					{
 						pagePath: 'pkg-main/pages/mine/mine',
-						text: '我'
+						text: '我',
+						icon: '/static/icons/tab-me.svg',
+						activeIcon: '/static/icons/tab-me-active.svg'
 					}
 				],
 				midButton: {
-					iconPath: '/static/image/publish.png'
+					iconPath: '/static/icons/tab-plus.svg'
 				},
-				isSelecting: false, // 防止重复点击
+				isSelecting: false,
 				selectedCategory: null
 			};
 		},
@@ -103,7 +124,7 @@
 			updateTabBarBadge(index, badge) {
 				if (index >= 0 && index < this.tabList.length) {
 					const item = this.tabList[index]
-					if (item && !item.midButton) { // 中间按钮不显示徽章
+					if (item && !item.midButton) {
 						const num = typeof badge === 'string' ? (parseInt(badge, 10) || 0) : (Number(badge) || 0)
 						const text = (typeof badge === 'string' && badge.indexOf('+') !== -1) ? badge : (num > 99 ? '99+' :
 							String(num))
@@ -119,7 +140,7 @@
 			},
 
 			async onMidButton() {
-				if (this.isSelecting) return; // 防止重复点击
+				if (this.isSelecting) return;
 				this.isSelecting = true;
 				try {
 					await this.showCategorySelection();
@@ -158,11 +179,6 @@
 					} else if (res.tapIndex === 2) {
 						type = 'live';
 					}
-					console.log('准备调用 handlePublish', {
-						category: this.selectedCategory,
-						type
-					});
-					// 延迟以避免在操作表关闭动画期间调用选择器被拦截（特别是 mp-weixin）
 					setTimeout(() => {
 						this.handlePublish(this.selectedCategory, type);
 					}, 200);
@@ -171,14 +187,13 @@
 				}
 			},
 
-			// 封装 uni.showActionSheet 为 Promise，兼容 H5 取消
+			// 封装 uni.showActionSheet 为 Promise
 			showActionSheet(itemList) {
 				return new Promise((resolve, reject) => {
 					uni.showActionSheet({
 						itemList,
 						success: resolve,
 						fail: (err) => {
-							// H5 端可能不会触发 fail，手动检测
 							if (process.env.UNI_PLATFORM === 'h5') {
 								setTimeout(() => reject(new Error('用户取消')), 300);
 							} else {
@@ -212,10 +227,9 @@
 				uni.chooseVideo({
 					sourceType: ['album', 'camera'],
 					compressed: true,
-					maxDuration: 60, // 最长60秒
+					maxDuration: 60,
 					success: (res) => {
-						// 检查视频大小，不能超过20M
-						const maxSize = 20 * 1024 * 1024; // 20M in bytes
+						const maxSize = 20 * 1024 * 1024;
 						if (res.size > maxSize) {
 							uni.showToast({
 								title: '视频大小不能超过20M',
@@ -224,20 +238,16 @@
 							});
 							return;
 						}
-						
+
 						// #ifdef MP-WEIXIN
-						// 微信小程序端：使用系统生成的缩略图作为封面
 						if (res.thumbTempFilePath) {
-							console.log('✅ 选择视频成功，使用系统缩略图:', res.thumbTempFilePath);
 							this.navigateToPublishPage(page, '2', [res.tempFilePath], res.thumbTempFilePath);
 						} else {
-							console.log('⚠️ 未获取到系统缩略图，需手动添加封面');
 							this.navigateToPublishPage(page, '2', [res.tempFilePath]);
 						}
 						// #endif
-						
+
 						// #ifndef MP-WEIXIN
-						// 其他平台：跳转后自动提取视频帧作为封面
 						this.navigateToPublishPage(page, '2', [res.tempFilePath]);
 						// #endif
 					},
@@ -249,27 +259,16 @@
 				});
 			} else if (type === 'live') {
 					// #ifdef APP-PLUS || MP-WEIXIN
-					// Live 图选择（支持 Live Photo、GIF、APNG、WebP 等）
 					uni.chooseMedia({
 						count: 1,
 						mediaType: ['image', 'video'],
 						sourceType: ['album', 'camera'],
 						success: (res) => {
 							const file = res.tempFiles[0];
-							
-							console.log('选择的文件信息:', {
-								fileType: file.fileType,
-								duration: file.duration,
-								size: file.size,
-								tempFilePath: file.tempFilePath
-							});
-							
-							// 检测是否为 Live Photo
 							const isLivePhoto = (file.fileType === 'image' && file.duration && file.duration > 0);
-							
-							// 如果是视频或 Live Photo，检查大小限制
+
 							if (isLivePhoto || file.fileType === 'video') {
-								const maxSize = 20 * 1024 * 1024; // 20M in bytes
+								const maxSize = 20 * 1024 * 1024;
 								if (file.size > maxSize) {
 									uni.showToast({
 										title: '视频大小不能超过20M',
@@ -279,24 +278,16 @@
 									return;
 								}
 							}
-							
+
 							if (isLivePhoto) {
-								console.log('✅ 检测到 Live Photo，将作为视频笔记发布');
-								// Live Photo：作为视频笔记
 								let videoPath = file.tempFilePath;
-								// iOS 系统规则：视频文件与图片同名，扩展名为 .MOV
 								if (videoPath.toLowerCase().endsWith('.jpg') || videoPath.toLowerCase().endsWith('.jpeg')) {
 									videoPath = videoPath.replace(/\.(jpg|jpeg)$/i, '.MOV');
 								}
-								// type=2 视频笔记，传递视频路径和封面图
 								this.navigateToPublishPage(page, '2', [videoPath], file.tempFilePath);
 							} else if (file.fileType === 'video') {
-								console.log('普通视频');
-								// 普通视频
 								this.navigateToPublishPage(page, '2', [file.tempFilePath]);
 							} else {
-								console.log('普通图片/动图');
-								// 普通图片/动图（GIF、APNG、WebP）
 								this.navigateToPublishPage(page, '3', [file.tempFilePath]);
 							}
 						},
@@ -307,9 +298,8 @@
 						}
 					});
 					// #endif
-					
+
 					// #ifdef H5
-					// H5 暂不支持 Live 图，仅提示，不打开选图（与 uniapp_im 一致）
 					uni.showToast({
 						title: 'H5 暂不支持 Live 图，请选择图片或视频',
 						icon: 'none',
@@ -325,14 +315,12 @@
 					update: 0,
 					type: type
 				};
-				
-				// 如果有封面图（Live Photo 的 JPG 或微信小程序的系统缩略图），添加到参数中
+
 				if (coverPicture) {
 					params.coverPicture = coverPicture;
 				}
-				
+
 				// #ifdef H5
-				// H5端直接跳转，使用URL参数传递
 				params.tempFilePaths = JSON.stringify(tempFilePaths);
 				const queryString = Object.keys(params)
 					.map(key => `${key}=${encodeURIComponent(params[key])}`)
@@ -340,56 +328,40 @@
 				uni.navigateTo({
 					url: `${page}?${queryString}`
 				});
-				console.log('✅ H5端跳转到:', `${page}?${queryString}`);
 				// #endif
-				
+
 				// #ifdef MP-WEIXIN
-				// 微信小程序端：使用全局存储传递文件路径，避免URL长度限制
-				// 存储文件路径和封面图到全局存储
-				console.log('🔍 准备存储文件路径到全局存储，数量:', tempFilePaths.length);
-				console.log('🔍 文件路径详情:', tempFilePaths);
 				uni.setStorageSync('publish_tempFilePaths', tempFilePaths);
-				// 验证存储是否成功
 				const verifyStored = uni.getStorageSync('publish_tempFilePaths');
-				console.log('🔍 验证存储结果:', verifyStored, '类型:', typeof verifyStored, '是否为数组:', Array.isArray(verifyStored));
-				
+
 				if (coverPicture) {
 					uni.setStorageSync('publish_coverPicture', coverPicture);
-					console.log('✅ 封面图已存储:', coverPicture);
 				} else {
 					uni.removeStorageSync('publish_coverPicture');
 				}
-				
-				const queryString = Object.keys(params)
+
+				const queryString2 = Object.keys(params)
 					.map(key => `${key}=${encodeURIComponent(params[key])}`)
 					.join('&');
-				
-				console.log('🔍 准备跳转，URL参数:', queryString);
-				console.log('🔍 准备调用 uni.navigateTo，URL:', `${page}?${queryString}`);
+
 				uni.navigateTo({
-					url: `${page}?${queryString}`,
+					url: `${page}?${queryString2}`,
 					success: (res) => {
-						console.log('✅ navigateTo 成功:', res);
+						console.log('navigateTo 成功:', res);
 					},
 					fail: (err) => {
-						console.error('❌ navigateTo 失败:', err);
-					},
-					complete: () => {
-						console.log('🔍 navigateTo 完成');
+						console.error('navigateTo 失败:', err);
 					}
 				});
-				console.log('✅ 微信小程序端跳转到:', page, '参数:', params, '文件路径已存储到全局存储');
 				// #endif
-				
+
 				// #ifdef APP-PLUS
-				// APP端需要先保存文件，再跳转
 				Promise.all(tempFilePaths.map(item =>
 					new Promise((resolve) => {
 						uni.saveFile({
 							tempFilePath: item,
 							success: resolve,
 							fail: () => {
-								// 保存失败，直接使用临时路径
 								resolve({ savedFilePath: item });
 							}
 						});
@@ -397,15 +369,14 @@
 				)).then(savedFiles => {
 					const filePaths = savedFiles.map(file => file.savedFilePath);
 					params.tempFilePaths = JSON.stringify(filePaths);
-					
-					const queryString = Object.keys(params)
+
+					const qs = Object.keys(params)
 						.map(key => `${key}=${encodeURIComponent(params[key])}`)
 						.join('&');
-					
+
 					uni.navigateTo({
-						url: `${page}?${queryString}`
+						url: `${page}?${qs}`
 					});
-					console.log('✅ APP端跳转到:', `${page}?${queryString}`);
 				});
 				// #endif
 			}
@@ -414,60 +385,38 @@
 </script>
 
 <style scoped>
+	/* ─── 设计稿: AppTabBar ─── */
+	/* position: absolute, left: 14, right: 14, bottom: 16, height: 60 */
+	/* borderRadius: radius*1.4 ≈ 31, bg rgba(255,255,255,0.72), blur(24px) */
 	.tabbar-root {
 		position: fixed;
-		left: 0;
-		right: 0;
-		bottom: 20px;
+		left: 28rpx;
+		right: 28rpx;
+		bottom: 32rpx;
 		z-index: 999;
-		/* iOS26 液态玻璃：统一变量（降级在不支持 backdrop-filter 的端仍可用） */
-		background: var(--im-glass-bg-fallback, linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.28)));
-		border: 0px solid var(--im-glass-border, rgba(255, 255, 255, 0.52));
-		border-radius: 25px;
-		margin: 0 20px;
-		box-shadow: var(--im-glass-shadow, 0 12px 34px rgba(15, 23, 42, 0.12), inset 0 0 0 rgba(255, 255, 255, 0.72));
-		overflow: hidden;
+		height: 120rpx;
+		border-radius: 62rpx;
+		background: rgba(255, 255, 255, 0.72);
+		box-shadow: 0 16rpx 56rpx rgba(201, 123, 74, 0.13),
+					0 4rpx 12rpx rgba(0, 0, 0, 0.05),
+					inset 0 2rpx 0 rgba(255, 255, 255, 0.9);
+		overflow: visible;
 
 		/* #ifdef H5 || APP-PLUS */
-		-webkit-backdrop-filter: blur(20px) saturate(185%);
-		backdrop-filter: blur(20px) saturate(185%);
-		background: var(--im-glass-bg, linear-gradient(135deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.2)));
+		-webkit-backdrop-filter: blur(24px) saturate(180%);
+		backdrop-filter: blur(24px) saturate(180%);
 		/* #endif */
-	}
-
-	.tabbar-root::before {
-		content: '';
-		position: absolute;
-		left: -16%;
-		top: -130%;
-		width: 60%;
-		height: 260%;
-		background: var(--im-glass-highlight, radial-gradient(circle, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0) 72%));
-		transform: rotate(16deg);
-		pointer-events: none;
-	}
-
-	.tabbar-root::after {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: 0;
-		height: 0;
-		background: var(--im-glass-topline, linear-gradient(90deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.02)));
-		pointer-events: none;
 	}
 
 	.tabbar {
 		display: flex;
 		flex-direction: row;
-		justify-content: space-between;
+		justify-content: space-around;
 		align-items: center;
-		height: 55px;
+		height: 120rpx;
 		position: relative;
 		background: transparent;
-		border-radius: 25px;
-		padding: 0 10px;
+		padding: 0 16rpx;
 	}
 
 	.tabbar-item {
@@ -479,39 +428,60 @@
 		justify-content: center;
 		align-items: center;
 		position: relative;
-		/* 让徽标相对每个tab定位 */
 	}
 
-	.tabbar-text {
-		font-size: 22px;
-		color: var(--im-glass-text, rgba(34, 34, 34, 0.55));
-		font-weight: normal;
+	/* ─── 普通 Tab 内容（图标 + 文字） ─── */
+	.tab-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 4rpx;
+	}
+
+	.tab-icon-wrapper {
+		position: relative;
+		width: 44rpx;
+		height: 44rpx;
+	}
+
+	.tab-icon {
+		width: 44rpx;
+		height: 44rpx;
+	}
+
+	/* 设计稿: fontSize 10, normal inkMuted, active primary+bold */
+	.tab-label {
+		font-size: 20rpx;
+		color: #8F7260;
+		font-weight: 500;
 		transition: all 0.2s ease;
 	}
 
+	.tab-label-active {
+		color: #C97B4A;
+		font-weight: 700;
+	}
+
+	/* ─── 徽标（设计稿: minWidth 16, height 16, bg warn #D66A5E） ─── */
 	.tabbar-badge {
 		position: absolute;
-		/* 让徽标贴在当前tab文字的右上角 */
-		right: 22%;
-		top: 2px;
-		background: #ff4d4f;
+		top: -8rpx;
+		right: -16rpx;
+		min-width: 32rpx;
+		height: 32rpx;
+		padding: 0 8rpx;
+		border-radius: 16rpx;
+		background: #D66A5E;
 		color: #fff;
-		border-radius: 10px;
-		padding: 0 6px;
-		font-size: 10px;
-		line-height: 18px;
-		min-width: 18px;
-		height: 18px;
+		font-size: 20rpx;
+		font-weight: 700;
+		line-height: 32rpx;
 		text-align: center;
+		box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.15);
 	}
 
-	.active .tabbar-text {
-		color: var(--im-glass-text-active, rgba(9, 9, 11, 0.95));
-		font-weight: bold;
-		font-size: 24px;
-		text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
-	}
-
+	/* ─── 中间发布按钮 ─── */
+	/* 设计稿: 48x48, marginTop -18, borderRadius 16, gradient primary→primaryInk */
 	.mid-button-wrapper {
 		width: 100%;
 		height: 100%;
@@ -520,20 +490,26 @@
 		align-items: center;
 	}
 
-	.mid-icon {
-		width: 45px;
-		height: 40px;
-		border-radius: 10px;
-		background: #3d8af5;
-		/* box-shadow: 0 2px 8px rgba(255, 45, 45, 0.2); */
-		border: 0 solid #fff;
-		object-fit: contain;
-		transition: all 0.3s ease;
-		box-shadow: 0 10px 24px rgba(61, 138, 245, 0.22), inset 0 0 0 rgba(255, 255, 255, 0.65);
+	.mid-button {
+		width: 96rpx;
+		height: 96rpx;
+		margin-top: -36rpx;
+		border-radius: 32rpx;
+		background: linear-gradient(135deg, #C97B4A, #8A4A1F);
+		box-shadow: 0 20rpx 44rpx rgba(201, 123, 74, 0.35),
+					inset 0 2rpx 0 rgba(255, 255, 255, 0.4);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: transform 0.2s ease;
 	}
 
-	.mid-button-wrapper:active .mid-icon {
-		transform: scale(0.95);
-		background: #3d8af5;
+	.mid-button:active {
+		transform: scale(0.92);
+	}
+
+	.mid-icon {
+		width: 48rpx;
+		height: 48rpx;
 	}
 </style>

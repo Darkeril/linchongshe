@@ -7,18 +7,18 @@
 
 /* 头部 logo */
 .header {
-	width:160rpx;
-	height:160rpx;
-	/* box-shadow:0rpx 0rpx 60rpx 0rpx rgba(0,0,0,0.1); */
+	width:144rpx;
+	height:144rpx;
 	border-radius:50%;
 	margin-top: 128rpx;
-	margin-bottom: 72rpx;
+	margin-bottom: 40rpx;
 	margin-left: auto;
 	margin-right: auto;
 }
 .header image{
-	width:220rpx;
-	height:120rpx;
+	width:144rpx;
+	height:144rpx;
+	border-radius:50%;
 }
 
 /* 主体 */
@@ -59,7 +59,7 @@
 	color: #83DC42;
 }
 .weibo_color{
-	color: #3d8af5;
+	color: #C97B4A;
 }
 .github_color{
 	color: #24292E;

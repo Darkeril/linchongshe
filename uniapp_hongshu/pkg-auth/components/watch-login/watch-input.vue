@@ -2,7 +2,7 @@
 	<view :class="['main-list','oBorder', {'has-prefix-icon': !!prefixIcon}]">
 		<!-- 左侧前缀图标（可选，使用 u-icon） -->
 		<view v-if="prefixIcon" class="wl-prefix-icon">
-			<u-icon :name="prefixIcon" color="#3d8af5" size="36rpx"></u-icon>
+			<u-icon :name="prefixIcon" color="#C97B4A" size="36rpx"></u-icon>
 		</view>
 		<!-- 文本框 -->
 		<input 
@@ -238,18 +238,18 @@
 	}
 	.vercode {
 		color: #ffffff;
-		background: #3d8af5;
+		background: #C97B4A;
 		font-size: 24rpx;
 		font-weight: 600;
 		padding: 0 28rpx;
 		height: 64rpx;
 		line-height: 64rpx;
 		border-radius: 999rpx;
-		box-shadow: 0 8rpx 24rpx rgba(61,138,245,0.35);
+		box-shadow: 0 8rpx 24rpx rgba(201,123,74,0.35);
 	}
 	.vercode-run {
-		background: rgba(61,138,245,0.18) !important;
-		color: #8bb5fb !important;
+		background: rgba(201,123,74,0.18) !important;
+		color: #C4AC95 !important;
 		box-shadow: none;
 	}
 	.oBorder{

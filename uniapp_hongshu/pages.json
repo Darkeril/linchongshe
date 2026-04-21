@@ -19,7 +19,9 @@
 		{
 			"path": "pages/splash/splash",
 			"style": {
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": false,
+				"backgroundColor": "#F4EDE2",
+				"navigationBarBackgroundColor": "#FFFFFF"
 			}
 		},
 		{
@@ -95,8 +97,8 @@
 			{ "path": "pages/editData/editData", "style": { "navigationBarTitleText": "编辑资料" } }
 		]},
 		{ "root": "pkg-auth", "independent": true, "pages": [
-			{ "path": "pages/login/loginMethod" },
-			{ "path": "pages/login/login", "style": { "navigationBarTitleText": "登录" } },
+			{ "path": "pages/login/loginMethod", "style": { "backgroundColor": "#F4EDE2" } },
+			{ "path": "pages/login/login", "style": { "navigationBarTitleText": "登录", "backgroundColor": "#F4EDE2" } },
 			{ "path": "pages/login/forget", "style": { "navigationBarTitleText": "忘记密码" } },
 			{ "path": "pages/login/register", "style": { "navigationBarTitleText": "注册" } },
 			{ "path": "pages/login/bindPhone", "style": { "navigationBarTitleText": "绑定手机号" } }
@@ -153,8 +155,8 @@
 		/* #ifdef MP-WEIXIN */
 		"navigationStyle": "default",
 		/* #endif */
-		"navigationBarBackgroundColor": "#ffffff",
-		"backgroundColor": "#ffffff"
+		"navigationBarBackgroundColor": "#F4EDE2",
+		"backgroundColor": "#F4EDE2"
 	},
 	"uniIdRouter": {}
 }

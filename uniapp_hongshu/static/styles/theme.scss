@@ -1,0 +1,52 @@
+/**
+ * 爱宠社设计系统 — 全局主题变量
+ * 当前主题: Latte（暖咖温润）
+ * 色板来源: design/design-system.jsx PALETTES.latte
+ *
+ * 使用方式: var(--acs-primary), var(--acs-bg) ...
+ * 前缀 acs = 爱宠社 (AiChongShe)
+ */
+
+:root {
+  // ─── 背景 ───
+  --acs-bg: #F4EDE2;
+  --acs-surface: #FFFFFF;
+  --acs-surface-dim: #EADFCB;
+  --acs-divider: rgba(80, 50, 30, 0.1);
+
+  // ─── 品牌主色 ───
+  --acs-primary: #C97B4A;
+  --acs-primary-soft: #EFCFB0;
+  --acs-primary-ink: #8A4A1F;
+
+  // ─── 辅助色 ───
+  --acs-accent: #7BA58E;
+  --acs-warn: #D66A5E;
+
+  // ─── 文字色 ───
+  --acs-ink: #231710;
+  --acs-ink-soft: #63463A;
+  --acs-ink-muted: #8F7260;
+  --acs-ink-faint: #C4AC95;
+
+  // ─── 圆角 ───
+  --acs-radius-sm: 10px;
+  --acs-radius-md: 16px;
+  --acs-radius-lg: 22px;
+  --acs-radius-xl: 28px;
+  --acs-radius-pill: 999px;
+
+  // ─── 渐变 ───
+  --acs-gradient-primary: linear-gradient(135deg, #C97B4A, #8A4A1F);
+  --acs-gradient-splash: linear-gradient(180deg, #FFFFFF 0%, #F4EDE2 40%, #EFCFB0 100%);
+  --acs-gradient-radial-soft: radial-gradient(ellipse at 50% 60%, #EFCFB0 0%, #F4EDE2 70%);
+
+  // ─── 阴影 ───
+  --acs-shadow-primary: 0 8px 20px rgba(201, 123, 74, 0.35);
+  --acs-shadow-card: 0 2px 12px rgba(35, 23, 16, 0.06);
+  --acs-shadow-tabbar: 0 8px 28px rgba(201, 123, 74, 0.13), 0 2px 6px rgba(0, 0, 0, 0.05);
+
+  // ─── 玻璃态 ───
+  --acs-glass-bg: rgba(255, 255, 255, 0.72);
+  --acs-glass-border: rgba(255, 255, 255, 0.52);
+}
