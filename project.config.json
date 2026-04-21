@@ -1,0 +1,148 @@
+{
+    "appid": "touristappid",
+    "compileType": "miniprogram",
+    "libVersion": "3.10.2",
+    "packOptions": {
+        "ignore": [
+            {
+                "value": "**/node_modules/**",
+                "type": "glob"
+            },
+            {
+                "value": "**/unpackage/**",
+                "type": "glob"
+            },
+            {
+                "value": "**/*.map",
+                "type": "glob"
+            },
+            {
+                "value": "static/raw/**",
+                "type": "glob"
+            },
+            {
+                "value": "**/*.psd",
+                "type": "glob"
+            },
+            {
+                "value": "**/*.ai",
+                "type": "glob"
+            },
+            {
+                "value": "**/*.md",
+                "type": "glob"
+            },
+            {
+                "value": "**/*.txt",
+                "type": "glob"
+            },
+            {
+                "value": "**/changelog.md",
+                "type": "glob"
+            },
+            {
+                "value": "**/readme.md",
+                "type": "glob"
+            },
+            {
+                "value": "**/README.md",
+                "type": "glob"
+            },
+            {
+                "value": "**/debug/**",
+                "type": "glob"
+            },
+            {
+                "value": "**/test/**",
+                "type": "glob"
+            },
+            {
+                "value": "index.html",
+                "type": "glob"
+            },
+            {
+                "value": "**/uni_modules/uview-ui/docs/**",
+                "type": "glob"
+            },
+            {
+                "value": "**/uni_modules/uview-ui/example/**",
+                "type": "glob"
+            },
+            {
+                "value": "**/uni_modules/uview-ui/changelog.md",
+                "type": "glob"
+            },
+            {
+                "value": "**/uni_modules/uview-ui/readme.md",
+                "type": "glob"
+            },
+            {
+                "value": "**/uni_modules/*/readme.md",
+                "type": "glob"
+            },
+            {
+                "value": "**/uni_modules/*/changelog.md",
+                "type": "glob"
+            },
+            {
+                "value": "**/uni_modules/*/package.json",
+                "type": "glob"
+            },
+            {
+                "value": "**/uni_modules/*/README.md",
+                "type": "glob"
+            },
+            {
+                "value": "**/uni_modules/*/CHANGELOG.md",
+                "type": "glob"
+            },
+            {
+                "value": "**/pages/test/**",
+                "type": "glob"
+            },
+            {
+                "value": "**/debug/**",
+                "type": "glob"
+            },
+            {
+                "value": "**/js_sdk/**",
+                "type": "glob"
+            }
+        ],
+        "include": []
+    },
+    "setting": {
+        "coverView": true,
+        "es6": true,
+        "postcss": true,
+        "minified": true,
+        "enhance": true,
+        "showShadowRootInWxmlPanel": true,
+        "packNpmRelationList": [],
+        "babelSetting": {
+            "ignore": [],
+            "disablePlugins": [],
+            "outputPath": ""
+        },
+        "compileWorklet": false,
+        "uglifyFileName": false,
+        "uploadWithSourceMap": false,
+        "packNpmManually": false,
+        "minifyWXSS": true,
+        "minifyWXML": true,
+        "localPlugins": false,
+        "disableUseStrict": false,
+        "useCompilerPlugins": false,
+        "condition": false,
+        "swc": false,
+        "disableSWC": true,
+        "ignoreDevUnusedFiles": true,
+        "ignoreUploadUnusedFiles": true
+    },
+    "condition": {},
+    "editorSetting": {
+        "tabIndent": "insertSpaces",
+        "tabSize": 4
+    },
+    "simulatorPluginLibVersion": {}
+}

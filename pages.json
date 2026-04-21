@@ -1,0 +1,160 @@
+{
+	// "easycom": {
+	// 	"autoscan": true,
+	// 	"^u-(.*)": "@/uni_modules/uview-ui/components/u-$1/u-$1.vue"
+	// },
+	"easycom": {
+		"autoscan": true,
+		"^u-(.*)": "@/uni_modules/uview-ui/components/u-$1/u-$1.vue",
+		"^custom-tabbar": "@/components/custom-tabbar/CustomTabBar.vue",
+		"^optimized-image": "@/components/OptimizedImage.vue",
+		"^virtual-list": "@/components/VirtualList.vue",
+		"^notes-list-item": "@/components/NotesListItem.vue",
+		"^skeleton-screen": "@/components/SkeletonScreen.vue",
+		"^shopping-skeleton": "@/components/ShoppingSkeleton.vue",
+		"^profile-skeleton": "@/components/ProfileSkeleton.vue",
+		"^data-skeleton": "@/components/DataSkeleton.vue"
+	},
+	"pages": [
+		{
+			"path": "pages/splash/splash",
+			"style": {
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"enablePullDownRefresh": false,
+				"navigationBarTitleText": "爱宠社"
+			}
+		}
+	],
+	"subPackages": [
+		{ "root": "pkg-main", "pages": [
+			{ "path": "pages/category/category", "style": { "enablePullDownRefresh": false, "navigationBarTitleText": "分类" } },
+			{ "path": "pages/idle/idle", "style": { "enablePullDownRefresh": false, "navigationBarTitleText": "爱宠社" } },
+			{ "path": "pages/categories/categories", "style": { "enablePullDownRefresh": true, "navigationBarTitleText": "全部分类" } },
+			{ "path": "pages/categoryProducts/categoryProducts", "style": { "enablePullDownRefresh": false, "navigationBarTitleText": "商品列表" } },
+			{ "path": "pages/message/message", "style": { "enablePullDownRefresh": true } },
+			{ "path": "pages/mine/mine", "style": { "enablePullDownRefresh": true, "navigationBarTitleText": "爱宠社" } },
+			{ "path": "pages/frequentUsers/frequentUsers", "style": { "navigationBarTitleText": "常看的人" } }
+		]},
+		{ "root": "pkg-detail", "pages": [
+			{ "path": "pages/notesDetail/notesDetail" },
+			{ "path": "pages/idleDetail/idleDetail" },
+			{ "path": "pages/notesDetail/noteVideoD" },
+			{ "path": "pages/idleDetail/idleVideoD" }
+		]},
+		{ "root": "pkg-mine", "pages": [
+			{ "path": "pages/mine/otherMine" },
+			{ "path": "pages/attentionAndFans/attentionAndFans" },
+			{ "path": "pages/browseRecord/browseRecord", "style": { "navigationBarTitleText": "浏览记录" } },
+			{ "path": "pages/orders/orders", "style": { "navigationBarTitleText": "我的订单" } },
+			{ "path": "pages/orderDetail/orderDetail", "style": { "navigationBarTitleText": "订单详情" } },
+			{ "path": "pages/shoppingCart/shoppingCart", "style": { "navigationBarTitleText": "我的收藏" } },
+			{ "path": "pages/confirmOrder/confirmOrder" },
+			{ "path": "pages/drafts/drafts", "style": { "navigationBarTitleText": "本地草稿" } },
+			{ "path": "pages/addressManagement/addressManagement", "style": { "navigationBarTitleText": "收货地址" } },
+			{ "path": "pages/addressEdit/addressEdit" },
+			{ "path": "pages/setting/setting", "style": { "navigationBarTitleText": "账号与安全" } },
+			{ "path": "pages/setting/updateBindPhone" },
+			{ "path": "pages/setting/updateNewPhone" },
+			{ "path": "pages/setting/resetPasswordMethods" },
+			{ "path": "pages/setting/setPasswordByPasswordVerify" }
+		]},
+		{ "root": "pkg-publish", "independent": true, "pages": [
+			{ "path": "pages/publishNotes/publishNotes", "style": { "navigationBarTitleText": "发布", "navigationStyle": "custom" } },
+			{ "path": "pages/publishIdle/publishIdle", "style": { "navigationBarTitleText": "发布", "navigationStyle": "custom" } }
+		]},
+		{ "root": "pkg-search", "independent": true, "pages": [
+			{ "path": "pages/searchPage/searchPage" },
+			{ "path": "pages/searchPage/searchDetailPage" },
+			{ "path": "pages/searchPage/productSearchPage" },
+			{ "path": "pages/searchPage/productSearchDetailPage" },
+			{ "path": "pages/topicIndex/topicIndex" }
+		]},
+		{ "root": "pkg-others", "independent": true, "pages": [
+			{ "path": "pages/praiseAndCollect/praiseAndCollect", "style": { "navigationBarTitleText": "收到的赞和收藏" } },
+			{ "path": "pages/category/categoryDetail" },
+			{ "path": "pages/attentionMessageList/attentionMessageList", "style": { "navigationBarTitleText": "新增关注" } },
+			{ "path": "pages/payEntry/payEntry", "style": { "navigationBarTitleText": "订单支付" } },
+			{ "path": "pages/noticeList/noticeList", "style": { "navigationBarTitleText": "通知公告" } },
+			{ "path": "pages/systemNoticeList/systemNoticeList", "style": { "navigationBarTitleText": "系统消息" } },
+			{ "path": "pages/webview/webview", "style": { "navigationBarTitleText": "网页" } }
+		]},
+		{ "root": "pkg-msg", "independent": true, "pages": [
+			{ "path": "pages/createGroup/createGroup", "style": { "navigationBarTitleText": "创建群聊" } },
+			{ "path": "pages/chat/chat", "style": { "navigationStyle": "custom" } },
+			{ "path": "pages/groupDetail/groupDetail", "style": { "navigationBarTitleText": "群聊详情" } },
+			{ "path": "pages/groupChatList/groupChatList", "style": { "navigationBarTitleText": "我的群聊" } },
+			{ "path": "pages/productMessageList/productMessageList", "style": { "navigationBarTitleText": "闲宝消息", "navigationStyle": "custom" } },
+			{ "path": "pages/comment/comment", "style": { "navigationBarTitleText": "收到的评论" } }
+		]},
+		{ "root": "pkg-profile", "independent": true, "pages": [
+			{ "path": "pages/editData/editData", "style": { "navigationBarTitleText": "编辑资料" } }
+		]},
+		{ "root": "pkg-auth", "independent": true, "pages": [
+			{ "path": "pages/login/loginMethod" },
+			{ "path": "pages/login/login", "style": { "navigationBarTitleText": "登录" } },
+			{ "path": "pages/login/forget", "style": { "navigationBarTitleText": "忘记密码" } },
+			{ "path": "pages/login/register", "style": { "navigationBarTitleText": "注册" } },
+			{ "path": "pages/login/bindPhone", "style": { "navigationBarTitleText": "绑定手机号" } }
+		]},
+		{ "root": "pkg-ai", "independent": true, "pages": [
+			{ "path": "pages/model-select/model-select", "style": { "navigationBarTitleText": "选择大模型" } },
+			{ "path": "pages/chat-history/chat-history", "style": { "navigationBarTitleText": "对话记录" } },
+			{ "path": "pages/chat/chat" }
+		]}
+	],
+	"preloadRule": {
+		"pages/index/index": { 
+			"network": "all", 
+			"packages": ["pkg-main"]
+		}
+	},
+	// "tabBar": { // 使用自定义 TabBar，注释原生配置以避免双层显示
+	// 	"backgroundColor": "#ffffff",
+	// 	"borderStyle": "white",
+	// 	"height": "50px",
+	// 	"iconWidth": "37px",
+	// 	"list": [{
+	// 			"pagePath": "pages/index/index",
+	// 			"iconPath": "/static/image/index.png",
+	// 			"selectedIconPath": "static/image/index_select.png",
+	// 			"text": "首页"
+	// 		},
+	// 		{
+	// 			"pagePath": "pages/idle/idle",
+	// 			"iconPath": "/static/image/shop.png",
+	// 			"selectedIconPath": "/static/image/shop_select.png",
+	// 			"text": "商城"
+	// 		},
+	// 		{
+	// 			"pagePath": "pages/message/message",
+	// 			"iconPath": "/static/image/message.png",
+	// 			"selectedIconPath": "static/image/message_select.png",
+	// 			"text": "消息"
+	// 		},
+	// 		{
+	// 			"pagePath": "pages/mine/mine",
+	// 			"iconPath": "static/image/mine.png",
+	// 			"selectedIconPath": "static/image/mine_select.png",
+	// 			"text": "我"
+	// 		}
+	// 	]
+	// },
+	"globalStyle": {
+		"navigationBarTitleText": "爱宠社",
+		"navigationBarTextStyle": "black",
+		/* #ifndef MP-WEIXIN */
+		"navigationStyle": "custom",
+		/* #endif */
+		/* #ifdef MP-WEIXIN */
+		"navigationStyle": "default",
+		/* #endif */
+		"navigationBarBackgroundColor": "#ffffff",
+		"backgroundColor": "#ffffff"
+	},
+	"uniIdRouter": {}
+}

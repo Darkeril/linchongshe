@@ -1,0 +1,1247 @@
+<template>
+	<view>
+		<view class="msg-divider"></view>
+		<!-- 状态栏占位 -->
+		<view :style="{height: statusBarHeight + 'px'}" style="position: fixed;top: 0;width: 100%;"></view>
+		<!-- 顶部主tab -->
+		<view :style="{top: statusBarHeight + 'px'}"
+			style="position: fixed;width: 100%;height: 44px;background-color: #fff;z-index: 9999;display: flex;align-items: center;justify-content: center;">
+			<u-tabs @click='changetabs' :current="actTab" :list="tabsList" lineWidth="40" lineColor="#3d8af5"
+				:activeStyle="{
+          color: '#16160e',
+          fontSize: '35rpx',
+          transform: 'scale(1.05)'
+        }" :inactiveStyle="{
+          color: '#606266',
+          fontSize: '32rpx',
+          transform: 'scale(1)'
+        }" itemStyle="padding-left: 20px; padding-right: 20px; height: 42px;">
+			</u-tabs>
+			<view style="position: absolute;right: 30rpx;">
+				<u-icon @click="goToSearch" name="search" color="#16160e" size="24"></u-icon>
+			</view>
+		</view>
+		<view :style="{height: statusBarHeight+40+ 'px'}" style="width: 100%;background-color:antiquewhite;"></view>
+
+		<!-- 主swiper：支持左右滑动切换 -->
+		<swiper :current="actTab" @change="onMainSwiperChange" :style="{height: notesHeight + 'px', marginTop: '5px'}" :duration="300">
+			<!-- 关注页 -->
+			<swiper-item>
+				<follow-page :notes-height="notesHeight" :enablerefresh="enablerefresh"
+					@goToUser="goToUser"
+					@goToDetail="goToDetail"></follow-page>
+			</swiper-item>
+
+			<!-- 发现页 -->
+			<swiper-item>
+				<discover-page :notes-height="notesHeight" :enablerefresh="enablerefresh"
+					@goToDetail="goToDetail" @goToUser="goToUser"></discover-page>
+			</swiper-item>
+
+			<!-- 附近页 -->
+			<swiper-item>
+				<nearby-page :notes-height="notesHeight" :enablerefresh="enablerefresh"
+					:loading-text="loadingText" :loadmore-text="loadmoreText" :nomore-text="nomoreText"
+					@cityNameChange="handleCityNameChange" @goToDetail="goToDetail"
+					@goToUser="goToUser"></nearby-page>
+			</swiper-item>
+		</swiper>
+        <custom-tabbar ref="tabbar" :current="0" @update:current="updateCurrentTab"></custom-tabbar>
+	</view>
+</template>
+
+<script>
+	// import CustomTabbar from '@/components/custom-tabbar/CustomTabBar.vue'
+	import FollowPage from './FollowPage.vue'
+	import DiscoverPage from './DiscoverPage.vue'
+	import NearbyPage from './NearbyPage.vue'
+	
+	export default {
+		// components: {
+		// 	CustomTabbar
+		// },
+		components: {
+			FollowPage,
+			DiscoverPage,
+			NearbyPage
+		},
+		data() {
+			return {
+				statusBarHeight: 0,
+				notesHeight: 0,
+				actTab: 1,
+				cityName: '附近',
+				tabsList: [{
+					name: '关注',
+				}, {
+					name: '发现',
+				}, {
+					name: '附近',
+				}],
+				loadingText: '加载中...',
+				loadmoreText: '加载更多',
+				nomoreText: '到底了',
+				enablerefresh: true,
+			}
+		},
+		computed: {
+			// 地址缩短显示方法
+			shortenLocation() {
+				return (location) => {
+					if (!location) return '';
+					if (location.length <= 8) return location;
+					return location.substring(0, 8) + '...';
+				}
+			}
+		},
+		methods: {
+			// 反查城市并替换"附近"标签
+			updateNearbyTabTitleByReverseGeocode(lat, lng) {
+				if (!lat || !lng) return;
+				// 使用腾讯地图/H5内置反地理或你已有的后端接口。这里先尝试 uni.reverseGeocoder（App/H5 支持），失败则忽略。
+				// #ifdef APP-PLUS
+				try {
+					uni.reverseGeocoder({
+						location: { latitude: lat, longitude: lng },
+						success: (res) => {
+							const city = res?.result?.addressComponent?.city || res?.result?.addressComponent?.province
+							if (city) {
+								// 确保触发响应式更新
+								this.$set(this.tabsList, 2, { ...this.tabsList[2], name: city })
+							}
+						}
+					})
+				} catch(e) {}
+				// #endif
+				// #ifndef APP-PLUS
+				// H5/小程序如无内置反地理，可接入你方后端反地理接口，此处占位：
+				// this.fetchCityByServer(lat, lng).then(city => { if (city) this.$set(this.tabsList, 2, { ...this.tabsList[2], name: city }) })
+				// #endif
+			},
+			updateCurrentTab(index) {
+				console.log('切换到 tab:', index);
+			},
+			goToSearch() {
+				uni.navigateTo({
+					url: '/pkg-search/pages/searchPage/searchPage'
+				})
+			},
+			goToUser(id) {
+				uni.navigateTo({
+					url: '/pkg-mine/pages/mine/otherMine?userId=' + id
+				})
+			},
+			goToDetail(id, type) {
+				console.log(type)
+				if (type == 1) {
+					// 图文
+					uni.navigateTo({
+						url: '/pkg-detail/pages/notesDetail/notesDetail?notesId=' + id
+					})
+				} else if (type == 2) {
+					// 视频
+					console.log('视频')
+					uni.navigateTo({
+						url: '/pkg-detail/pages/notesDetail/noteVideoD?notesId=' + id
+					})
+				}
+			},
+			changetabs(e) {
+				let index = e.index;
+				if (this.actTab === index) return; // 避免重复切换
+				this.actTab = index;
+			},
+			onMainSwiperChange(e) {
+				const index = e.detail.current;
+				if (this.actTab === index) return;
+				this.actTab = index;
+			},
+			handleCityNameChange(cityName) {
+				if (cityName) {
+					this.$set(this.tabsList, 2, { ...this.tabsList[2], name: cityName });
+				}
+			},
+			async getImageHeight(url) {
+				// 先检查缓存
+				const cachedImage = ImageCacheUtil.getCachedImage(url);
+				if (cachedImage) {
+					return cachedImage;
+				}
+				// 如果没有缓存，则加载图片
+				return new Promise((resolve) => {
+					uni.getImageInfo({
+						src: url,
+						success: (res) => {
+							const imageInfo = {
+								height: pxToRpx(res.height),
+								path: res.path
+							};
+							// 存入缓存
+							ImageCacheUtil.cacheImage(url, imageInfo);
+							resolve(imageInfo);
+						},
+						fail: () => {
+							// 加载失败时的默认值
+							const defaultInfo = {
+								height: 200,
+								path: url
+							};
+							resolve(defaultInfo);
+						}
+					});
+				});
+			},
+			praiseNotes(id, targetUserId, type, index) {
+				console.log(type)
+				let i = this.actTab;
+				praiseOrCancelNotes({
+					notesId: id,
+					userId: uni.getStorageSync('userInfo').id,
+					targetUserId: targetUserId
+				}).then(res => {
+					console.log(res)
+					if (res.code == 200) {
+						if (type === 1) {
+							console.log(this.notesList[i].leftList[index])
+							if (this.notesList[i].leftList[index].isLike) {
+								this.notesList[i].leftList[index].notesLikeNum = this.notesList[i].leftList[index]
+									.notesLikeNum - 1
+								this.notesList[i].leftList[index].isLike = false
+							} else {
+								this.notesList[i].leftList[index].notesLikeNum = this.notesList[i].leftList[index]
+									.notesLikeNum + 1
+								this.notesList[i].leftList[index].isLike = true
+							}
+						} else {
+							if (this.notesList[i].rightList[index].isLike) {
+								this.notesList[i].rightList[index].notesLikeNum = this.notesList[i].rightList[
+									index].notesLikeNum - 1
+								this.notesList[i].rightList[index].isLike = false
+							} else {
+								this.notesList[i].rightList[index].notesLikeNum = this.notesList[i].rightList[
+									index].notesLikeNum + 1
+								this.notesList[i].rightList[index].isLike = true
+							}
+						}
+					}
+				})
+			},
+			praiseUserNotes(id, targetUserId, index) {
+				let i = this.actTab;
+				praiseOrCancelNotes({
+					notesId: id,
+					userId: uni.getStorageSync('userInfo').id,
+					targetUserId: targetUserId
+				}).then(res => {
+					console.log(res)
+					if (res.code == 200) {
+						if (this.notesList[i].notesList[index].isLike) {
+							this.notesList[i].notesList[index].notesLikeNum = this.notesList[i].notesList[index]
+								.notesLikeNum - 1
+							this.notesList[i].notesList[index].isLike = false
+						} else {
+							this.notesList[i].notesList[index].notesLikeNum = this.notesList[i].notesList[index]
+								.notesLikeNum + 1
+							this.notesList[i].notesList[index].isLike = true
+						}
+					}
+				})
+			},
+			collectNotes(id, targetUserId, index) {
+				let i = this.actTab;
+				collectOrCancelNotes({
+					notesId: id,
+					userId: uni.getStorageSync('userInfo').id,
+					targetUserId: targetUserId
+				}).then(res => {
+					console.log(res)
+					if (res.code == 200) {
+						if (this.notesList[i].notesList[index].isCollect) {
+							this.notesList[i].notesList[index].notesCollectNum = this.notesList[i].notesList[index]
+								.notesCollectNum - 1
+							this.notesList[i].notesList[index].isCollect = false
+						} else {
+							this.notesList[i].notesList[index].notesCollectNum = this.notesList[i].notesList[index]
+								.notesCollectNum + 1
+							this.notesList[i].notesList[index].isCollect = true
+						}
+					}
+				})
+			},
+			// 处理swiper滑动改变
+			onFindSwiperChange(e) {
+				const current = e.detail.current;
+				this.typeTabIndex = current;
+				this.notesList[1].status = 'loading';
+				// 如果是推荐分类
+				if (current === 0) {
+					this.getMoreNotes(1);
+				} else {
+					this.refreshFindNotes();
+				}
+			},
+			fetchFindList() {
+				getFindList().then(res => {
+					if (res.code === 200) {
+						let list = res.data.map(item => ({
+							name: item.title,
+							id: item.id,
+							pid: item.pid,
+						}));
+						// 推荐始终在第一个
+						list.unshift({
+							name: '推荐',
+							cid: '',
+							cpid: '',
+							type: 1
+						});
+						this.findList = list;
+					}
+				});
+			},
+			async refreshFindNotes() {
+				// 如果是推荐分类，不执行此方法
+				if (this.typeTabIndex === 0) return;
+				const curCategory = this.findList[this.typeTabIndex];
+				
+				// 🔧 修复：刷新时先清空数据，确保显示最新数据
+				this.notesList[1].leftList = [];
+				this.notesList[1].rightList = [];
+				this.notesList[1].notesList = [];
+				
+				try {
+					// 🔧 修复：添加时间戳参数，确保不使用缓存
+					const res = await getNotesByCategoryId({
+						page: 1,
+						pageSize: this.notesList[1].pageSize,
+						cpid: curCategory.id,
+						keyword: '',
+						_t: Date.now() // 添加时间戳，防止HTTP缓存
+					});
+					console.log('🔄 刷新发现分类，调用API，返回记录数:', res?.data?.records?.length || 0);
+					if (res.code == 200) {
+						this.notesList[1].leftList = [];
+						this.notesList[1].rightList = [];
+						this.notesList[1].leftHeight = 0;
+						this.notesList[1].rightHeight = 0;
+						let records = res.data.records.map(this.mapNoteItem);
+						if (!records.length) {
+							this.notesList[1].leftList = [];
+							this.notesList[1].rightList = [];
+							this.notesList[1].notesList = [];
+							this.notesList[1].page = 2;
+							this.notesList[1].status = 'nomore';
+							return;
+						}
+						
+						// 🔧 新增：刷新时对数据进行随机打乱，提供更好的用户体验
+						const shuffledRecords = [...records];
+						for (let i = shuffledRecords.length - 1; i > 0; i--) {
+							const j = Math.floor(Math.random() * (i + 1));
+							[shuffledRecords[i], shuffledRecords[j]] = [shuffledRecords[j], shuffledRecords[i]];
+						}
+						records = shuffledRecords;
+						console.log('🎲 发现页刷新时随机打乱数据顺序，提供更好的用户体验');
+						
+						await this.assignToWaterfall(records, 1);
+						this.notesList[1].notesList = records;
+						this.notesList[1].page = 2;
+						this.notesList[1].status = records.length < this.notesList[1].pageSize ? 'nomore' : 'loadmore';
+						
+						// 保存到缓存
+						this.setCategoryCache(`category_${this.typeTabIndex}`, {
+							leftList: this.notesList[1].leftList,
+							rightList: this.notesList[1].rightList,
+							leftHeight: this.notesList[1].leftHeight,
+							rightHeight: this.notesList[1].rightHeight
+						});
+					} else {
+						this.notesList[1].status = 'nomore';
+					}
+				} catch (err) {
+					this.notesList[1].status = 'nomore';
+					uni.showToast({
+						title: '加载失败',
+						icon: 'none',
+						duration: 1000
+					});
+				}
+			},
+			goToDetail(id, type) {
+				console.log(type)
+				if (type == 1) {
+					// 图文
+					uni.navigateTo({
+						url: '/pkg-detail/pages/notesDetail/notesDetail?notesId=' + id
+					})
+				} else if (type == 2) {
+					// 视频
+					console.log('视频')
+					uni.navigateTo({
+						url: '/pkg-detail/pages/notesDetail/noteVideoD?notesId=' + id
+					})
+				}
+			},
+			animationFinish(e) {
+				this.enablerefresh = true;
+			},
+			transition(e) {
+				if (e.target.dx == 0) {
+					this.enablerefresh = true;
+				} else {
+					this.enablerefresh = false;
+				}
+			},
+			async loadMoreFindNotes() {
+				if (this.notesList[1].status == 'nomore' || this.notesList[1].status == 'loading') {
+					return;
+				}
+				this.notesList[1].status = 'loading';
+				const curCategory = this.findList[this.typeTabIndex];
+
+				try {
+					const res = await getNotesByCategoryId({
+						page: this.notesList[1].page,
+						pageSize: this.notesList[1].pageSize,
+						cpid: curCategory.id,
+						keyword: ''
+					});
+
+					if (res.code == 200) {
+						// 使用mapNoteItem处理数据
+						const mappedRecords = res.data.records.map(this.mapNoteItem);
+						// 使用assignToWaterfall处理瀑布流
+						await this.assignToWaterfall(mappedRecords, 1);
+
+						this.notesList[1].page += 1;
+						this.notesList[1].status = res.data.records.length < this.notesList[1].pageSize ?
+							'nomore' : 'loadmore';
+					} else {
+						this.notesList[1].status = 'nomore';
+					}
+				} catch (error) {
+					console.error('加载数据失败:', error);
+					this.notesList[1].status = 'nomore';
+					uni.showToast({
+						title: '加载失败，请重试',
+						icon: 'none',
+						duration: 1000
+					});
+				}
+			},
+			async assignToWaterfall(items, index) {
+				const processedItems = await Promise.all(
+					items.map(async (item) => {
+						const imageInfo = await this.getImageHeight(item.coverPicture);
+						return {
+							...item,
+							coverPicture: imageInfo.path,
+							_imgHeight: imageInfo.height
+						};
+					})
+				);
+				processedItems.forEach(item => {
+					if (this.notesList[index].leftHeight <= this.notesList[index].rightHeight) {
+						this.notesList[index].leftList.push(item);
+						this.notesList[index].leftHeight += (item._imgHeight + pxToRpx(50));
+					} else {
+						this.notesList[index].rightList.push(item);
+						this.notesList[index].rightHeight += (item._imgHeight + pxToRpx(50));
+					}
+				});
+
+				return processedItems;
+			},
+			getApiConfig(index) {
+				const configs = {
+					0: {
+						api: getAttentionUserNotes,
+						params: {
+							page: this.notesList[index].page,
+							pageSize: this.notesList[index].pageSize
+						}
+					},
+					1: {
+						api: getLastNotesByPage,
+						params: {
+							page: this.notesList[index].page,
+							pageSize: this.notesList[index].pageSize
+						}
+					},
+					2: {
+						api: searchNotesNearby,
+						params: {
+							pageParam: {
+								page: this.notesList[index].page,
+								pageSize: this.notesList[index].pageSize,
+								latitude: this.latitude,
+								longitude: this.longitude
+							}
+						}
+					}
+				};
+				return configs[index];
+			},
+			async getMoreNotes(index, isInitialLoad = false) {
+				if (this.notesList[index].status === 'nomore' ||
+					this.notesList[index].status === 'loading') {
+					return;
+				}
+
+				this.notesList[index].status = 'loading';
+
+				try {
+					const config = this.getApiConfig(index);
+					
+					// 首次加载使用更大的pageSize
+					if (isInitialLoad && this.notesList[index].page === 1) {
+						config.params.pageSize = this.notesList[index].initialLoadSize;
+					}
+					
+					const res = await config.api(config.params);
+
+					if (res.code === 200) {
+						// 处理数据
+						let mappedRecords = res.data.records.map(item => this.mapNoteItem(item));
+						
+						// 🔧 新增：首次加载时对数据进行随机打乱，提供更好的用户体验
+						// 注意：只在首次加载且列表为空时打乱，追加数据时保持原有顺序
+						const isFirstLoad = isInitialLoad && (!this.notesList[index].notesList || this.notesList[index].notesList.length === 0);
+						if (isFirstLoad) {
+							const shuffledRecords = [...mappedRecords];
+							for (let i = shuffledRecords.length - 1; i > 0; i--) {
+								const j = Math.floor(Math.random() * (i + 1));
+								[shuffledRecords[i], shuffledRecords[j]] = [shuffledRecords[j], shuffledRecords[i]];
+							}
+							mappedRecords = shuffledRecords;
+							console.log('🎲 发现页首次加载时随机打乱数据顺序，提供更好的用户体验');
+						}
+						
+						const processedItems = await this.assignToWaterfall(mappedRecords, index);
+
+						// 更新列表数据
+						this.notesList[index].notesList = [
+							...this.notesList[index].notesList,
+							...processedItems
+						];
+
+						// 更新页码和状态
+						this.notesList[index].page += 1;
+						
+						// 首次加载后，重置pageSize为正常值
+						if (isInitialLoad && this.notesList[index].page === 2) {
+							config.params.pageSize = this.notesList[index].pageSize;
+						}
+						
+						this.notesList[index].status =
+							res.data.records.length < (isInitialLoad ? this.notesList[index].initialLoadSize : this.notesList[index].pageSize) ?
+							'nomore' : 'loadmore';
+					} else {
+						this.notesList[index].status = 'nomore';
+						if (index === 2) {
+							uni.showToast({
+								title: res.msg,
+								icon: 'none',
+								duration: 1000
+							});
+						}
+					}
+				} catch (error) {
+					console.error('加载数据失败:', error);
+					this.notesList[index].status = 'nomore';
+					uni.showToast({
+						title: '加载失败，请重试',
+						icon: 'none',
+						duration: 1000
+					});
+				}
+			},
+			// 字段映射
+			mapNoteItem(item) {
+				return {
+					...item,
+					coverPicture: item.noteCover,
+					avatarUrl: item.avatar,
+					nickname: item.username,
+					notesLikeNum: parseInt(item.likeCount, 10) || 0,
+					commentCount: parseInt(item.commentCount, 10) || 0,
+					notesCollectNum: parseInt(item.collectCount, 10) || 0,
+					isLike: item.isLike || false,
+					isCollect: item.isCollect || false,
+					notesType: parseInt(item.noteType, 10) || 0,
+					content: item.content || '',
+					title: item.title,
+					updateTime: item.time ? weChatTimeFormat(item.time) : '',
+					createTime: item.time ? weChatTimeFormat(item.time) : '',
+					belongUserId: item.uid,
+					noteCoverHeight: parseInt(item.noteCoverHeight, 10) || 0,
+					views: parseInt(item.viewCount, 10) || 0,
+					// 兼容后端不同字段：视频地址
+					videoUrl: item.videoUrl || item.video || item.videoPath || '',
+					// 图片数组兜底，后端可能返回 imgUrls 或 images 或 imgList
+					imgList: item.imgUrls || item.images || item.imgList || (item.noteCover ? [item.noteCover] : []),
+					location: item.location
+				}
+			},
+			// 获取关注用户列表（顶部用户列表）
+			async getFollowUsersList() {
+				try {
+					console.log('🔄 开始调用getFollowUser接口...');
+					// 🔧 修复：添加时间戳参数，禁用缓存，确保下拉刷新时获取最新数据
+					const res = await getFollowUser({
+						_t: Date.now()
+					});
+					console.log('📥 getFollowUser接口响应:', res);
+					if (res.code === 200 && res.data) {
+						console.log('✅ 关注用户列表API响应:', res);
+						// 直接使用后端返回的去重数据，映射字段名
+						this.followUsersList = res.data.map(user => ({
+							userId: user.uid,
+							nickname: user.username || '用户',
+							avatarUrl: user.avatar,
+							hasNewContent: user.tag === true, // 使用后端返回的tag字段控制红点显示
+							hasContent: user.hasContent === true // 使用后端返回的hasContent字段判断是否有内容
+						}));
+						console.log('✅ 关注用户列表加载成功:', this.followUsersList.length);
+					} else {
+						console.log('⚠️ API响应异常:', res);
+						this.followUsersList = [];
+					}
+				} catch (error) {
+					console.error('❌ 获取关注用户列表失败:', error);
+					this.followUsersList = [];
+				}
+			},
+			// 🔧 修复：处理关注状态变化事件，刷新用户列表
+			async handleAttentionListUpdate() {
+				console.log('🔄 监听到关注状态变化，刷新关注用户列表');
+				// 如果当前在关注页，刷新关注用户列表
+				if (this.actTab === 0) {
+					await this.getFollowUsersList();
+				}
+			},
+			async refreshList(index) {
+				if (this.notesList[index].status == 'nomore' || this.notesList[index].status == 'loading')
+					return;
+				this.notesList[index].status = 'loading';
+
+				// 🔧 修复：刷新时先清空数据，确保显示最新数据
+				this.notesList[index].leftList = [];
+				this.notesList[index].rightList = [];
+				this.notesList[index].notesList = [];
+
+				let api, params;
+				if (index == 0) {
+					api = getAttentionUserNotes;
+					params = {
+						page: 1,
+						pageSize: this.notesList[index].pageSize,
+						_t: Date.now() // 添加时间戳，防止HTTP缓存
+					};
+				} else if (index == 1) {
+					api = getLastNotesByPage;
+					params = {
+						page: 1,
+						pageSize: this.notesList[index].pageSize,
+						_t: Date.now() // 添加时间戳，防止HTTP缓存
+					};
+				} else if (index == 2) {
+					api = searchNotesNearby;
+					params = {
+						pageParam: {
+							page: 1,
+							pageSize: this.notesList[index].pageSize,
+							latitude: this.latitude,
+							longitude: this.longitude,
+							_t: Date.now() // 添加时间戳，防止HTTP缓存
+						}
+					};
+				}
+				try {
+					console.log('🔄 刷新列表，调用API:', api.name || 'unknown', '参数:', params);
+					const res = await api(params);
+					console.log('✅ API返回数据，记录数:', res?.data?.records?.length || 0);
+					if (res.code == 200) {
+						// let records = res.data.records.map(this.mapNoteItem);
+						const records = res.data.records.map(this.mapNoteItem)
+						// 如果没有数据，直接设置状态并返回
+						if (!records.length) {
+							this.notesList[index].leftList = [];
+							this.notesList[index].rightList = [];
+							this.notesList[index].notesList = [];
+							this.notesList[index].page = 2;
+							this.notesList[index].status = 'nomore';
+							return;
+						}
+						await this.assignToWaterfall(records, index);
+						this.notesList[index].notesList = records;
+						this.notesList[index].page = 2;
+						this.notesList[index].status = records.length < this.notesList[index].pageSize ?
+							'nomore' :
+							'loadmore';
+					} else {
+						this.notesList[index].status = 'nomore';
+					}
+				} catch (err) {
+					this.notesList[index].status = 'nomore';
+					uni.showToast({
+						title: '加载失败',
+						icon: 'none',
+						duration: 1000
+					});
+				}
+			},
+			changetabs(e) {
+				let index = e.index;
+				if (this.actTab === index) return; // 避免重复切换
+				
+				this.actTab = index;
+				
+				// 优化：使用防抖避免快速切换
+				if (this.tabSwitchTimer) {
+					clearTimeout(this.tabSwitchTimer);
+				}
+				
+				this.tabSwitchTimer = setTimeout(() => {
+					this.handleTabSwitch(index);
+				}, 100);
+			},
+			
+			// 新增：处理标签切换逻辑
+			handleTabSwitch(index) {
+				// 判断数据是否已加载，没有就加载
+				const hasData = this.notesList[index].leftList.length > 0 || 
+								this.notesList[index].rightList.length > 0 ||
+								this.notesList[index].notesList.length > 0;
+				
+				if (!hasData) {
+					this.notesList[index].status = 'loadmore';
+					this.notesList[index].page = 1;
+					this.refreshList(index);
+				}
+				
+				// 只在需要时获取位置信息，同时反查城市名以替换“附近”标签
+				if (index === 2 && (this.latitude === 0 || this.longitude === 0)) {
+					uni.getLocation({
+						type: 'gcj02',
+						success: (res) => {
+							this.latitude = res.latitude;
+							this.longitude = res.longitude;
+							this.updateNearbyTabTitleByReverseGeocode(res.latitude, res.longitude);
+							if (!hasData) {
+								this.notesList[index].status = 'loadmore';
+								this.notesList[index].page = 1;
+								this.refreshList(index);
+							}
+						},
+						fail: (err) => {
+							console.log('定位失败，使用默认经纬度', err);
+							this.latitude = 39.908823; // 默认纬度
+							this.longitude = 116.39747; // 默认经度
+							if (!hasData) {
+								this.notesList[index].status = 'loadmore';
+								this.notesList[index].page = 1;
+								this.refreshList(index);
+							}
+						}
+					});
+				} else if (index === 2) {
+					// 已有坐标则直接更新一次标题
+					this.updateNearbyTabTitleByReverseGeocode(this.latitude, this.longitude);
+				}
+			},
+			async onRefresh() {
+				if (this.refreshing) return;
+				this.refreshing = true;
+				let index = this.actTab;
+
+				// 🔧 修复：下拉刷新时清除缓存，确保获取最新数据
+				if (index === 1) {
+					// 发现tab下的分类缓存
+					const categoryKey = `category_${this.typeTabIndex}`;
+					if (this.categoryCache && this.categoryCache[categoryKey]) {
+						delete this.categoryCache[categoryKey];
+						console.log('🗑️ 下拉刷新：清除分类缓存', categoryKey);
+					}
+					// 同时清除该分类的所有分页缓存
+					Object.keys(this.categoryCache || {}).forEach(key => {
+						if (key.startsWith(`${categoryKey}_page_`)) {
+							delete this.categoryCache[key];
+							console.log('🗑️ 下拉刷新：清除分页缓存', key);
+						}
+					});
+				}
+
+				// 🔧 修复：重置分页参数，但不设置loading状态（避免refreshList提前返回）
+				this.notesList[index].page = 1;
+
+				// 如果需要定位
+				await new Promise((resolve) => {
+					uni.getLocation({
+						type: 'gcj02',
+						success: (res) => {
+							this.latitude = res.latitude;
+							this.longitude = res.longitude;
+							resolve();
+						},
+						fail: (err) => {
+							this.latitude = 39.908823;
+							this.longitude = 116.39747;
+							resolve();
+						}
+					});
+				});
+				try {
+					// 🔧 修复：关注页下拉刷新时，先更新顶部用户列表，再更新笔记列表
+					if (index === 0) {
+						// 关注页：先重置状态，确保refreshList不会提前返回
+						this.notesList[index].status = 'loadmore';
+						// 关注页：先更新顶部用户列表，再更新笔记列表（顺序执行，确保两个都被调用）
+						console.log('🔄 关注页下拉刷新：开始调用getFollowUsersList');
+						try {
+							await this.getFollowUsersList();
+							console.log('✅ 关注页下拉刷新：getFollowUsersList完成');
+						} catch (error) {
+							console.error('❌ getFollowUsersList调用失败:', error);
+						}
+						console.log('🔄 关注页下拉刷新：开始调用refreshList');
+						await this.refreshList(index);
+						console.log('✅ 关注页下拉刷新：refreshList完成');
+					} else if (index === 1) {
+						// 发现tab下的二级分类特殊处理
+						if (this.typeTabIndex === 0) {
+							// 推荐
+							await this.refreshList(1);
+						} else {
+							// 其他分类
+							await this.refreshFindNotes();
+						}
+					} else {
+						// 附近页
+						await this.refreshList(index);
+					}
+				} catch (e) {
+					console.error('下拉刷新失败:', e);
+					// 如果刷新失败，恢复状态
+					this.notesList[index].status = 'loadmore';
+				} finally {
+					this.refreshing = false;
+				}
+			},
+			swipeIndex(e) {
+				let index = e.detail.current;
+				this.actTab = index;
+				if (this.latitude == 0 || this.longitude == 0) {
+					uni.getLocation({
+						type: 'gcj02',
+						success: (res) => {
+							this.latitude = res.latitude;
+							this.longitude = res.longitude;
+							if (this.notesList[index].leftList.length == 0) {
+								this.refreshList(index);
+							}
+						},
+						fail: (err) => {
+							console.log(err);
+							console.log('定位失败，使用默认经纬度', err);
+							this.latitude = 39.908823; // 默认纬度
+							this.longitude = 116.39747; // 默认经度
+							this.refreshList(index);
+							// uni.showToast({
+							// 	title: '获取位置失败',
+							// 	icon: 'none'
+							// })
+						}
+					})
+				} else {
+					if (this.notesList[index].leftList.length == 0) {
+						this.refreshList(index);
+					}
+				}
+			},
+			typeTabChange(e) {
+				this.typeTabIndex = e.detail.current;
+			},
+			changeType(e) {
+				const newIndex = e.index;
+				if (this.typeTabIndex === newIndex) return; // 避免重复切换
+				
+				this.typeTabIndex = newIndex;
+				
+				// 优化：使用防抖避免快速切换
+				if (this.typeSwitchTimer) {
+					clearTimeout(this.typeSwitchTimer);
+				}
+				
+				this.typeSwitchTimer = setTimeout(() => {
+					this.handleTypeSwitch(newIndex);
+				}, 150);
+			},
+			
+			// 新增：处理分类切换逻辑
+			handleTypeSwitch(newIndex) {
+				// 检查是否已有缓存数据
+				const cacheKey = `category_${newIndex}`;
+				const cachedData = this.getCategoryCache(cacheKey);
+				
+				if (cachedData) {
+					// 使用缓存数据
+					this.notesList[1].leftList = cachedData.leftList || [];
+					this.notesList[1].rightList = cachedData.rightList || [];
+					this.notesList[1].leftHeight = cachedData.leftHeight || 0;
+					this.notesList[1].rightHeight = cachedData.rightHeight || 0;
+					this.notesList[1].status = 'loadmore';
+					return;
+				}
+				
+				// 没有缓存，需要加载数据
+				this.notesList[1].status = 'loading';
+				
+				// 如果是推荐分类
+				if (newIndex === 0) {
+					this.getMoreNotes(this.actTab, true);
+				} else {
+					this.refreshFindNotes();
+				}
+			},
+			
+			// 新增：分类数据缓存管理
+			setCategoryCache(key, data) {
+				if (!this.categoryCache) {
+					this.categoryCache = {};
+				}
+				this.categoryCache[key] = {
+					...data,
+					timestamp: Date.now()
+				};
+			},
+			
+			getCategoryCache(key) {
+				if (!this.categoryCache) return null;
+				
+				const cached = this.categoryCache[key];
+				if (!cached) return null;
+				
+				// 检查缓存是否过期（5分钟）
+				const isExpired = Date.now() - cached.timestamp > 5 * 60 * 1000;
+				if (isExpired) {
+					delete this.categoryCache[key];
+					return null;
+				}
+				
+				return cached;
+			},
+			// 添加防抖函数
+			debounce(fn, delay = 200) {
+				let timer = null;
+				return function(...args) {
+					if (timer) clearTimeout(timer);
+					timer = setTimeout(() => {
+						fn.apply(this, args);
+					}, delay);
+				}
+			},
+			// 基础的 onReach 处理函数
+			handleReach() {
+				console.log('onReach');
+				if (this.actTab === 1) {
+					// 发现页
+					if (this.typeTabIndex === 0) {
+						// 推荐
+						this.getMoreNotes(1);
+					} else {
+						this.loadMoreFindNotes();
+					}
+				} else {
+					this.getMoreNotes(this.actTab);
+				}
+			},
+		},
+		created() {
+			// 在 created 生命周期中创建防抖版本的 onReach
+			this.onReach = this.debounce(this.handleReach, 200);
+		},
+		onLoad() {
+			uni.getSystemInfo({
+				success: (res) => {
+					console.log(res);
+					this.statusBarHeight = res.statusBarHeight;
+					this.notesHeight = res.windowHeight - this.statusBarHeight - 40;
+					console.log(this.statusBarHeight);
+				}
+			})
+			// 首次加载使用优化策略
+			this.getMoreNotes(this.actTab, true);
+			this.fetchFindList();
+			// 🔧 修复：首次加载时获取关注用户列表（顶部用户列表）
+			if (this.actTab === 0) {
+				this.getFollowUsersList();
+			}
+			// 接收全局徽标更新事件
+			uni.$on('im:setTabBadge', (count) => {
+				const tabbar = this.$refs.tabbar
+				if (tabbar && tabbar.setMessageBadge) tabbar.setMessageBadge(count)
+			})
+			// 🔧 修复：监听关注状态变化事件，当取消关注后刷新用户列表
+			uni.$on('updateAttentionList', this.handleAttentionListUpdate);
+			// 首次进入时读取本地缓存的未读数，避免空白
+			try {
+				const cached = uni.getStorageSync('im_total_unread') || 0
+				const tabbar = this.$refs.tabbar
+				if (tabbar && tabbar.setMessageBadge) tabbar.setMessageBadge(cached)
+			} catch(e) {}
+		},
+		
+		onUnload() {
+			// 清理定时器
+			if (this.tabSwitchTimer) {
+				clearTimeout(this.tabSwitchTimer);
+			}
+			if (this.typeSwitchTimer) {
+				clearTimeout(this.typeSwitchTimer);
+			}
+			// 🔧 修复：移除事件监听
+			uni.$off('updateAttentionList', this.handleAttentionListUpdate);
+		},
+	};
+</script>
+<style lang="scss">
+	.msg-divider {
+		width: 100%;
+		height: 1rpx;
+		background: #eaeaea;
+	}
+
+	.follow-card {
+		background: #fff;
+		// border-radius: 20rpx;
+		// margin: 24rpx 20rpx 0 20rpx;
+		padding: 20rpx 20rpx 20rpx 20rpx;
+		margin-bottom: 10rpx;
+		box-shadow: 0 4rpx 16rpx 0 rgba(0, 0, 0, 0.04);
+		position: relative;
+	}
+
+	.follow-user {
+		display: flex;
+		align-items: center;
+		margin-bottom: 12rpx;
+
+		.avatar {
+			width: 60rpx;
+			height: 60rpx;
+			border-radius: 50%;
+			margin-right: 16rpx;
+		}
+
+		.nickname {
+			font-size: 30rpx;
+			color: #222;
+			font-weight: 500;
+			margin-right: auto;
+		}
+
+		.more-btn {
+			margin-left: auto;
+			color: #bbb;
+		}
+	}
+
+	.follow-content {
+		font-size: 30rpx;
+		color: #222;
+		margin-bottom: 12rpx;
+		line-height: 1.5;
+	}
+
+	.follow-bottom-bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 4rpx;
+
+		.follow-location {
+			display: flex;
+			align-items: center;
+			font-size: 22rpx;
+			color: #888;
+			max-width: 200rpx; // 限制整体最大宽度，防止撑满
+			background-color: rgb(245, 246, 247);
+			border-radius: 15px;
+			padding: 5rpx 10rpx;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+
+			u-icon {
+				margin-right: 6rpx;
+				flex-shrink: 0;
+			}
+
+			text {
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				display: inline-block;
+				max-width: 90vw;
+				vertical-align: middle;
+			}
+		}
+	}
+
+	.follow-action {
+		display: flex;
+		align-items: center;
+		font-size: 26rpx;
+		color: #888;
+
+		u-icon {
+			margin-right: 6rpx;
+		}
+	}
+
+	.follow-video {
+		position: relative;
+		width: 70%;
+		height: 350rpx;
+		border-radius: 16rpx;
+		margin-bottom: 12rpx;
+		overflow: hidden;
+		background-color: #000;
+
+		.video-player {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.video-play-overlay {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 2;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.1);
+		}
+	}
+
+	.follow-single-img image {
+		width: 70%;
+		height: 350rpx;
+		border-radius: 16rpx;
+		margin-bottom: 12rpx;
+	}
+
+	.follow-multi-img {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8rpx;
+		margin-bottom: 12rpx;
+
+		image {
+			height: 32%;
+			width: 32%;
+			aspect-ratio: 1/1;
+			border-radius: 10rpx;
+		}
+	}
+
+	.water-left,
+	.water-right {
+		width: 48%;
+		margin: 20rpx auto;
+	}
+
+	.title {
+		font-size: 30rpx;
+		padding: 10rpx;
+		margin-left: 5px;
+		margin-bottom: -5px;
+		color: #000000;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		word-break: break-all;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-height: 1.4em;
+		max-height: 2.4em;
+	}
+
+	.note-username {
+		margin-left: 10rpx;
+		color: #16160e;
+		font-size: 24rpx;
+		line-height: 20px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: calc(100% - 70px);
+	}
+
+	.look-views {
+		display: flex;
+		position: absolute;
+		bottom: 135rpx;
+		left: 8rpx;
+		color: #ffffff;
+		background-color: rgba(123, 124, 125, 0.6);
+		// filter: brightness(65%);
+		padding: 3rpx 10rpx;
+		border-radius: 50rpx;
+		font-size: 22rpx;
+		max-width: 200rpx;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.video-play {
+		position: absolute;
+		top: 5rpx;
+		right: 10rpx;
+		// background-color: rgba(123, 124, 125, 0.6);
+		// filter: brightness(65%);
+		padding: 10rpx;
+		border-radius: 50%;
+	}
+	
+	.live-badge {
+		position: absolute;
+		top: 10rpx;
+		right: 10rpx;
+		// background-color: rgba(123, 124, 125, 0.6);
+		// filter: brightness(65%);
+		padding: 10rpx;
+		border-radius: 50%;
+	}
+
+	.water-left,
+	.water-right {
+		width: 50%;
+		margin: -8rpx auto;
+	}
+
+	.note-card {
+		background: #fff;
+		border-radius: 20rpx;
+		box-shadow: 0 4rpx 16rpx 0 rgba(0, 0, 0, 0.08);
+		margin-top: 5rpx;
+		margin-bottom: 10rpx;
+		margin-left: 8rpx;
+		margin-right: 8rpx;
+		overflow: hidden;
+		position: relative;
+		border: 1rpx solid #f0f0f0;
+	}
+
+	page,
+	.page-bg {
+		background: #f5f5f5;
+	}
+</style>
