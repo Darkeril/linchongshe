@@ -51,8 +51,9 @@ withDefaults(defineProps<Props>(), {
   &__content {
     width: 100%;
     min-height: 100vh;
-    // 底部预留 TabBar 高 120rpx + bottom 32rpx + 额外 32rpx 安全距 + safe-area
-    padding-bottom: calc(216rpx + env(safe-area-inset-bottom));
+    // Phase 4 修正：TabBar 是悬浮毛玻璃（fixed），内容区延伸到屏幕底部
+    // 最后一屏卡片能滚到 TabBar 后面再露出（视觉连续感，小红书/抖音模式）
+    // 页面自己的滚动容器末尾加空白占位保证最后一张卡不被 TabBar 永久遮挡
     box-sizing: border-box;
   }
 }

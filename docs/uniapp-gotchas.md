@@ -777,3 +777,119 @@ function onTabTap(id) {
 **首次发现**：Phase 3（worker 读 CLAUDE.md 规则 5/6 后要求"澄清我是主线程还是 sub-agent"）
 
 ---
+
+### 18. Vue3 reactive 数组索引赋值，子组件持有旧引用
+
+**场景**：父组件通过 `list[idx] = { ...old, ...changes }` 替换数组里的对象；子组件在更早时机保存了 `item` 引用（比如 WaterFall 的 `cards[i].note = items[i]`）。
+
+**现象**：父层数据改了，父组件自己的 `v-for` 渲染更新了，但**子组件持有的对象没跟着变** → UI 不更新。典型表现：点赞按钮点了，数据层 liked=true，但卡片视觉还是未点赞。
+
+**根因**：
+- Vue3 `reactive` 追踪"对象属性变化"和"数组方法调用"，但 **新对象替换旧对象后，持有旧对象引用的地方不会自动重新获取**
+- WaterFall 在 `layoutAll()` 时把 `props.items[i]` 存入 `cards[i].note`。parent 后续 `list[idx] = newObj`，`cards[i].note` 还是旧对象
+- `watch(() => props.items, ..., { deep: false })` 只监听"数组引用整体变"，索引赋值不算
+- deep: true 性能代价大（列表长时每次 mutation 全扫）
+
+**正确做法**（三选一，推荐 A）：
+
+A. **In-place mutation**（最简）：直接改对象属性，不换对象引用
+```typescript
+// ✅ 推荐
+const target = list[idx]
+const prevLiked = target.liked
+target.liked = !prevLiked
+target.likes += prevLiked ? -1 : 1
+// 失败回滚
+target.liked = prevLiked
+```
+
+B. **watch deep**（性能代价换简单）：WaterFall 的 watch 改 `{ deep: true }`，短列表可接受
+
+C. **整数组重赋值**：`feedState.list = [...list.slice(0, idx), newObj, ...list.slice(idx+1)]` —— 触发顶层 watch，但每次都要 O(n) 拷贝
+
+**反例**：
+```typescript
+// ❌ 父组件改引用，子组件持有旧引用不更新
+const old = list[idx]
+list[idx] = { ...old, liked: !old.liked }
+```
+
+**影响范围**：H5 / 小程序 / App（Vue3 reactive 通用问题）
+**首次发现**：Phase 4（WaterFall 乐观点赞不亮）
+
+---
+
+### 19. CSS `:active` 伪类冒泡到父，`@tap.stop` 无效
+
+**场景**：卡片 `<view class="card" @tap="onCardTap">`，内含"心形按钮" `<view class="like" @tap.stop="onLikeTap">`。心形按钮和卡片都带 `:active` 按压反馈。
+
+**现象**：点心形按钮时，整张卡片也触发 `:active` 效果（scale / opacity 变化），视觉错乱。用户期望只有心形本身有反馈。
+
+**根因**：
+- `@tap.stop` 只阻止 **JS 事件冒泡**（不触发父 `onCardTap` handler）
+- CSS `:active` 伪类是 **浏览器 / 渲染层的原生行为**，任何 pointer-down 到子元素，DOM 冒泡链上所有祖先都被打上 `:active` 状态
+- `e.stopPropagation()` 也阻止不了 CSS :active
+
+**正确做法**（推荐 A）：
+
+A. **取消父元素的 :active 样式**，只保留子按钮的反馈。父元素的"按压感"在点击触发跳转时已经通过路由切换/动画表达了
+```scss
+// ❌ 删掉这一段
+.card:active { transform: scale(0.98); }
+
+// ✅ 保留子按钮反馈
+.card__like:active { opacity: 0.65; }
+```
+
+B. 复杂场景：父元素 :active 改用 **JS 驱动的 class**（`pressed` 状态由父自己管），父的 handler 判断 target 不是按钮子元素再切换 class
+
+**反例**：
+```scss
+.card {
+  &:active { transform: scale(0.98); }  // 会被子按钮触发
+}
+.card__btn {
+  &:active { opacity: 0.5; }
+}
+```
+点 `.card__btn` 时两个 :active 一起触发，整卡一起缩。
+
+**影响范围**：H5 / 小程序 / App（CSS 规范统一行为）
+**首次发现**：Phase 4（NoteCard 心形点击时整卡缩放）
+
+---
+
+### 20. UniApp H5 端 `custom: true` 不等于隐藏原生 tabBar
+
+**场景**：`pages.json` 配置 `tabBar.custom: true` 启用自定义 tabBar 组件，期望系统不渲染原生底栏。
+
+**现象**：H5 端运行时，悬浮自定义 TabBar 下方**仍会出现一排"首页 / 市集 / 消息 / 我"文字**（DOM 里是 `<uni-tabbar>` 元素）。小程序端正常隐藏，只有 H5 泄漏。
+
+**根因**：
+- UniApp H5 的 custom tabBar 机制和小程序不完全等价
+- 即使 `custom: true`，H5 端仍会渲染 `<uni-tabbar>` DOM 节点用于路由能力（uni.switchTab 实现）
+- 官方文档没把 custom 对 H5 的具体行为讲清
+
+**正确做法**：全局 CSS 条件编译兜底隐藏
+```scss
+/* App.vue 或 global.scss */
+/* #ifdef H5 */
+uni-tabbar,
+uni-tabbar-bd {
+  display: none !important;
+}
+/* #endif */
+```
+
+pages.json 的 `tabBar.list` 仍然保留（`uni.switchTab` 需要它），视觉上通过 CSS 隐藏。
+
+**反例**：
+```json
+// ❌ 只配 custom:true，以为 H5 就自动不渲染
+"tabBar": { "custom": true, "list": [...] }
+```
+
+**影响范围**：H5（小程序 / App 不受影响，行为正常）
+**首次发现**：Phase 4 视觉验收
+
+---

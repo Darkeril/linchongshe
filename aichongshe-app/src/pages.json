@@ -67,6 +67,14 @@
         "navigationBarTextStyle": "black",
         "navigationBarTitleText": "手机号登录"
       }
+    },
+    {
+      "path": "pages/note-detail/note-detail",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "笔记详情"
+      }
     }
   ],
   "tabBar": {

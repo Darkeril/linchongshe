@@ -29,4 +29,17 @@ onHide(() => {
 
 /* uview-plus 全局样式 */
 @import 'uview-plus/index.scss';
+
+/*
+ * H5 端原生 tabBar 隐藏
+ * 设计稿 TabBar 是自定义悬浮毛玻璃（AppTabBar），pages.json 已配 custom:true，
+ * 但 UniApp H5 端仍可能渲染 uni-tabbar 系统组件（Phase 4 视觉验收发现）。
+ * 这里通过 CSS 兜底隐藏，防止出现"悬浮 TabBar 下面再贴一排系统原生 tabBar 文字"。
+ */
+/* #ifdef H5 */
+uni-tabbar,
+uni-tabbar-bd {
+  display: none !important;
+}
+/* #endif */
 </style>
