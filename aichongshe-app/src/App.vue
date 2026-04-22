@@ -16,6 +16,9 @@ onHide(() => {
 </script>
 
 <style lang="scss">
+/* 全局字体（Baloo 2 + ZCOOL KuaiLe，本地打包） */
+@import '@/styles/fonts.scss';
+
 /* uview-plus 全局样式 */
 @import 'uview-plus/index.scss';
 </style>

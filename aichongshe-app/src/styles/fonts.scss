@@ -1,0 +1,27 @@
+// ─────────────────────────────────────────────────────────────
+// 字体资源（本地打包，支持 H5 / App / 小程序四端）
+// ─────────────────────────────────────────────────────────────
+// 来源：Google Fonts —— Baloo 2 + ZCOOL KuaiLe
+// 说明：
+// - Baloo 2 Bold：覆盖拉丁字符（英文、数字），用于 brand / num 字体族
+// - ZCOOL KuaiLe（爱宠社子集）：仅覆盖 "爱宠社" 三个字，1.7KB，未来其他中文场景再扩展子集
+// - font-display: swap 保证加载期不空白，有 fallback 字体先渲染
+// ─────────────────────────────────────────────────────────────
+
+@font-face {
+  font-family: 'Baloo 2';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('@/static/fonts/Baloo2-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'ZCOOL KuaiLe';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('@/static/fonts/ZCOOLKuaiLe-aichongshe.ttf') format('truetype');
+  // TODO: 未来如果 brand 字体需要覆盖更多中文字符，可通过 Google Fonts
+  // `&text=<字符集>` API 按需追加子集
+}
