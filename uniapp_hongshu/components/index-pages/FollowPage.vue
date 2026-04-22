@@ -88,7 +88,7 @@
 						</view>
 						<view class="action-item">
 							<u-transition :show="!item.isLike" mode="fade" duration="200">
-								<u-icon v-if="!item.isLike" name="thumb-up" size="22" color="#333"
+								<u-icon v-if="!item.isLike" name="thumb-up" size="22" color="#231710"
 									@click="handlePraiseUserNotes(item.nid, item.belongUserId, index)"></u-icon>
 							</u-transition>
 							<u-transition :show="item.isLike" mode="fade" duration="200">
@@ -830,12 +830,12 @@
 	}
 
 	.follow-user-item.active .user-avatar {
-		border-color: #f56c6c;
+		border-color: #C97B4A;
 		border-width: 3rpx;
 	}
 
 	.follow-user-item.active .user-nickname {
-		color: #f56c6c;
+		color: #C97B4A;
 		font-weight: 600;
 	}
 
@@ -848,7 +848,7 @@
 		width: 90rpx;
 		height: 90rpx;
 		border-radius: 50%;
-		border: 2rpx solid #f0f0f0;
+		border: 2rpx solid rgba(80,50,30,0.1);
 	}
 
 	.notification-dot {
@@ -857,7 +857,7 @@
 		right: 5rpx;
 		width: 20rpx;
 		height: 20rpx;
-		background-color: #ff4757;
+		background-color: #D66A5E;
 		border-radius: 50%;
 		border: 2rpx solid #fff;
 	}
@@ -868,7 +868,7 @@
 		right: 0;
 		width: 24rpx;
 		height: 24rpx;
-		background-color: #f56c6c;
+		background-color: #C97B4A;
 		border-radius: 50%;
 		border: 2rpx solid #fff;
 		display: flex;
@@ -878,7 +878,7 @@
 
 	.user-nickname {
 		font-size: 20rpx;
-		color: #333;
+		color: #231710;
 		text-align: center;
 		max-width: 80rpx;
 		overflow: hidden;
@@ -917,31 +917,31 @@
 
 		.nickname {
 			font-size: 30rpx;
-			color: #222;
+			color: #231710;
 			font-weight: 500;
 		}
 
 		.follow-time {
 			font-size: 22rpx;
-			color: #999;
+			color: #8F7260;
 			margin-top: 4rpx;
 		}
 
 		.more-btn {
 			margin-left: auto;
-			color: #bbb;
+			color: #C4AC95;
 		}
 	}
 
 	.follow-content {
 		font-size: 30rpx;
-		color: #222;
+		color: #231710;
 		margin-bottom: 12rpx;
 		line-height: 1.5;
 		word-break: break-all;
 
 		.hashtag {
-			color: #1890ff;
+			color: #C97B4A;
 			font-size: 30rpx;
 			line-height: 1.5;
 		}
@@ -951,7 +951,7 @@
 		}
 
 		.expand-btn {
-			color: #1890ff;
+			color: #C97B4A;
 			font-size: 24rpx;
 			margin-left: 8rpx;
 			cursor: pointer;
@@ -969,9 +969,9 @@
 			display: flex;
 			align-items: center;
 			font-size: 22rpx;
-			color: #888;
+			color: #8F7260;
 			max-width: 200rpx; // 限制整体最大宽度，防止撑满
-			background-color: rgb(245, 246, 247);
+			background-color: #EADFCB;
 			border-radius: 15px;
 			padding: 5rpx 10rpx;
 			overflow: hidden;
@@ -999,7 +999,7 @@
 		align-items: center;
 		gap: 20rpx;
 		font-size: 26rpx;
-		color: #888;
+		color: #8F7260;
 	}
 
 	.action-item {
@@ -1081,14 +1081,14 @@
 
 	.empty-text {
 		font-size: 32rpx;
-		color: #666;
+		color: #8F7260;
 		margin-bottom: 20rpx;
 		font-weight: 500;
 	}
 
 	.empty-tip {
 		font-size: 24rpx;
-		color: #999;
+		color: #8F7260;
 		line-height: 1.5;
 	}
 </style>

@@ -11,31 +11,31 @@
 		<view class="msg-divider"></view>
 		<!-- 状态栏背景 - 白色（非微信端需要占位；微信端用系统栏，无需占位） -->
 		<!-- #ifndef MP-WEIXIN -->
-		<view :style="{height: statusBarHeight + 'px'}" style="position: fixed;top: 0;width: 100%;background-color: #ffffff;z-index: 10000;"></view>
+		<view :style="{height: statusBarHeight + 'px'}" style="position: fixed;top: 0;width: 100%;background-color: #F4EDE2;z-index: 10000;"></view>
 		<!-- #endif -->
-		<!-- 顶部主tab（微信端紧贴系统「爱宠社」栏，非微信端在状态栏下方） -->
+		<!-- 顶部 Tab + 搜索 (design: padding 6px 16px 10px, flex, gap 12) -->
 		<view :style="{ top: navBarTop }"
-			style="position: fixed;width: 100%;height: 44px;background-color: #fff;z-index: 9999;display: flex;align-items: center;justify-content: center;">
-			<!-- 左侧菜单按钮 -->
-			<view style="position: absolute; left: 30rpx; top: 50%; transform: translateY(-50%);" @click="openMore">
-				<u-icon name="list" size="24" color="#16160e"></u-icon>
+			class="nav-bar">
+			<!-- 左侧菜单 -->
+			<view class="nav-menu-btn" @click="openMore">
+				<u-icon name="list" size="22" color="#231710"></u-icon>
 			</view>
-			<u-tabs @click='changetabs' :current="actTab" :list="tabsList" lineWidth="40" lineColor="#1890ff"
-				:activeStyle="{
-          color: '#16160e',
-          fontSize: '35rpx',
-          transform: 'scale(1.05)'
-        }" :inactiveStyle="{
-          color: '#606266',
-          fontSize: '32rpx',
-          transform: 'scale(1)'
-        }" itemStyle="padding-left: 20px; padding-right: 20px; height: 42px;">
-			</u-tabs>
-			<view style="position: absolute;right: 30rpx;">
-				<u-icon @click="goToSearch" name="search" color="#16160e" size="24"></u-icon>
+			<!-- 中间 Tabs -->
+			<view class="nav-tabs">
+				<view v-for="(tab, idx) in tabsList" :key="idx"
+					class="nav-tab-item"
+					:class="{ active: actTab === idx }"
+					@click="changetabs({ index: idx })">
+					<text>{{ tab.name }}</text>
+					<view v-if="actTab === idx" class="nav-tab-line"></view>
+				</view>
+			</view>
+			<!-- 右侧搜索：圆形白底按钮 (design: 36px circle, surface bg, shadow) -->
+			<view class="nav-search-btn" @click="goToSearch">
+				<u-icon name="search" color="#231710" size="18"></u-icon>
 			</view>
 		</view>
-	<view :style="{ height: navPlaceholderHeight }" style="width: 100%;background-color:#ffffff;"></view>
+	<view :style="{ height: navPlaceholderHeight }" style="width: 100%;background-color:#F4EDE2;"></view>
 
 	<!-- 主swiper：支持左右滑动切换 -->
 		<!-- #ifdef MP-WEIXIN -->
@@ -1235,7 +1235,7 @@ export default {
     // #ifdef MP-WEIXIN
     uni.setNavigationBarColor({
       frontColor: '#000000', // 状态栏文字颜色为黑色
-      backgroundColor: '#ffffff' // 状态栏背景色为白色
+      backgroundColor: '#F4EDE2' // 状态栏背景色
     });
     // #endif
 
@@ -1292,7 +1292,7 @@ export default {
 .msg-divider {
   width: 100%;
   height: 1rpx;
-  background: #eaeaea;
+  background: rgba(80, 50, 30, 0.1);
 }
 
 /* 关注页样式已移至 FollowPage 组件 */
@@ -1300,17 +1300,88 @@ export default {
 
 page,
 .page-bg {
-  background: #f5f5f5;
+  background: #F4EDE2;
+}
+
+/* ── 顶部导航栏 (design: padding 6px 16px 10px, flex, gap 12) ── */
+.nav-bar {
+  position: fixed;
+  width: 100%;
+  height: 44px;
+  background-color: #F4EDE2;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  padding: 0 32rpx;
+  box-sizing: border-box;
+}
+
+.nav-menu-btn {
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── 自定义 Tabs (design: gap 18, 激活 18px/700, 非激活 15px/500) ── */
+.nav-tabs {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 36rpx;
+}
+
+.nav-tab-item {
+  position: relative;
+  padding: 8rpx 4rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #8F7260;
+  transition: all 0.2s ease;
+}
+
+.nav-tab-item.active {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #231710;
+}
+
+/* Tab 下划线 (design: width 16, height 3, borderRadius 2, centered) */
+.nav-tab-line {
+  position: absolute;
+  bottom: -4rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32rpx;
+  height: 6rpx;
+  border-radius: 4rpx;
+  background: #C97B4A;
+}
+
+/* ── 搜索按钮：圆形白底 (design: 36px circle, surface bg, shadow) ── */
+.nav-search-btn {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
 }
 
 // 优化"到底了"提示样式
 ::v-deep .u-loadmore__nomore-text,
 ::v-deep .u-loadmore-text {
-  font-size: 24rpx !important;
-  color: #c8c9cc !important;
+  font-size: 20rpx !important;
+  color: #C4AC95 !important;
 }
 
 ::v-deep .u-loadmore__nomore-line {
-  border-color: #e4e7ed !important;
+  border-color: rgba(80, 50, 30, 0.1) !important;
 }
 </style>

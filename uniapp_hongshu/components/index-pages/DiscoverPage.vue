@@ -1,26 +1,19 @@
 <template>
 	<view @touchstart="$emit('touchstart', $event)" @touchend="$emit('touchend', $event)" style="height: 100%;">
-		<!-- 二级分类tabs（固定显示） -->
-		<view class="category-tabs-wrapper">
-			<u-tabs @click="handleChangeType" :current="typeTabIndex" :list="findList" :lineWidth="0" :activeStyle="{
-					color: '#222',
-					fontWeight: 'bold',
-					fontSize: '32rpx',
-					padding: '0 15rpx',
-					height: '50rpx',
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center'
-				}" :inactiveStyle="{
-					color: '#606266',
-					fontSize: '30rpx',
-					padding: '0 15rpx',
-					height: '50rpx',
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center'
-				}" itemStyle="margin: 5rpx 0rpx; padding: 0rpx 1rpx; height: 60rpx;"></u-tabs>
-		</view>
+		<!-- 话题胶囊区 (design: horizontal scroll pills) -->
+		<scroll-view class="topic-pills-wrapper" scroll-x :show-scrollbar="false" enhanced :bounces="false">
+			<view class="topic-pills-inner">
+				<view
+					v-for="(item, idx) in findList"
+					:key="idx"
+					class="topic-pill"
+					:class="{ active: typeTabIndex === idx }"
+					@click="handleChangeType({ index: idx })"
+				>
+					<text>{{ getCategoryEmoji(item.name) }} {{ item.name }}</text>
+				</view>
+			</view>
+		</scroll-view>
 		<!-- 二级分类swiper -->
 		<swiper :current="typeTabIndex" @change="handleSwiperChange" @transition="handleSwiperTransition"
 			@animationfinish="handleSwiperAnimationFinish" @touchstart="handleSwiperTouchStart"
@@ -198,6 +191,25 @@
 				this.$emit('goToDetail', note.id, note.notesType, isVideoCategory);
 			},
 			// 切换分类（点击分类标签）
+			// 分类名 → emoji 映射
+			getCategoryEmoji(name) {
+				const map = {
+					'推荐': '🔥',
+					'视频': '🎬',
+					'头像': '😺',
+					'壁纸': '🖼️',
+					'风景': '🌄',
+					'动漫': '✨',
+					'美食': '🥘',
+					'艺术': '🎨',
+					'影视': '🎬',
+					'猫咪': '🐈',
+					'狗狗': '🐕',
+					'宠物医院': '🏥',
+					'美容': '✂️',
+				}
+				return map[name] || '📌'
+			},
 			handleChangeType(e) {
 				const newIndex = e.index;
 				console.log('🔄 点击分类标签:', newIndex, this.findList[newIndex]?.name);
@@ -1300,106 +1312,46 @@
 </script>
 
 <style lang="scss" scoped>
-	/* 二级分类滚动隐藏样式 */
-	.category-tabs-wrapper {
+	/* ── 话题胶囊横滚区 (design: flex, gap 8, padding 0 16px 10px) ── */
+	.topic-pills-wrapper {
 		width: 100%;
-		height: 38px;
-		background-color: #fff;
-		z-index: 9999;
-		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-		transform: translateY(0);
-		opacity: 1;
-		overflow: hidden;
-		/* 防止阴影溢出 */
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-		/* 默认阴影 */
-	}
-
-	.category-tabs-wrapper.hide-tabs {
-		transform: translateY(-100%);
-		opacity: 0;
-		height: 0;
-		/* 高度为0，彻底隐藏 */
-		box-shadow: none;
-		/* 移除阴影 */
-		pointer-events: none;
-		/* 隐藏时不可点击 */
-	}
-
-	.water-left,
-	.water-right {
-		width: 50%;
-		margin: -8rpx auto;
-	}
-
-	.note-card {
-		background: #fff;
-		border-radius: 20rpx;
-		box-shadow: 0 4rpx 16rpx 0 rgba(0, 0, 0, 0.08);
-		margin-top: 5rpx;
-		margin-bottom: 10rpx;
-		margin-left: 8rpx;
-		margin-right: 8rpx;
-		overflow: hidden;
-		position: relative;
-		border: 1rpx solid #f0f0f0;
-	}
-
-	.look-views {
-		display: flex;
-		position: absolute;
-		bottom: 135rpx;
-		left: 8rpx;
-		color: #ffffff;
-		background-color: rgba(123, 124, 125, 0.6);
-		// filter: brightness(65%);
-		padding: 3rpx 10rpx;
-		border-radius: 50rpx;
-		font-size: 22rpx;
-		max-width: 200rpx;
-		overflow: hidden;
-		text-overflow: ellipsis;
 		white-space: nowrap;
+		padding: 0 0 20rpx;
+		background: #F4EDE2;
 	}
 
-	.video-play {
-		position: absolute;
-		top: 10rpx;
-		right: 10rpx;
-		// background-color: rgba(123, 124, 125, 0.6);
-		// filter: brightness(65%);
-		padding: 10rpx;
-		border-radius: 50%;
+	/* 隐藏滚动条 */
+	.topic-pills-wrapper ::-webkit-scrollbar {
+		display: none;
 	}
 
-	.title {
-		font-size: 30rpx;
-		padding: 10rpx;
-		margin-left: 5px;
-		margin-bottom: -5px;
-		color: #000000;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		word-break: break-all;
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 2;
-		line-height: 1.4em;
-		max-height: 2.4em;
+	.topic-pills-inner {
+		display: inline-flex;
+		gap: 16rpx;
+		padding: 0 32rpx;
 	}
 
-	.note-username {
-		margin-left: 10rpx;
-		color: #16160e;
+	.topic-pill {
+		display: inline-flex;
+		align-items: center;
+		padding: 12rpx 24rpx;
+		border-radius: 28rpx;
+		background: #FFFFFF;
+		color: #63463A;
 		font-size: 24rpx;
-		line-height: 20px;
+		font-weight: 500;
 		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		max-width: calc(100% - 70px);
+		box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.03);
+		flex-shrink: 0;
 	}
 
-	/* 空状态样式 */
+	.topic-pill.active {
+		background: #C97B4A;
+		color: #FFFFFF;
+		box-shadow: 0 8rpx 20rpx rgba(201, 123, 74, 0.27);
+	}
+
+	/* ── 空状态 ── */
 	.empty-state {
 		display: flex;
 		flex-direction: column;
@@ -1417,14 +1369,14 @@
 
 	.empty-text {
 		font-size: 32rpx;
-		color: #666;
+		color: #8F7260;
 		margin-bottom: 20rpx;
 		font-weight: 500;
 	}
 
 	.empty-tip {
 		font-size: 24rpx;
-		color: #999;
+		color: #8F7260;
 		line-height: 1.5;
 	}
 </style>

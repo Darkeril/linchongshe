@@ -28,7 +28,8 @@
 			"path": "pages/index/index",
 			"style": {
 				"enablePullDownRefresh": false,
-				"navigationBarTitleText": "爱宠社"
+				"navigationBarTitleText": "爱宠社",
+				"backgroundColor": "#F4EDE2"
 			}
 		}
 	],
@@ -43,7 +44,7 @@
 			{ "path": "pages/frequentUsers/frequentUsers", "style": { "navigationBarTitleText": "常看的人" } }
 		]},
 		{ "root": "pkg-detail", "pages": [
-			{ "path": "pages/notesDetail/notesDetail" },
+			{ "path": "pages/notesDetail/notesDetail", "style": { "backgroundColor": "#F4EDE2" } },
 			{ "path": "pages/idleDetail/idleDetail" },
 			{ "path": "pages/notesDetail/noteVideoD" },
 			{ "path": "pages/idleDetail/idleVideoD" }

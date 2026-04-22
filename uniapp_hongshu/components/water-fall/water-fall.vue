@@ -1,5 +1,5 @@
 <template>
-	<view style="width: 100%;display: flex;flex-wrap: wrap; background: #f5f5f5;">
+	<view class="waterfall-container">
 		<view class="water-left">
 			<block v-for="(item,index) in leftList" :key="index">
 				<view class="note-card">
@@ -10,7 +10,7 @@
 							height="auto" mode="widthFix" :fade="false" lazyLoad webp :style="imageStyle">
 							<template v-slot:loading>
 								<view style="height: 200rpx;text-align: center;padding: 20rpx;">
-									<u-loading-icon color="#3d8af5"></u-loading-icon>
+									<u-loading-icon color="#C97B4A"></u-loading-icon>
 									<view style="font-size: 30rpx;">loading......</view>
 								</view>
 							</template>
@@ -25,7 +25,7 @@
 						<!-- 未通过状态 -->
 						<view v-if="item.auditStatus === '2'" class="audit-overlay not-passed">
 							<view class="audit-eye">
-								<view style="color: #3d8af5; font-size: 24rpx;">未通过⚠️</view>
+								<view style="color: #C97B4A; font-size: 24rpx;">未通过⚠️</view>
 								<u-button v-if="item.uid === userId" type="error" size="mini"
 									@click.stop="editNote(item.id)" style="margin-top: 10rpx; font-size: 20rpx;">
 									重新编辑
@@ -33,8 +33,8 @@
 							</view>
 						</view>
 						<!-- 置顶标签 -->
-						<view class="top-wrapper" v-if="item.pinned ==1 && type ==1 && showPinned">
-							<view style="margin-left: 5rpx;">置顶</view>
+						<view class="card-tag" v-if="item.pinned ==1 && type ==1 && showPinned">
+							<view>置顶</view>
 						</view>
 						<!-- 浏览数 -->
 						<view class="look-views" v-if="showViews && item.notesViewNum!=null ">
@@ -62,43 +62,42 @@
 						</view> -->
 					</view>
 					<view class="title" @click="goToDetail(item.id,item.notesType)">{{item.title}}</view>
-					<view style="display: flex;position: relative;padding: 20rpx;" v-if="slot_bottom">
-						<image v-if="item.avatarUrl && String(item.avatarUrl).trim()"
-							style="height: 22px;width: 22px;border-radius: 50%;" mode="aspectFill"
-							:src="item.avatarUrl">
-						</image>
-						<view class="note-username">
-							{{item.nickname}}
+					<view class="bottom-info" v-if="slot_bottom">
+						<view class="user-row">
+							<image v-if="item.avatarUrl && String(item.avatarUrl).trim()"
+								class="user-avatar" mode="aspectFill"
+								:src="item.avatarUrl">
+							</image>
+							<view class="note-username">
+								{{item.nickname}}
+							</view>
 						</view>
-						<view style="display: flex;position: absolute;right: 10rpx;">
+						<view class="like-row">
 							<!-- 只有审核通过的笔记才显示点赞按钮 -->
 							<template v-if="item.auditStatus === '1'">
 								<view @tap.stop="praiseNotes(item.id,item.belongUserId,1,index)"
 									style="display: flex; align-items: center;">
 									<u-transition :show="!item.isLike" mode="fade" duration="2000">
-										<u-icon v-if="!item.isLike" name="/static/praise.png" size="18"></u-icon>
+										<u-icon v-if="!item.isLike" name="/static/praise.png" size="24rpx"></u-icon>
 									</u-transition>
 									<u-transition :show="item.isLike" mode="fade" duration="2000">
-										<u-icon v-if="item.isLike" name="/static/praise_select.png" size="18"></u-icon>
+										<u-icon v-if="item.isLike" name="/static/praise_select.png" size="24rpx"></u-icon>
 									</u-transition>
 								</view>
 							</template>
 							<!-- 审核中或未通过的笔记显示不可操作状态 -->
 							<template v-else>
-								<u-icon name="/static/praise.png" size="18" color="#ccc" style="opacity: 0.5;"></u-icon>
+								<u-icon name="/static/praise.png" size="24rpx" color="#C4AC95" style="opacity: 0.5;"></u-icon>
 							</template>
-							<view v-if="item.notesLikeNum>0"
-								style="color: gray;font-size: 12px;line-height: 18px;margin-left: 3rpx;">
-								{{item.notesLikeNum}}
-							</view>
-							<view v-else style="color: gray;font-size: 12px;line-height: 18px;margin-left: 3rpx;">
-								{{'赞'}}
+							<view class="like-num" :class="{ 'like-num--active': item.isLike }"
+								v-if="item.notesLikeNum>0">
+								{{item.notesLikeNum > 999 ? (item.notesLikeNum / 1000).toFixed(1) + 'k' : item.notesLikeNum}}
 							</view>
 						</view>
 					</view>
-					<view v-else style="display: flex;position: relative;padding: 20rpx;">
-						<view style="margin-right: auto;color: #c8c9cc;font-size: 23rpx;">{{item.updateTime}}</view>
-						<u-icon name="trash" @click="deleteDraft(item.id,0)" color="#c8c9cc" size="18"></u-icon>
+					<view v-else class="bottom-info-draft">
+						<view style="margin-right: auto;color: #C4AC95;font-size: 23rpx;">{{item.updateTime}}</view>
+						<u-icon name="trash" @click="deleteDraft(item.id,0)" color="#C4AC95" size="18"></u-icon>
 					</view>
 				</view>
 			</block>
@@ -112,7 +111,7 @@
 							width="100%" height="auto" mode="widthFix" :fade="false" lazyLoad webp :style="imageStyle">
 							<template v-slot:loading>
 								<view style="height: 200rpx;text-align: center;padding: 20rpx;margin-bottom: 30rpx;">
-									<u-loading-icon color="#3d8af5"></u-loading-icon>
+									<u-loading-icon color="#C97B4A"></u-loading-icon>
 									<view style="font-size: 30rpx;">loading......</view>
 								</view>
 							</template>
@@ -127,7 +126,7 @@
 						<!-- 未通过状态 -->
 						<view v-if="item.auditStatus === '2'" class="audit-overlay not-passed">
 							<view class="audit-eye">
-								<view style="color: #3d8af5; font-size: 24rpx;">未通过⚠️</view>
+								<view style="color: #C97B4A; font-size: 24rpx;">未通过⚠️</view>
 								<u-button v-if="item.uid === userId" type="error" size="mini"
 									@click.stop="editNote(item.id)" style="margin-top: 10rpx; font-size: 20rpx;">
 									重新编辑
@@ -135,8 +134,8 @@
 							</view>
 						</view>
 						<!-- 置顶标签 -->
-						<view class="top-wrapper" v-if="item.pinned ==1 && type ==1 && showPinned">
-							<view style="margin-left: 5rpx;">置顶</view>
+						<view class="card-tag" v-if="item.pinned ==1 && type ==1 && showPinned">
+							<view>置顶</view>
 						</view>
 						<!-- 浏览数 -->
 						<view class="look-views" v-if="showViews && item.notesViewNum!=null ">
@@ -165,44 +164,42 @@
 					</view>
 
 					<view class="title" @click.stop="goToDetail(item.id,item.notesType)">{{item.title}}</view>
-					<view style="display: flex;position: relative;padding: 20rpx;" v-if="slot_bottom">
-						<image v-if="item.avatarUrl && String(item.avatarUrl).trim()"
-							style="height: 22px;width: 22px;border-radius: 50%;" mode="aspectFill"
-							:src="item.avatarUrl">
-						</image>
-						<view class="note-username">
-							{{item.nickname}}
+					<view class="bottom-info" v-if="slot_bottom">
+						<view class="user-row">
+							<image v-if="item.avatarUrl && String(item.avatarUrl).trim()"
+								class="user-avatar" mode="aspectFill"
+								:src="item.avatarUrl">
+							</image>
+							<view class="note-username">
+								{{item.nickname}}
+							</view>
 						</view>
-						<view
-							style="display: flex;flex-direction: row;align-items: center;position: absolute;right: 10rpx;">
+						<view class="like-row">
 							<!-- 只有审核通过的笔记才显示点赞按钮 -->
 							<template v-if="item.auditStatus === '1'">
 								<view @tap.stop="praiseNotes(item.id,item.belongUserId,2,index)"
 									style="display: flex; align-items: center;">
 									<u-transition :show="!item.isLike" mode="fade" duration="2000">
-										<u-icon v-if="!item.isLike" name="/static/praise.png" size="18"></u-icon>
+										<u-icon v-if="!item.isLike" name="/static/praise.png" size="24rpx"></u-icon>
 									</u-transition>
 									<u-transition :show="item.isLike" mode="fade" duration="2000">
-										<u-icon v-if="item.isLike" name="/static/praise_select.png" size="18"></u-icon>
+										<u-icon v-if="item.isLike" name="/static/praise_select.png" size="24rpx"></u-icon>
 									</u-transition>
 								</view>
 							</template>
 							<!-- 审核中或未通过的笔记显示不可操作状态 -->
 							<template v-else>
-								<u-icon name="/static/praise.png" size="18" color="#ccc" style="opacity: 0.5;"></u-icon>
+								<u-icon name="/static/praise.png" size="24rpx" color="#C4AC95" style="opacity: 0.5;"></u-icon>
 							</template>
-							<view v-if="item.notesLikeNum>0"
-								style="color: gray;font-size: 12px;line-height: 18px;margin-left: 3rpx;">
-								{{item.notesLikeNum}}
-							</view>
-							<view v-else style="color: gray;font-size: 12px;line-height: 18px;margin-left: 3rpx;">
-								{{'赞'}}
+							<view class="like-num" :class="{ 'like-num--active': item.isLike }"
+								v-if="item.notesLikeNum>0">
+								{{item.notesLikeNum > 999 ? (item.notesLikeNum / 1000).toFixed(1) + 'k' : item.notesLikeNum}}
 							</view>
 						</view>
 					</view>
-					<view v-else style="display: flex;position: relative;padding: 20rpx;">
-						<view style="margin-right: auto;color: #c8c9cc;font-size: 23rpx;">{{item.updateTime}}</view>
-						<u-icon name="trash" @click="deleteDraft(item.id,1)" color="#c8c9cc" size="18"></u-icon>
+					<view v-else class="bottom-info-draft">
+						<view style="margin-right: auto;color: #C4AC95;font-size: 23rpx;">{{item.updateTime}}</view>
+						<u-icon name="trash" @click="deleteDraft(item.id,1)" color="#C4AC95" size="18"></u-icon>
 					</view>
 				</view>
 			</block>
@@ -912,82 +909,145 @@
 </script>
 
 <style lang="scss">
+	/* ====== 瀑布流容器 ====== */
+	.waterfall-container {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		background: #F4EDE2;
+		padding: 0 20rpx;
+		box-sizing: border-box;
+	}
+
 	.water-left,
 	.water-right {
-		width: 48%;
-		margin: 10rpx auto;
+		width: calc((100% - 16rpx) / 2);
 	}
 
+	.water-left {
+		margin-right: 16rpx;
+	}
+
+	/* ====== 卡片 ====== */
 	.note-card {
-		background: #fff;
-		border-radius: 20rpx;
-		box-shadow: 0 4rpx 16rpx 0 rgba(0, 0, 0, 0.08);
-		margin-bottom: 24rpx;
-		margin-left: 8rpx;
-		margin-right: 8rpx;
+		background: #FFFFFF;
+		border-radius: 32rpx;
+		box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+		margin-bottom: 20rpx;
 		overflow: hidden;
 		position: relative;
-		border: 1rpx solid #f0f0f0;
 	}
 
+	/* ====== 标题 ====== */
 	.title {
-		font-size: 30rpx;
-		padding: 10rpx;
-		margin-bottom: -5px;
-		color: #000000;
+		font-size: 24rpx;
+		font-weight: 500;
+		color: #231710;
+		padding: 16rpx 20rpx 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		word-break: break-all;
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 2;
-		line-height: 1.4em;
-		max-height: 2.4em;
+		line-height: 1.4;
+	}
+
+	/* ====== 底部信息区 ====== */
+	.bottom-info {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 16rpx 20rpx 20rpx;
+	}
+
+	.bottom-info-draft {
+		display: flex;
+		align-items: center;
+		padding: 16rpx 20rpx 20rpx;
+	}
+
+	/* 用户信息（左侧） */
+	.user-row {
+		display: flex;
+		align-items: center;
+		gap: 10rpx;
+		overflow: hidden;
+		flex: 1;
+		min-width: 0;
+	}
+
+	.user-avatar {
+		width: 36rpx;
+		height: 36rpx;
+		border-radius: 50%;
+		flex-shrink: 0;
 	}
 
 	.note-username {
-		margin-left: 10rpx;
-		color: #16160e;
-		font-size: 23rpx;
-		line-height: 20px;
+		color: #8F7260;
+		font-size: 20rpx;
+		line-height: 1.2;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		max-width: calc(100% - 70px);
 	}
 
-	.top-wrapper {
-		position: absolute;
-		left: 5px;
-		top: 5px;
-		z-index: 4;
-		background: #3d8af5;
-		border-radius: 999px;
+	/* 点赞（右侧） */
+	.like-row {
+		display: flex;
+		align-items: center;
+		gap: 6rpx;
+		flex-shrink: 0;
+		margin-left: 10rpx;
+	}
+
+	.like-num {
+		font-size: 20rpx;
 		font-weight: 500;
-		color: #fff;
-		line-height: 120%;
-		font-size: 12px;
-		padding: 5px 8px;
+		color: #8F7260;
+		line-height: 1;
+	}
+
+	.like-num--active {
+		color: #D66A5E;
+	}
+
+	/* ====== 卡片标签（毛玻璃） ====== */
+	.card-tag {
+		position: absolute;
+		left: 16rpx;
+		top: 16rpx;
+		z-index: 4;
+		background: rgba(255, 255, 255, 0.85);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		border-radius: 16rpx;
+		padding: 6rpx 16rpx;
+		font-size: 20rpx;
+		font-weight: 600;
+		color: #8A4A1F;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 	}
 
+	/* ====== 浏览数 / 位置覆盖层 ====== */
 	.look-views {
 		display: flex;
+		align-items: center;
 		position: absolute;
-		bottom: 5rpx;
-		left: 8rpx;
+		bottom: 12rpx;
+		left: 12rpx;
 		color: #ffffff;
-		background-color: rgba(123, 124, 125, 0.6);
-		// filter: brightness(65%);
-		padding: 3rpx 10rpx;
-		border-radius: 50rpx;
-		font-size: 22rpx;
+		background: rgba(0, 0, 0, 0.45);
+		padding: 6rpx 16rpx;
+		border-radius: 20rpx;
+		font-size: 20rpx;
 		z-index: 2;
 	}
 
-	/* 审核状态样式 */
+	/* ====== 图片容器 ====== */
 	.image-container {
 		position: relative;
 		display: inline-block;
@@ -1007,6 +1067,7 @@
 
 	/* #endif */
 
+	/* ====== 审核状态 ====== */
 	.audit-overlay {
 		position: absolute;
 		top: 0;
@@ -1017,7 +1078,6 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		border-radius: 20rpx;
 	}
 
 	.audit-overlay.not-passed {
@@ -1032,40 +1092,20 @@
 		text-align: center;
 	}
 
+	/* ====== 视频 / Live 图标 ====== */
 	.video-play {
 		position: absolute;
 		top: 5rpx;
 		right: 10rpx;
-		// background-color: rgba(123, 124, 125, 0.6);
-		// filter: brightness(65%);
 		padding: 10rpx;
 		border-radius: 50%;
 	}
-	
+
 	.live-badge {
 		position: absolute;
 		top: 10rpx;
 		right: 10rpx;
-		// background-color: rgba(123, 124, 125, 0.6);
-		// filter: brightness(65%);
 		padding: 10rpx;
 		border-radius: 50%;
 	}
-
-	// .live-badge {
-	// 	position: absolute;
-	// 	top: 10rpx;
-	// 	right: 10rpx;
-	// 	background-color: #3d8af5;
-	// 	color: #ffffff;
-	// 	font-size: 24rpx;
-	// 	padding: 8rpx 16rpx;
-	// 	border-radius: 24rpx;
-	// 	z-index: 2;
-
-	// 	text {
-	// 		color: #ffffff;
-	// 		font-size: 24rpx;
-	// 	}
-	// }
 </style>

@@ -43,19 +43,19 @@
       <view class="action-item" @click.stop="handleLike">
         <u-icon 
           :name="item.isLiked ? 'thumb-up-fill' : 'thumb-up'" 
-          :color="item.isLiked ? '#ff4757' : '#999'"
+          :color="item.isLiked ? '#ff4757' : '#8F7260'"
           size="20"
         />
         <text class="action-text">{{ item.likeCount || 0 }}</text>
       </view>
       
       <view class="action-item" @click.stop="handleComment">
-        <u-icon name="chat" color="#999" size="20" />
+        <u-icon name="chat" color="#8F7260" size="20" />
         <text class="action-text">{{ item.commentCount || 0 }}</text>
       </view>
       
       <view class="action-item" @click.stop="handleShare">
-        <u-icon name="share" color="#999" size="20" />
+        <u-icon name="share" color="#8F7260" size="20" />
         <text class="action-text">分享</text>
       </view>
     </view>
@@ -173,13 +173,13 @@ export default {
         display: block;
         font-size: 16px;
         font-weight: 600;
-        color: #333;
+        color: #231710;
         margin-bottom: 4px;
       }
       
       .publish-time {
         font-size: 12px;
-        color: #999;
+        color: #8F7260;
       }
     }
   }
@@ -190,7 +190,7 @@ export default {
     .content-text {
       font-size: 15px;
       line-height: 1.6;
-      color: #333;
+      color: #231710;
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 3;
@@ -220,7 +220,7 @@ export default {
     display: flex;
     justify-content: space-around;
     padding-top: 12px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid rgba(80,50,30,0.1);
     
     .action-item {
       display: flex;
@@ -230,13 +230,13 @@ export default {
       transition: background-color 0.2s;
       
       &:active {
-        background-color: #f5f5f5;
+        background-color: #F4EDE2;
       }
       
       .action-text {
         margin-left: 6px;
         font-size: 14px;
-        color: #666;
+        color: #63463A;
       }
     }
   }
