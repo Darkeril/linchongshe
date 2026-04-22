@@ -24,12 +24,13 @@ interface Props {
 
 defineProps<Props>();
 
+// emit 名避开 DOM 原生事件 tap（gotcha #21）
 const emit = defineEmits<{
-  (e: 'tap'): void;
+  (e: 'topic-tap'): void;
 }>();
 
 function onTap(): void {
-  emit('tap');
+  emit('topic-tap');
 }
 </script>
 

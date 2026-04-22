@@ -1,21 +1,23 @@
 <!--
-  note-detail — 笔记详情页（Phase 5a 主体）
+  note-detail — 笔记详情页（Phase 5a 主体 + Phase 5b 评论接入）
   设计稿来源：design/screens-part2.jsx L159-320（NoteDetailScreen）
 
   布局：
     - NoteDetailHeader（absolute top，悬浮）
-    - scroll-view 滚动区：NoteGallery + 标题/正文/话题/时间 + 分隔条 + 评论占位
+    - scroll-view 滚动区：NoteGallery + 标题/正文/话题/时间 + 分隔条 + CommentList
     - NoteDetailActions（fixed bottom）
+    - CommentInputSheet（fixed 半屏，Phase 5b 新增）
 
   注意事项（按陷阱编号）：
-    - #4 scroll-view 显式高度（calc 计算 viewport - safe-area）
-    - #5 fixed + transform：页面根节点不加 transform
+    - #4 scroll-view 显式高度；CommentList 不嵌 scroll-view，共用本页主 scroll
+    - #5 fixed + transform：页面根节点不加 transform（Sheet fixed 也依赖此）
     - #13 返回按钮：navigateBack，栈深 1 时 reLaunch 到 home
-    - #14 条件编译（小程序端毛玻璃降级由子组件处理）
+    - #14 条件编译（小程序端毛玻璃降级由子组件处理；Sheet 键盘高度监听亦条件编译）
     - #16 swiper 显式高度（由 NoteGallery 内部处理）
-    - #18 reactive 引用替换：点赞/收藏/关注统一 in-place mutation
+    - #18 reactive 引用替换：点赞/收藏/关注/评论点赞/发评论全部 in-place mutation
     - #19 根节点不加 :active（防止冒泡）
     - #11 @tap + 按钮风格
+    - #21 emit 名避 DOM 原生：CommentList 用 list-like/list-reply；Sheet 用 sheet-*
 -->
 <template>
   <view class="acs-detail">
@@ -41,6 +43,7 @@
       scroll-y
       :enhanced="true"
       :show-scrollbar="false"
+      @scrolltolower="onListLoadMore"
     >
       <!-- 图文轮播（顶格） -->
       <NoteGallery :images="detail.images" @change="onGalleryChange" />
@@ -54,7 +57,7 @@
             v-for="t in detail.topics"
             :key="t"
             :text="t"
-            @tap="onTopicTap(t)"
+            @topic-tap="onTopicTap(t)"
           />
         </view>
         <text class="acs-detail__meta">
@@ -65,13 +68,16 @@
       <!-- 分隔条（设计稿 height 8 → 16rpx，背景 surfaceDim） -->
       <view class="acs-detail__divider" />
 
-      <!-- 评论区占位 -->
-      <!-- TODO(phase5b): 评论列表 + 回复 + 子楼 -->
+      <!-- 评论区（Phase 5b 接入；gotcha #4 不嵌 scroll-view，共用主 scroll） -->
       <view class="acs-detail__comments">
-        <text class="acs-detail__comments-count">共 {{ detail.comments }} 条评论</text>
-        <view class="acs-detail__comments-todo">
-          <text class="acs-detail__comments-todo-text">评论功能 Phase 5b 实现</text>
-        </view>
+        <CommentList
+          :threads="commentThreads"
+          :has-more="commentsHasMore"
+          :loading="commentsLoading"
+          :total="commentsTotal"
+          @list-like="onListLike"
+          @list-reply="onListReply"
+        />
       </view>
 
       <!-- 底部留白，防止内容被固定操作栏遮挡 -->
@@ -88,8 +94,16 @@
       :comments="detail.comments"
       @like="onLike"
       @save="onSave"
-      @comment="onComment"
-      @input-tap="onComment"
+      @comment="onInputTap"
+      @input-tap="onInputTap"
+    />
+
+    <!-- 评论发送面板 -->
+    <CommentInputSheet
+      :open="sheetOpen"
+      :reply-target="sheetReplyTarget"
+      @sheet-close="onSheetClose"
+      @sheet-submit="onSheetSubmit"
     />
   </view>
 </template>
@@ -101,16 +115,41 @@ import NoteDetailHeader from '@/components/ui/NoteDetailHeader.vue';
 import NoteGallery from '@/components/ui/NoteGallery.vue';
 import TopicTag from '@/components/ui/TopicTag.vue';
 import NoteDetailActions from '@/components/ui/NoteDetailActions.vue';
+import CommentList from '@/components/ui/CommentList.vue';
+import CommentInputSheet from '@/components/ui/CommentInputSheet.vue';
 import {
   getNoteDetail,
   likeNote,
   toggleSave,
   toggleFollow,
 } from '@/api/services/note';
+import {
+  getComments,
+  likeComment,
+  postComment,
+} from '@/api/services/comment';
+import { useAuthGuard } from '@/composables/useAuthGuard';
 import type { NoteDetail } from '@/types/note';
+import type { CommentItem, CommentThread, CommentUser } from '@/types/comment';
 
 const detail = ref<NoteDetail | null>(null);
 const loading = ref<boolean>(false);
+
+// ── 评论状态（Phase 5b） ────────────────────────────
+const commentThreads = ref<CommentThread[]>([]);
+const commentsHasMore = ref<boolean>(false);
+const commentsLoading = ref<boolean>(false);
+const commentsTotal = ref<number>(0);
+const commentPage = ref<number>(1);
+const COMMENT_PAGE_SIZE = 10;
+
+const { requireAuth } = useAuthGuard();
+
+// Sheet 状态
+const sheetOpen = ref<boolean>(false);
+const sheetReplyTarget = ref<CommentUser | null>(null);
+// 回复目标 rootId：null 表示发一级评论
+const sheetReplyRootId = ref<string | null>(null);
 
 // gotchas #15：初次加载读 query 用 onLoad
 onLoad((query) => {
@@ -128,6 +167,8 @@ async function loadDetail(id: string): Promise<void> {
   loading.value = true;
   try {
     detail.value = await getNoteDetail(id);
+    // 详情拉到后串联加载首页评论
+    await loadComments(1);
   } catch (err) {
     uni.showToast({
       title: err instanceof Error ? err.message : '加载失败',
@@ -137,6 +178,134 @@ async function loadDetail(id: string): Promise<void> {
   } finally {
     loading.value = false;
   }
+}
+
+// ── 评论加载 ────────────────────────────────────────
+
+async function loadComments(page: number): Promise<void> {
+  const d = detail.value;
+  if (!d) return;
+  if (commentsLoading.value) return;
+  commentsLoading.value = true;
+  try {
+    const res = await getComments({ noteId: d.id, page, size: COMMENT_PAGE_SIZE });
+    if (page === 1) {
+      commentThreads.value = res.threads;
+    } else {
+      // append（gotcha #18：append 不替换已有对象引用）
+      for (const t of res.threads) {
+        commentThreads.value.push(t);
+      }
+    }
+    commentsHasMore.value = res.hasMore;
+    commentsTotal.value = res.total;
+    commentPage.value = res.page;
+  } catch (err) {
+    uni.showToast({
+      title: err instanceof Error ? err.message : '加载评论失败',
+      icon: 'none',
+    });
+  } finally {
+    commentsLoading.value = false;
+  }
+}
+
+function onListLoadMore(): void {
+  if (!commentsHasMore.value || commentsLoading.value) return;
+  void loadComments(commentPage.value + 1);
+}
+
+// ── 评论点赞（in-place mutation，gotcha #18） ──────
+
+function onListLike(c: CommentItem): void {
+  requireAuth(() => {
+    // 直接改 comment 对象属性（不替换引用）
+    const prevLiked = c.liked;
+    const prevLikes = c.likes;
+    c.liked = !prevLiked;
+    c.likes = Math.max(0, prevLikes + (prevLiked ? -1 : 1));
+    likeComment(c.id)
+      .then((res) => {
+        c.liked = res.liked;
+        c.likes = res.likes;
+      })
+      .catch((err: unknown) => {
+        c.liked = prevLiked;
+        c.likes = prevLikes;
+        uni.showToast({
+          title: err instanceof Error ? err.message : '点赞失败',
+          icon: 'none',
+        });
+      });
+  });
+}
+
+// ── 评论回复 ────────────────────────────────────────
+
+function onListReply(target: CommentItem, thread: CommentThread): void {
+  requireAuth(() => {
+    sheetReplyTarget.value = target.author;
+    sheetReplyRootId.value = thread.root.id;
+    sheetOpen.value = true;
+  });
+}
+
+// ── 发一级评论入口（底部 Actions 输入框/评论图标） ──
+
+function onInputTap(): void {
+  requireAuth(() => {
+    sheetReplyTarget.value = null;
+    sheetReplyRootId.value = null;
+    sheetOpen.value = true;
+  });
+}
+
+// ── Sheet 提交 ──────────────────────────────────────
+
+function onSheetSubmit(text: string): void {
+  const d = detail.value;
+  if (!d) return;
+  const rootId = sheetReplyRootId.value;
+  const replyTarget = sheetReplyTarget.value;
+  postComment({
+    noteId: d.id,
+    text,
+    ...(rootId ? { rootId } : {}),
+    ...(replyTarget ? { replyTo: replyTarget } : {}),
+  })
+    .then((created) => {
+      // gotcha #18：in-place 更新数组（unshift / push，不替换 threads 引用）
+      if (!rootId) {
+        // 一级评论：插到顶部
+        commentThreads.value.unshift({ root: created, replies: [] });
+      } else {
+        const thread = commentThreads.value.find((t) => t.root.id === rootId);
+        if (thread) {
+          thread.replies.push(created);
+        }
+      }
+      commentsTotal.value += 1;
+      // 同步详情页评论数徽章（gotcha #18 in-place）
+      if (d) {
+        d.comments += 1;
+      }
+      sheetOpen.value = false;
+      sheetReplyTarget.value = null;
+      sheetReplyRootId.value = null;
+      uni.showToast({ title: '发送成功', icon: 'none' });
+    })
+    .catch((err: unknown) => {
+      uni.showToast({
+        title: err instanceof Error ? err.message : '发送失败',
+        icon: 'none',
+      });
+    });
+}
+
+function onSheetClose(): void {
+  sheetOpen.value = false;
+  sheetReplyTarget.value = null;
+  sheetReplyRootId.value = null;
 }
 
 // ── 顶部导航 ────────────────────────────────────────
@@ -229,10 +398,6 @@ async function onSave(): Promise<void> {
   }
 }
 
-function onComment(): void {
-  // Phase 5b 替换为打开评论面板
-  uni.showToast({ title: '评论功能 Phase 5b 实现', icon: 'none' });
-}
 </script>
 
 <style lang="scss" scoped>
@@ -330,26 +495,6 @@ function onComment(): void {
   padding: 28rpx 36rpx 40rpx;
 }
 
-.acs-detail__comments-count {
-  display: block;
-  font-size: $font-size-lg; // 14px
-  font-weight: $font-weight-bold;
-  color: $color-ink;
-  margin-bottom: 24rpx; // 12 → 24rpx
-}
-
-.acs-detail__comments-todo {
-  padding: 80rpx 24rpx;
-  border-radius: $radius-md;
-  background: $color-surface;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2rpx 6rpx rgba(80, 50, 30, 0.04);
-}
-
-.acs-detail__comments-todo-text {
-  font-size: $font-size-base; // 12px
-  color: $color-ink-muted;
-}
+// Phase 5b：评论占位 CSS（__comments-count / __comments-todo / __comments-todo-text）
+// 已被 CommentList 组件内置样式替换，移除孤儿样式
 </style>
