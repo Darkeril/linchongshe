@@ -1,9 +1,9 @@
 <template>
-  <view>
+  <view style="background: #F4EDE2; font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
     <!-- #ifndef MP-WEIXIN -->
     <view
       :style="{ height: statusBarHeight + 'px' }"
-      style="position: fixed; top: 0; width: 100%; z-index: 9999; background-color: #fff"
+      style="position: fixed; top: 0; width: 100%; z-index: 9999; background-color: #F4EDE2"
     ></view>
     <!-- #endif -->
     <view
@@ -12,16 +12,16 @@
         position: fixed;
         width: 100%;
         height: 44px;
-        background-color: #fff;
+        background-color: #F4EDE2;
         z-index: 9999;
         display: flex;
         align-items: center;
-        padding: 0 10rpx;
+        padding: 0 24rpx;
         box-sizing: border-box;
       "
     >
       <!-- #ifndef MP-WEIXIN -->
-      <u-icon name="arrow-left" color="#2b2b2b" size="25" @click="goBack"></u-icon>
+      <u-icon name="arrow-left" color="#231710" size="25" @click="goBack"></u-icon>
       <!-- #endif -->
       <view style="margin-left: 20rpx">
         <image
@@ -40,9 +40,9 @@
           v-if="notesDetail.isFollow"
           text="已关注"
           shape="circle"
-          color="#3d8af5"
-          bgColor="#e6f2ff"
-          borderColor="#3d8af5"
+          color="#C97B4A"
+          bgColor="#EFCFB0"
+          borderColor="#C97B4A"
           @click="attention"
         ></u-tag>
         <u-tag
@@ -50,14 +50,14 @@
           text="关注"
           plain
           shape="circle"
-          color="#3d8af5"
-          borderColor="#3d8af5"
+          color="#C97B4A"
+          borderColor="#C97B4A"
           @click="attention"
         ></u-tag>
-        <u-icon @click="showShare = true" name="share" color="#2b2b2b" size="30"></u-icon>
+        <u-icon @click="showShare = true" name="share" color="#231710" size="30"></u-icon>
       </view>
       <view v-else style="display: flex; margin-left: auto; margin-right: 15rpx">
-        <u-icon @click="showShare = true" name="more-dot-fill" color="#2b2b2b" size="26"></u-icon>
+        <u-icon @click="showShare = true" name="more-dot-fill" color="#231710" size="26"></u-icon>
       </view>
     </view>
     <view :style="{ height: navPlaceholderHeight }" style="width: 100%"></view>
@@ -68,8 +68,8 @@
         :circular="true"
         current="swiperCurrent"
         @change="swiperChange"
-        indicator-active-color="#3d8af5"
-        indicator-color="#9ea1a3"
+        indicator-active-color="#ffffff"
+        indicator-color="rgba(255,255,255,0.55)"
       >
         <swiper-item v-for="(item, index) in notesDetail.notesResources" :key="index">
           <view
@@ -92,28 +92,30 @@
       <view
         style="
           position: absolute;
-          top: 30rpx;
+          bottom: 30rpx;
           right: 30rpx;
-          background-color: #383c3c;
-          border-radius: 20px;
-          font-size: 28rpx;
-          color: #f5f5f5;
-          padding: 8rpx 18rpx;
+          background: rgba(0,0,0,0.45);
+          border-radius: 20rpx;
+          font-size: 22rpx;
+          font-weight: 600;
+          color: #fff;
+          padding: 6rpx 20rpx;
         "
         v-if="notesDetail != null"
       >
         {{ swiperCurrent + 1 }}/{{ swipperCount }}
       </view>
     </view>
-    <view style="padding: 10rpx 40rpx">
+    <view style="padding: 32rpx 36rpx">
       <view
         style="
-          font-size: 37rpx;
-          color: #474a4d;
-          margin-bottom: 15rpx;
+          font-size: 38rpx;
+          font-weight: 700;
+          color: #231710;
+          line-height: 1.4;
+          margin-bottom: 20rpx;
           word-wrap: break-word;
           word-break: break-all;
-          letter-spacing: 2rpx;
         "
       >
         {{ notesDetail.title }}
@@ -130,7 +132,7 @@
         v-if="notesDetail.relatedProducts && notesDetail.relatedProducts.length > 0"
         style="margin-top: 20rpx"
       >
-        <!-- <view style="font-size: 26rpx;color: #2b2b2b;margin-bottom: 16rpx;font-weight: 600;">关联商品</view> -->
+        <!-- <view style="font-size: 26rpx;color: #231710;margin-bottom: 16rpx;font-weight: 600;">关联商品</view> -->
         <view style="display: flex; flex-direction: column; gap: 12rpx">
           <view
             v-for="product in notesDetail.relatedProducts"
@@ -141,7 +143,7 @@
               align-items: center;
               background: #ffffff;
               border-radius: 10rpx;
-              border: 1rpx solid #e6e6e6;
+              border: 1rpx solid rgba(80,50,30,0.1);
               box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.02);
               padding: 12rpx;
               gap: 12rpx;
@@ -164,7 +166,7 @@
               <view
                 style="
                   font-size: 26rpx;
-                  color: #2b2b2b;
+                  color: #231710;
                   overflow: hidden;
                   text-overflow: ellipsis;
                   white-space: nowrap;
@@ -174,7 +176,7 @@
                 {{ product.title }}
               </view>
               <view style="display: flex; align-items: center; gap: 8rpx">
-                <text style="font-size: 28rpx; color: #ff3b30; font-weight: 600">
+                <text style="font-size: 28rpx; color: #D66A5E; font-weight: 600">
                   ￥{{ formatProductPrice(product.price) }}
                 </text>
                 <text
@@ -182,17 +184,17 @@
                     product.originalPrice &&
                     parseFloat(product.originalPrice || 0) > parseFloat(product.price || 0)
                   "
-                  style="font-size: 22rpx; color: #999; text-decoration: line-through"
+                  style="font-size: 22rpx; color: #8F7260; text-decoration: line-through"
                 >
                   ￥{{ formatProductPrice(product.originalPrice) }}
                 </text>
               </view>
             </view>
-            <u-icon name="arrow-right" color="#999" size="18" style="flex-shrink: 0"></u-icon>
+            <u-icon name="arrow-right" color="#8F7260" size="18" style="flex-shrink: 0"></u-icon>
           </view>
         </view>
       </view>
-      <view style="display: flex; margin-top: 15rpx; font-size: 24rpx; color: #afafb0">
+      <view style="display: flex; margin-top: 15rpx; font-size: 22rpx; color: #8F7260">
         <view>
           <text v-if="notesDetail.updateTime != notesDetail.createTime">
             更新于{{ notesDetail.updateTime }}
@@ -204,15 +206,15 @@
         </view>
       </view>
     </view>
-    <u-divider style="padding: 0 30rpx" :hairline="true"></u-divider>
-    <view style="padding: 30rpx">
-      <view v-if="commentCount > 0" style="font-size: 25rpx; color: #474a4d">
+    <view style="height: 16rpx; background: #EADFCB; margin: 8rpx 0;"></view>
+    <view style="padding: 28rpx 36rpx 40rpx">
+      <view v-if="commentCount > 0" style="font-size: 28rpx; font-weight: 700; color: #231710; margin-bottom: 24rpx;">
         共{{ commentCount }}条评论
       </view>
-      <view v-else style="font-size: 25rpx; color: #474a4d">暂无评论</view>
-      <view style="display: flex; margin-top: 20rpx; height: 90rpx; align-items: center">
+      <view v-else style="font-size: 28rpx; font-weight: 700; color: #231710; margin-bottom: 24rpx;">暂无评论</view>
+      <view style="display: flex; margin-top: 20rpx; height: 90rpx; align-items: center; margin-bottom: 32rpx;">
         <image
-          style="height: 70rpx; width: 70rpx; border-radius: 50%"
+          style="height: 68rpx; width: 68rpx; border-radius: 50%"
           mode="aspectFill"
           :src="userInfo.avatarUrl"
         ></image>
@@ -221,7 +223,7 @@
           style="
             margin-left: 20rpx;
             flex: 1;
-            background-color: #f3f3f2;
+            background-color: #EADFCB;
             padding: 20rpx;
             border-radius: 70rpx;
             height: 100%;
@@ -230,7 +232,7 @@
             align-items: center;
           "
         >
-          <view style="font-size: 30rpx; color: #afafb0; margin-left: 10rpx">
+          <view style="font-size: 30rpx; color: #8F7260; margin-left: 10rpx">
             爱评论的人运气都不差
           </view>
           <view
@@ -243,17 +245,17 @@
         </view>
       </view>
     </view>
-    <view style="padding: 30rpx">
+    <view style="padding: 0 36rpx">
       <block v-for="(item, index) in commentList" v-bind:key="item.id">
-        <view style="display: flex; align-items: flex-start; margin-bottom: 20rpx">
+        <view style="display: flex; align-items: flex-start; gap: 20rpx; margin-bottom: 32rpx">
           <image
             :src="item.commentUserAvatar"
-            style="height: 70rpx; width: 70rpx; border-radius: 50%"
+            style="height: 68rpx; width: 68rpx; border-radius: 50%; flex-shrink: 0;"
             mode="aspectFill"
             @click="goToOtherMine(item.commentUserId)"
           ></image>
-          <view style="flex: 1; padding: 0 10px; word-break: break-all; text-overflow: ellipsis">
-            <view style="display: flex; font-size: 26rpx; color: #afafb0">
+          <view style="flex: 1; word-break: break-all; text-overflow: ellipsis; min-width: 0;">
+            <view style="display: flex; font-size: 24rpx; color: #8F7260; margin-bottom: 6rpx; align-items: center;">
               <view
                 style="
                   word-break: break-all;
@@ -271,8 +273,8 @@
                 style="
                   margin-left: 10rpx;
                   padding: 4rpx 10rpx;
-                  background-color: #f3f3f2;
-                  color: #7d7d7d;
+                  background-color: #EADFCB;
+                  color: #8F7260;
                   border-radius: 50rpx;
                   white-space: nowrap;
                   width: 50rpx;
@@ -286,8 +288,8 @@
                 style="
                   margin-left: 10rpx;
                   padding: 4rpx 10rpx;
-                  background-color: #f3f3f2;
-                  color: #7d7d7d;
+                  background-color: #EADFCB;
+                  color: #8F7260;
                   border-radius: 50rpx;
                   white-space: nowrap;
                   width: 30rpx;
@@ -297,42 +299,42 @@
                 我
               </view>
             </view>
-            <view style="margin-top: 5rpx">
-              <view style="display: flex; align-items: baseline; flex-wrap: wrap">
-                <rich-text
-                  v-if="item.content"
-                  style="font-size: 14px; letter-spacing: 0.05rem; color: #383c3c"
-                  :nodes="item.content"
-                  @longpress="openCommentSetting(item, 0)"
-                  @touchend="touchend"
-                  @click="replyFirstComment(item)"
-                  @itemclick="clickUser"
-                ></rich-text>
-                <text
-                  style="font-size: 20rpx; color: #afafb0; margin-left: 10rpx; white-space: nowrap"
-                  @longpress="openCommentSetting(item, 0)"
-                  @touchend="touchend"
-                  @click="replyFirstComment(item)"
-                >
-                  {{ item.createTime }}
-                </text>
-                <text
-                  style="font-size: 20rpx; color: #afafb0; margin-left: 20rpx; white-space: nowrap"
-                  @longpress="openCommentSetting(item, 0)"
-                  @touchend="touchend"
-                  @click="replyFirstComment(item)"
-                >
-                  {{ item.province }}
-                </text>
-                <text
-                  style="font-size: 20rpx; color: #7d7d7d; margin-left: 20rpx; white-space: nowrap"
-                  @longpress="openCommentSetting(item, 0)"
-                  @touchend="touchend"
-                  @click="replyFirstComment(item)"
-                >
-                  回复
-                </text>
-              </view>
+            <view style="margin-bottom: 12rpx;">
+              <rich-text
+                v-if="item.content"
+                style="font-size: 26rpx; color: #231710; line-height: 1.5;"
+                :nodes="item.content"
+                @longpress="openCommentSetting(item, 0)"
+                @touchend="touchend"
+                @click="replyFirstComment(item)"
+                @itemclick="clickUser"
+              ></rich-text>
+            </view>
+            <view style="display: flex; gap: 28rpx; font-size: 22rpx; color: #8F7260; align-items: center;">
+              <text
+                style="white-space: nowrap"
+                @longpress="openCommentSetting(item, 0)"
+                @touchend="touchend"
+                @click="replyFirstComment(item)"
+              >
+                {{ item.createTime }}
+              </text>
+              <text
+                style="white-space: nowrap"
+                @longpress="openCommentSetting(item, 0)"
+                @touchend="touchend"
+                @click="replyFirstComment(item)"
+              >
+                {{ item.province }}
+              </text>
+              <text
+                style="white-space: nowrap"
+                @longpress="openCommentSetting(item, 0)"
+                @touchend="touchend"
+                @click="replyFirstComment(item)"
+              >
+                回复
+              </text>
             </view>
             <view
               v-if="item.pictureUrl != null && item.pictureUrl != ''"
@@ -349,11 +351,11 @@
             <view
               v-if="item.isTop"
               style="
-                background-color: #fdeff2;
+                background-color: #EFCFB0;
                 padding: 5rpx 10rpx;
                 border-radius: 50rpx;
                 font-size: 22rpx;
-                color: #3d8af5;
+                color: #C97B4A;
                 display: inline-block;
               "
             >
@@ -384,7 +386,7 @@
                       text-overflow: ellipsis;
                     "
                   >
-                    <view style="display: flex; font-size: 26rpx; color: #afafb0; width: 350rpx">
+                    <view style="display: flex; font-size: 24rpx; color: #8F7260; margin-bottom: 6rpx; align-items: center;">
                       <view
                         style="
                           word-break: break-all;
@@ -402,8 +404,8 @@
                         style="
                           margin-left: 10rpx;
                           padding: 4rpx 10rpx;
-                          background-color: #f3f3f2;
-                          color: #7d7d7d;
+                          background-color: #EADFCB;
+                          color: #8F7260;
                           border-radius: 50rpx;
                           white-space: nowrap;
                           width: 50rpx;
@@ -417,8 +419,8 @@
                         style="
                           margin-left: 10rpx;
                           padding: 4rpx 10rpx;
-                          background-color: #f3f3f2;
-                          color: #7d7d7d;
+                          background-color: #EADFCB;
+                          color: #8F7260;
                           border-radius: 50rpx;
                           white-space: nowrap;
                           width: 30rpx;
@@ -428,57 +430,42 @@
                         我
                       </view>
                     </view>
-                    <view style="margin-top: 5rpx">
-                      <view style="display: flex; align-items: baseline; flex-wrap: wrap">
-                        <rich-text
-                          v-if="item2.content"
-                          style="font-size: 14px; letter-spacing: 0.05rem; color: #383c3c"
-                          @longpress="openCommentSetting(item2, item)"
-                          @touchend="touchend"
-                          :nodes="item2.content"
-                          @click="replySecondComment(item, item2)"
-                          @itemclick="clickUser"
-                        ></rich-text>
-                        <text
-                          style="
-                            font-size: 20rpx;
-                            color: #afafb0;
-                            margin-left: 10rpx;
-                            white-space: nowrap;
-                          "
-                          @longpress="openCommentSetting(item2, item)"
-                          @touchend="touchend"
-                          @click="replySecondComment(item, item2)"
-                        >
-                          {{ item2.createTime }}
-                        </text>
-                        <text
-                          style="
-                            font-size: 20rpx;
-                            color: #afafb0;
-                            margin-left: 20rpx;
-                            white-space: nowrap;
-                          "
-                          @longpress="openCommentSetting(item2, item)"
-                          @touchend="touchend"
-                          @click="replySecondComment(item, item2)"
-                        >
-                          {{ item2.province }}
-                        </text>
-                        <text
-                          style="
-                            font-size: 20rpx;
-                            color: #7d7d7d;
-                            margin-left: 20rpx;
-                            white-space: nowrap;
-                          "
-                          @longpress="openCommentSetting(item2, item)"
-                          @touchend="touchend"
-                          @click="replySecondComment(item, item2)"
-                        >
-                          回复
-                        </text>
-                      </view>
+                    <view style="margin-bottom: 12rpx;">
+                      <rich-text
+                        v-if="item2.content"
+                        style="font-size: 26rpx; color: #231710; line-height: 1.5;"
+                        @longpress="openCommentSetting(item2, item)"
+                        @touchend="touchend"
+                        :nodes="item2.content"
+                        @click="replySecondComment(item, item2)"
+                        @itemclick="clickUser"
+                      ></rich-text>
+                    </view>
+                    <view style="display: flex; gap: 28rpx; font-size: 22rpx; color: #8F7260; align-items: center;">
+                      <text
+                        style="white-space: nowrap"
+                        @longpress="openCommentSetting(item2, item)"
+                        @touchend="touchend"
+                        @click="replySecondComment(item, item2)"
+                      >
+                        {{ item2.createTime }}
+                      </text>
+                      <text
+                        style="white-space: nowrap"
+                        @longpress="openCommentSetting(item2, item)"
+                        @touchend="touchend"
+                        @click="replySecondComment(item, item2)"
+                      >
+                        {{ item2.province }}
+                      </text>
+                      <text
+                        style="white-space: nowrap"
+                        @longpress="openCommentSetting(item2, item)"
+                        @touchend="touchend"
+                        @click="replySecondComment(item, item2)"
+                      >
+                        回复
+                      </text>
                     </view>
                     <view
                       v-if="item2.pictureUrl != null && item2.pictureUrl != ''"
@@ -526,7 +513,7 @@
                         @click="praiseComment(item2.id, item2.commentUserId, 2, [index, index2])"
                       ></u-icon>
                     </u-transition>
-                    <view v-if="item2.commentLikeNum > 0" style="font-size: 12px; color: #7d7d7d">
+                    <view v-if="item2.commentLikeNum > 0" style="font-size: 12px; color: #8F7260">
                       {{ item2.commentLikeNum }}
                     </view>
                   </view>
@@ -536,7 +523,7 @@
             <u-loadmore
               v-if="item.commentReplyNum > 0 && item.children.list.length > 0"
               :fontSize="13"
-              color="#5b7e91"
+              color="#C97B4A"
               style="width: 350rpx; letter-spacing: 0.05rem"
               :status="item.children.status"
               :loading-text="loadingText"
@@ -572,7 +559,7 @@
                 @click="praiseComment(item.id, item.commentUserId, 1, [index])"
               ></u-icon>
             </u-transition>
-            <view v-if="item.commentLikeNum > 0" style="font-size: 12px; color: #7d7d7d">
+            <view v-if="item.commentLikeNum > 0" style="font-size: 12px; color: #8F7260">
               {{ item.commentLikeNum }}
             </view>
           </view>
@@ -626,7 +613,7 @@
               <u-icon
                 name="/static/emoji.png"
                 size="25"
-                :color="showEmoji ? '#3d8af5' : '#666'"
+                :color="showEmoji ? '#C97B4A' : '#63463A'"
               ></u-icon>
             </view>
             <view @touchend.prevent="chooseImage">
@@ -654,13 +641,13 @@
                 position: absolute;
                 top: 0;
                 right: 0;
-                background-color: #7d7d7d;
+                background-color: #8F7260;
                 padding: 5rpx;
                 border-bottom-left-radius: 50%;
                 border-top-right-radius: 5rpx;
               "
             >
-              <u-icon name="close" size="9" color="#f3f3f2" @click="deleteImage"></u-icon>
+              <u-icon name="close" size="9" color="#EADFCB" @click="deleteImage"></u-icon>
             </view>
           </view>
         </view>
@@ -706,7 +693,7 @@
             </view>
           </scroll-view>
         </view>
-        <!-- <view v-if="showAite" style="background-color: #f3f3f2">
+        <!-- <view v-if="showAite" style="background-color: #EADFCB">
           <scroll-view style="height: 500rpx" @scrolltolower="getAttentionUser">
             <view v-if="attentionUser.list.length > 0" style="padding: 30rpx">
               <block v-for="(item, index) in attentionUser.list" v-bind:key="item.id">
@@ -724,7 +711,7 @@
                       flex: 1;
                     "
                   >
-                    <view style="font-size: 30rpx; color: #2b2b2b">{{ item.nickname }}</view>
+                    <view style="font-size: 30rpx; color: #231710">{{ item.nickname }}</view>
                   </view>
                   <view style="margin-left: auto">
                     <view
@@ -734,7 +721,7 @@
                         line-height: 60rpx;
                         text-align: center;
                         border-radius: 30rpx;
-                        background-color: #3d8af5;
+                        background-color: #C97B4A;
                         color: #ffffff;
                         font-size: 25rpx;
                       "
@@ -754,7 +741,7 @@
               v-else
               style="display: flex; justify-content: center; align-items: center; height: 500rpx"
             >
-              <view style="font-size: 25rpx; color: #afafb0">暂无数据</view>
+              <view style="font-size: 25rpx; color: #8F7260">暂无数据</view>
             </view>
           </scroll-view>
         </view> -->
@@ -762,28 +749,20 @@
     </u-popup>
     <view
       v-if="!inputField"
-      style="
-        position: fixed;
-        bottom: 0;
-        display: flex;
-        padding: 20rpx;
-        box-sizing: border-box;
-        height: 60px;
-        width: 100%;
-        background-color: #fff;
-      "
+      class="bottom-bar"
     >
       <view class="bottom-edit" @click="replyNotes">
         <u-icon name="/static/icons_edit.png" size="22"></u-icon>
-        <view style="font-size: 26rpx; color: #afafb0; margin-left: 10rpx">说点什么...</view>
+        <view style="font-size: 24rpx; color: #8F7260; margin-left: 10rpx">说点什么...</view>
       </view>
       <view class="bottom-icon">
-        <view style="display: flex; align-items: center; margin: 0 10rpx">
+        <view class="bottom-btn-item">
           <u-transition :show="!notesDetail.isLike" mode="fade" duration="2000">
             <u-icon
               v-if="!notesDetail.isLike"
               name="/static/praise.png"
-              size="28"
+              size="22"
+              color="#63463A"
               @click="praiseNotes(notesDetail.id)"
             ></u-icon>
           </u-transition>
@@ -791,19 +770,19 @@
             <u-icon
               v-if="notesDetail.isLike"
               name="/static/praise_select.png"
-              size="28"
+              size="22"
               @click="praiseNotes(notesDetail.id)"
             ></u-icon>
           </u-transition>
-          <view v-if="notesDetail.notesLikeNum > 0">{{ notesDetail.notesLikeNum }}</view>
-          <view style="font-size: 30rpx" v-else>点赞</view>
+          <view v-if="notesDetail.notesLikeNum > 0" :class="{ 'num-liked': notesDetail.isLike }" class="bottom-btn-num">{{ notesDetail.notesLikeNum }}</view>
         </view>
-        <view style="display: flex; align-items: center; margin: 0 10rpx">
+        <view class="bottom-btn-item">
           <u-transition :show="!notesDetail.isCollect" mode="fade" duration="2000">
             <u-icon
               v-if="!notesDetail.isCollect"
               name="/static/collect.png"
-              size="28"
+              size="22"
+              color="#63463A"
               @click="collectNotes(notesDetail.id)"
             ></u-icon>
           </u-transition>
@@ -811,27 +790,25 @@
             <u-icon
               v-if="notesDetail.isCollect"
               name="/static/collect_select.png"
-              size="28"
+              size="22"
               @click="collectNotes(notesDetail.id)"
             ></u-icon>
           </u-transition>
-          <view v-if="notesDetail.notesCollectNum > 0">{{ notesDetail.notesCollectNum }}</view>
-          <view style="font-size: 30rpx" v-else>收藏</view>
+          <view v-if="notesDetail.notesCollectNum > 0" :class="{ 'num-collected': notesDetail.isCollect }" class="bottom-btn-num">{{ notesDetail.notesCollectNum }}</view>
         </view>
-        <view style="display: flex; align-items: center; margin: 0 10rpx">
-          <u-icon name="/static/comment.png" size="28"></u-icon>
-          <view v-if="commentCount > 0">{{ commentCount }}</view>
-          <view style="font-size: 30rpx" v-else>评论</view>
+        <view class="bottom-btn-item">
+          <u-icon name="/static/comment.png" size="22" color="#63463A"></u-icon>
+          <view v-if="commentCount > 0" class="bottom-btn-num">{{ commentCount }}</view>
         </view>
       </view>
     </view>
-    <view style="height: 60px"></view>
+    <view style="height: 124rpx"></view>
     <u-popup
       :show="showShare"
       mode="bottom"
       @close="showShare = false"
       round="10"
-      bgColor="#f5f5f5"
+      bgColor="#F4EDE2"
     >
       <view
         :style="{ height: windowHeight * (1 / 6) + 'px' }"
@@ -1280,7 +1257,7 @@ export default {
         cancelText: '取消', // 取消按钮的文字
         cancelColor: '#949495', // 取消按钮的文字颜色
         confirmText: '确定', // 确认按钮文字
-        confirmColor: '#3d8af5', // 确认按钮颜色
+        confirmColor: '#C97B4A', // 确认按钮颜色
         showCancel: true // 是否显示取消按钮，默认为 true
       }).then(res => {
         deleteNotes({
@@ -1319,7 +1296,7 @@ export default {
       // 	cancelText: "取消",
       // 	cancelColor: "#949495",
       // 	confirmText: "确定",
-      // 	confirmColor: "#3d8af5",
+      // 	confirmColor: "#C97B4A",
       // 	showCancel: true,
       // 	success: (res) => {
       // 		if (res.confirm) {
@@ -1401,7 +1378,7 @@ export default {
         cancelText: '取消', // 取消按钮的文字
         cancelColor: '#949495', // 取消按钮的文字颜色
         confirmText: '确定', // 确认按钮文字
-        confirmColor: '#3d8af5', // 确认按钮颜色
+        confirmColor: '#C97B4A', // 确认按钮颜色
         showCancel: true // 是否显示取消按钮，默认为 true
       }).then(res => {
         setNotesTopComment({
@@ -1446,7 +1423,7 @@ export default {
         cancelText: '取消', // 取消按钮的文字
         cancelColor: '#949495', // 取消按钮的文字颜色
         confirmText: '确定', // 确认按钮文字
-        confirmColor: '#3d8af5', // 确认按钮颜色
+        confirmColor: '#C97B4A', // 确认按钮颜色
         showCancel: true // 是否显示取消按钮，默认为 true
       }).then(res => {
         deleteNotesComment({
@@ -2063,13 +2040,13 @@ export default {
           if (beforeOpenTags > beforeCloseTags) {
             return match;
           }
-          // 只显示蓝色样式，不添加链接（只显示不跳转）
-          return '<span style="color: #1890ff;">' + match + '</span>';
+          // 只显示高亮样式，不添加链接（只显示不跳转）
+          return '<span style="color: #C97B4A;">' + match + '</span>';
         }
       );
 
       // 处理#标签高亮（如果还没有被格式化）
-      // 注意：需要避免匹配HTML标签内的#（如style="color: #1890ff;"）
+      // 注意：需要避免匹配HTML标签内的#（如style="color: #C97B4A;"）
       // 使用更精确的方法：先找到所有可能的#标签位置，然后检查是否在HTML标签属性内
       let lastIndex = 0;
       let result = '';
@@ -2122,8 +2099,8 @@ export default {
           const needSpace =
             lastChar !== ' ' && lastChar !== '\n' && lastChar !== '\t' && lastIndex !== 0;
           const space = needSpace ? ' ' : '';
-          // 只显示蓝色样式，不添加链接（只显示不跳转）
-          result += `${space}<span style="color: #1890ff;">${match[0]}</span>`;
+          // 只显示高亮样式，不添加链接（只显示不跳转）
+          result += `${space}<span style="display: inline-block; padding: 3px 9px; border-radius: 10px; background: #EFCFB0; color: #8A4A1F; font-size: 11px; font-weight: 500; line-height: 1.4;">${match[0]}</span>`;
         }
 
         lastIndex = matchEnd;
@@ -2171,13 +2148,13 @@ export default {
           if (beforeOpenTags > beforeCloseTags) {
             return match;
           }
-          // 只显示蓝色样式，不添加链接（只显示不跳转）
-          return '<span style="color: #1890ff;">' + match + '</span>';
+          // 只显示高亮样式，不添加链接（只显示不跳转）
+          return '<span style="color: #C97B4A;">' + match + '</span>';
         }
       );
 
       // 处理#标签高亮（如果还没有被格式化）
-      // 注意：需要避免匹配HTML标签内的#（如style="color: #1890ff;"）
+      // 注意：需要避免匹配HTML标签内的#（如style="color: #C97B4A;"）
       // 使用更精确的方法：先找到所有可能的#标签位置，然后检查是否在HTML标签属性内
       let lastIndex = 0;
       let result = '';
@@ -2230,8 +2207,8 @@ export default {
           const needSpace =
             lastChar !== ' ' && lastChar !== '\n' && lastChar !== '\t' && lastIndex !== 0;
           const space = needSpace ? ' ' : '';
-          // 只显示蓝色样式，不添加链接（只显示不跳转）
-          result += `${space}<span style="color: #1890ff;">${match[0]}</span>`;
+          // 只显示高亮样式，不添加链接（只显示不跳转）
+          result += `${space}<span style="display: inline-block; padding: 3px 9px; border-radius: 10px; background: #EFCFB0; color: #8A4A1F; font-size: 11px; font-weight: 500; line-height: 1.4;">${match[0]}</span>`;
         }
 
         lastIndex = matchEnd;
@@ -2812,7 +2789,7 @@ export default {
 
 <style scoped>
 .authorName {
-  color: #2b2b2b;
+  color: #231710;
   font-size: 15px;
   margin-left: 15rpx;
   width: 350rpx;
@@ -2822,27 +2799,63 @@ export default {
   white-space: nowrap;
 }
 
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 124rpx;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1rpx solid rgba(80,50,30,0.1);
+  display: flex;
+  align-items: center;
+  padding: 0 24rpx;
+  gap: 20rpx;
+  box-sizing: border-box;
+  z-index: 999;
+}
+
 .bottom-icon {
   display: flex;
-  justify-content: space-around;
-  font-size: 35rpx;
-  color: #2b2b2b;
-  justify-content: space-around;
-  padding-right: 10rpx;
+  align-items: center;
+  gap: 20rpx;
 }
 
 .bottom-edit {
-  padding: 0 15rpx;
-  background-color: #f3f3f2;
-  border-radius: 50px;
-  margin: 5rpx 18rpx;
+  flex: 1;
+  height: 76rpx;
+  border-radius: 38rpx;
+  background-color: #EADFCB;
+  padding: 0 28rpx;
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.bottom-btn-item {
+  width: 80rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rpx;
+}
+
+.bottom-btn-num {
+  font-size: 18rpx;
+  font-weight: 600;
+  color: #8F7260;
+}
+
+.num-liked {
+  color: #D66A5E;
+}
+
+.num-collected {
+  color: #7BA58E;
 }
 
 .share-item {
@@ -2879,8 +2892,23 @@ button.share-item::after {
   bottom: 30rpx;
 }
 
+::v-deep .uni-swiper-dot {
+  width: 10rpx !important;
+  height: 10rpx !important;
+  border-radius: 6rpx !important;
+  background: rgba(255,255,255,0.55) !important;
+  transition: all 0.3s ease;
+}
+
+::v-deep .uni-swiper-dot-active {
+  width: 32rpx !important;
+  height: 10rpx !important;
+  border-radius: 6rpx !important;
+  background: #fff !important;
+}
+
 ::v-deep .lsjComment .lsj-edit-edit-container {
-  background-color: #f3f3f2 !important;
+  background-color: #EADFCB !important;
   min-height: 40px !important;
   max-height: 140px !important;
   height: auto !important;
@@ -2919,17 +2947,16 @@ button.share-item::after {
 
 /* 笔记内容样式优化 */
 .note-content {
-  font-size: 32rpx;
-  color: #333;
-  line-height: 1.8;
-  letter-spacing: 0.5rpx;
+  font-size: 28rpx;
+  color: #63463A;
+  line-height: 1.75;
   word-wrap: break-word;
   word-break: break-all;
   white-space: pre-wrap;
-  margin-top: 10rpx;
+  margin-bottom: 24rpx;
 }
 
 .note-content ::v-deep rich-text {
-  line-height: 1.8 !important;
+  line-height: 1.75 !important;
 }
 </style>

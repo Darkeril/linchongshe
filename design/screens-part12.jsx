@@ -5,7 +5,7 @@ function PetDateScreen({ palette, radius }) {
   return (
     <div style={{ width: '100%', height: '100%', background: p.bg, position: 'relative', overflow: 'hidden', fontFamily: TYPE.body }}>
       <StatusLine color={p.ink} />
-      <TopBar palette={p} title="遛娃 · 宠友 🐾" right={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={p.ink} strokeWidth="2" strokeLinecap="round"><path d="M3 6h18M3 12h18M3 18h18" /></svg>} />
+      <TopBar palette={p} title="遛娃 · 宠友 🐾" showMenu right={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={p.ink} strokeWidth="2" strokeLinecap="round"><path d="M3 6h18M3 12h18M3 18h18" /></svg>} />
 
       {/* 条件 Chip */}
       <div style={{ position: 'absolute', top: 92, left: 0, right: 0, padding: '8px 14px', display: 'flex', gap: 6, overflowX: 'auto', borderBottom: `0.5px solid ${p.divider}`, zIndex: 3 }}>
@@ -86,9 +86,9 @@ function AdoptScreen({ palette, radius }) {
         <div style={{ position: 'absolute', bottom: -10, right: -10, opacity: 0.15 }}><PawIcon size={100} color="#fff" /></div>
         <div style={{ position: 'absolute', top: 20, left: 40, opacity: 0.12 }}><PawIcon size={40} color="#fff" /></div>
       </div>
-      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent right={<span style={{ fontSize: 12, color: '#fff' }}>我要送养 ›</span>} />
+      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent showMenu right={<span style={{ fontSize: 12, color: '#fff' }}>我要送养 ›</span>} />
 
-      <div style={{ position: 'absolute', top: 68, left: 14, right: 14, color: '#fff', zIndex: 2 }}>
+      <div style={{ position: 'absolute', top: 98, left: 14, right: 14, color: '#fff', zIndex: 2 }}>
         <div style={{ fontSize: 10, opacity: 0.9 }}>🤝 公益板块</div>
         <div style={{ fontSize: 22, fontWeight: 800, fontFamily: TYPE.brand, marginTop: 4 }}>领养代替购买 🏡</div>
         <div style={{ fontSize: 11, opacity: 0.9, marginTop: 4 }}>已有 8,420 只毛孩子找到了家 · 请谨慎决定</div>
@@ -169,9 +169,9 @@ function LostScreen({ palette, radius }) {
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 160, background: `linear-gradient(160deg, #c06a55, #9f4e3a)`, overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: 30, right: -10, opacity: 0.2 }}><PawIcon size={80} color="#fff" /></div>
       </div>
-      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent right={<span style={{ fontSize: 12, color: '#fff', fontWeight: 600 }}>📢 我要发布</span>} />
+      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent showMenu right={<span style={{ fontSize: 12, color: '#fff', fontWeight: 600 }}>📢 我要发布</span>} />
 
-      <div style={{ position: 'absolute', top: 74, left: 14, right: 14, color: '#fff', zIndex: 2 }}>
+      <div style={{ position: 'absolute', top: 98, left: 14, right: 14, color: '#fff', zIndex: 2 }}>
         <div style={{ fontSize: 10, opacity: 0.9 }}>🆘 走失播报</div>
         <div style={{ fontSize: 22, fontWeight: 800, fontFamily: TYPE.brand, marginTop: 4 }}>让每一只毛孩子都能回家</div>
         <div style={{ fontSize: 11, opacity: 0.9, marginTop: 4 }}>附近 3km · 1,248 位好心人已帮忙转发</div>
@@ -249,7 +249,7 @@ function AlbumScreen({ palette, radius }) {
   return (
     <div style={{ width: '100%', height: '100%', background: p.bg, position: 'relative', overflow: 'hidden', fontFamily: TYPE.body }}>
       <StatusLine color={p.ink} />
-      <TopBar palette={p} title="汤圆的相册" right={<span style={{ fontSize: 13, color: p.primary, fontWeight: 700 }}>＋上传</span>} />
+      <TopBar palette={p} title="汤圆的相册" showMenu right={<span style={{ fontSize: 13, color: p.primary, fontWeight: 700 }}>＋上传</span>} />
 
       {/* 切换视图 */}
       <div style={{ position: 'absolute', top: 92, left: 0, right: 0, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 10, zIndex: 3 }}>
@@ -309,7 +309,7 @@ function VIPScreen({ palette, radius }) {
         <div style={{ position: 'absolute', top: 40, right: -20, opacity: 0.15, color: '#d4a86a' }}><PawIcon size={120} color="#d4a86a" /></div>
         <div style={{ position: 'absolute', bottom: 20, left: -10, opacity: 0.12, color: '#d4a86a' }}><PawIcon size={60} color="#d4a86a" /></div>
       </div>
-      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent right={<span style={{ fontSize: 12, color: '#d4a86a' }}>会员规则</span>} />
+      <TopBar palette={{ ...p, ink: '#fff' }} title="" transparent showMenu right={<span style={{ fontSize: 12, color: '#d4a86a' }}>会员规则</span>} />
 
       {/* 会员卡 */}
       <div style={{ position: 'absolute', top: 82, left: 18, right: 18, height: 170, borderRadius: 18, background: 'linear-gradient(135deg, #d4a86a, #8a6230)', padding: 20, boxShadow: '0 12px 30px rgba(212, 168, 106, 0.25)', overflow: 'hidden' }}>
@@ -368,8 +368,8 @@ function VIPScreen({ palette, radius }) {
             { period: '季卡', price: '38', save: '省 4', unit: '/季' },
           ].map((pkg, i) => (
             <div key={i} style={{ flex: 1, padding: 12, borderRadius: 14, background: pkg.best ? `linear-gradient(135deg, #d4a86a, #8a6230)` : p.surface, border: pkg.best ? 'none' : `1.5px solid ${p.divider}`, color: pkg.best ? '#fff' : p.ink, textAlign: 'center', position: 'relative' }}>
-              {pkg.best && <div style={{ position: 'absolute', top: -8, left: '50%', transform: 'translateX(-50%)', padding: '2px 8px', borderRadius: 8, background: '#e07a5a', color: '#fff', fontSize: 9, fontWeight: 700 }}>🔥 推荐</div>}
-              <div style={{ fontSize: 11, fontWeight: 600, opacity: pkg.best ? 0.95 : 1 }}>{pkg.period}</div>
+              {pkg.best && <div style={{ position: 'absolute', top: -8, left: '50%', transform: 'translateX(-50%)', padding: '2px 8px', borderRadius: 8, background: '#e07a5a', color: '#fff', fontSize: 9, fontWeight: 700, whiteSpace: 'nowrap', minWidth: 'max-content' }}>🔥 推荐</div>}
+              <div style={{ fontSize: 11, fontWeight: 600, opacity: pkg.best ? 0.95 : 1, whiteSpace: 'nowrap' }}>{pkg.period}</div>
               <div style={{ marginTop: 4, fontSize: 22, fontWeight: 800, fontFamily: TYPE.num }}>
                 ¥{pkg.price}<span style={{ fontSize: 11, fontWeight: 500, opacity: 0.7 }}>{pkg.unit}</span>
               </div>
@@ -399,7 +399,7 @@ function AboutScreen({ palette, radius }) {
   return (
     <div style={{ width: '100%', height: '100%', background: p.bg, position: 'relative', overflow: 'hidden', fontFamily: TYPE.body }}>
       <StatusLine color={p.ink} />
-      <TopBar palette={p} title="关于爱宠社" />
+      <TopBar palette={p} title="关于爱宠社" showMenu />
 
       <div style={{ position: 'absolute', top: 92, left: 0, right: 0, bottom: 0, overflow: 'auto', paddingBottom: 30 }}>
         {/* Brand */}
@@ -474,4 +474,188 @@ function AboutScreen({ palette, radius }) {
   );
 }
 
-Object.assign(window, { PetDateScreen, AdoptScreen, LostScreen, AlbumScreen, VIPScreen, AboutScreen });
+// ============ DrawerScreen 侧边抽屉 ============
+function DrawerScreen({ palette, radius }) {
+  const p = palette;
+  const rr = radius ?? 16;
+  const drawerW = 260;
+
+  // 菜单组配置
+  const groups = [
+    {
+      title: '我的账户',
+      items: [
+        { icon: '💰', label: '我的钱包', sub: '¥ 328.50', accent: p.primary },
+        { icon: '🎟', label: '优惠券', sub: '5 张可用', accent: '#e07a5a' },
+        { icon: '📦', label: '我的订单', sub: '2 个待收货', accent: '#6fa36f' },
+        { icon: '⭐', label: '我的收藏', sub: '128 篇', accent: '#d9956a' },
+      ],
+    },
+    {
+      title: '激励与成长',
+      items: [
+        { icon: '📅', label: '每日签到', sub: '已连签 7 天 · 可领 10 喵币', accent: '#e9a94a', badge: '领取' },
+        { icon: '👑', label: 'PetClub 会员', sub: '再 3 天到期', accent: '#c97b4a' },
+        { icon: '🎁', label: '邀请好友', sub: '各得 15 元无门槛券', accent: '#b07a9c' },
+        { icon: '🏆', label: '我的成就', sub: '已解锁 24 / 60', accent: '#7fa4c4' },
+      ],
+    },
+    {
+      title: '工具与帮助',
+      items: [
+        { icon: '🔖', label: '浏览历史' },
+        { icon: '✏️', label: '草稿箱', sub: '3 篇未发布' },
+        { icon: '🎧', label: '在线客服' },
+        { icon: '⚙️', label: '设置' },
+        { icon: 'ℹ️', label: '关于爱宠社' },
+      ],
+    },
+  ];
+
+  return (
+    <div style={{ width: '100%', height: '100%', background: p.bg, position: 'relative', overflow: 'hidden', fontFamily: TYPE.body }}>
+      <StatusLine color="#fff" />
+
+      {/* 背后的个人主页（模糊示意）*/}
+      <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg, ${p.primarySoft} 0%, ${p.bg} 40%)`, filter: 'blur(2px)' }}>
+        {/* 背后的个人主页头图 */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 200, background: `linear-gradient(135deg, ${p.primary}, ${p.accent})` }} />
+        <div style={{ position: 'absolute', top: 160, left: 0, right: 0, height: 80, background: p.surface, borderRadius: '22px 22px 0 0' }} />
+        {/* 假装的头像 */}
+        <div style={{ position: 'absolute', top: 130, left: 20, width: 72, height: 72, borderRadius: 40, background: p.surface, padding: 3 }}>
+          <div style={{ width: '100%', height: '100%', borderRadius: 40, background: `linear-gradient(135deg, ${p.accent}, ${p.primary})` }} />
+        </div>
+      </div>
+
+      {/* 遮罩 */}
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(20, 12, 6, 0.45)', backdropFilter: 'blur(2px)' }} />
+
+      {/* Drawer */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, bottom: 0, width: drawerW,
+        background: p.bg,
+        boxShadow: '8px 0 40px rgba(0,0,0,0.2)',
+        display: 'flex', flexDirection: 'column',
+        overflow: 'hidden',
+      }}>
+        {/* 顶部用户区（带弧形背景）*/}
+        <div style={{ position: 'relative', paddingTop: 46, paddingBottom: 18, background: `linear-gradient(165deg, ${p.primary} 0%, ${p.accent} 100%)`, overflow: 'hidden' }}>
+          {/* 装饰爪印 */}
+          <div style={{ position: 'absolute', top: 14, right: -10, fontSize: 80, opacity: 0.1 }}>🐾</div>
+          <div style={{ position: 'absolute', bottom: -20, right: 30, fontSize: 50, opacity: 0.12, transform: 'rotate(25deg)' }}>🐾</div>
+
+          {/* 用户卡片 */}
+          <div style={{ padding: '16px 18px 0', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 54, height: 54, borderRadius: 28, background: '#fff', padding: 2, flexShrink: 0 }}>
+              <div style={{ width: '100%', height: '100%', borderRadius: 26, background: `linear-gradient(135deg, #ffd9b8, #c97b4a)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26 }}>🐱</div>
+            </div>
+            <div style={{ flex: 1, color: '#fff' }}>
+              <div style={{ fontSize: 17, fontWeight: 800, fontFamily: TYPE.brand, display: 'flex', alignItems: 'center', gap: 6 }}>
+                喵酱的铲屎官
+                <span style={{ fontSize: 9, padding: '1px 5px', borderRadius: 6, background: 'rgba(255,255,255,0.25)', fontWeight: 700 }}>Lv.12</span>
+              </div>
+              <div style={{ fontSize: 11, opacity: 0.9, marginTop: 3 }}>ID: petlover_0304 · 已加入 687 天</div>
+            </div>
+          </div>
+
+          {/* 数据栏 */}
+          <div style={{ margin: '14px 14px 0', padding: '10px 4px', borderRadius: 14, background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(10px)', display: 'flex', justifyContent: 'space-around', color: '#fff' }}>
+            {[['128', '关注'], ['2.3k', '粉丝'], ['86', '笔记'], ['1.2w', '获赞']].map(([n, l]) => (
+              <div key={l} style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 15, fontWeight: 800, fontFamily: TYPE.num, lineHeight: 1 }}>{n}</div>
+                <div style={{ fontSize: 9, opacity: 0.85, marginTop: 4 }}>{l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 宠物快切 */}
+        <div style={{ padding: '14px 18px 8px' }}>
+          <div style={{ fontSize: 10, color: p.inkMuted, fontWeight: 700, letterSpacing: 0.5, marginBottom: 8 }}>我的毛孩子</div>
+          <div style={{ display: 'flex', gap: 10, overflowX: 'auto' }}>
+            {[
+              { name: '喵酱', emoji: '🐱', active: true },
+              { name: '球球', emoji: '🐕', active: false },
+              { name: '闪闪', emoji: '🐠', active: false },
+            ].map((pet, i) => (
+              <div key={i} style={{ flexShrink: 0, width: 50, textAlign: 'center' }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: 24, margin: '0 auto',
+                  background: pet.active ? `linear-gradient(135deg, ${p.primary}, ${p.accent})` : p.surfaceDim,
+                  padding: pet.active ? 2 : 0,
+                  border: pet.active ? 'none' : `1px dashed ${p.divider}`,
+                }}>
+                  <div style={{ width: '100%', height: '100%', borderRadius: 22, background: p.surface, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>{pet.emoji}</div>
+                </div>
+                <div style={{ fontSize: 10, color: pet.active ? p.ink : p.inkMuted, fontWeight: pet.active ? 700 : 500, marginTop: 4 }}>{pet.name}</div>
+              </div>
+            ))}
+            <div style={{ flexShrink: 0, width: 50, textAlign: 'center' }}>
+              <div style={{ width: 44, height: 44, borderRadius: 24, margin: '0 auto', background: p.surfaceDim, border: `1px dashed ${p.inkFaint}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: p.inkMuted, fontSize: 18 }}>+</div>
+              <div style={{ fontSize: 10, color: p.inkMuted, marginTop: 4 }}>添加</div>
+            </div>
+          </div>
+        </div>
+
+        {/* 菜单组 */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '0 12px 12px' }}>
+          {groups.map((g, gi) => (
+            <div key={gi} style={{ marginTop: 12 }}>
+              <div style={{ fontSize: 10, color: p.inkMuted, fontWeight: 700, letterSpacing: 0.5, padding: '0 6px 6px' }}>{g.title}</div>
+              <div style={{ background: p.surface, borderRadius: rr, overflow: 'hidden' }}>
+                {g.items.map((it, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '11px 12px',
+                    borderBottom: i === g.items.length - 1 ? 'none' : `0.5px solid ${p.divider}`,
+                    cursor: 'pointer',
+                  }}>
+                    <div style={{
+                      width: 30, height: 30, borderRadius: 10,
+                      background: it.accent ? it.accent + '22' : p.surfaceDim,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 15, flexShrink: 0,
+                    }}>{it.icon}</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, color: p.ink, fontWeight: 600 }}>{it.label}</div>
+                      {it.sub && <div style={{ fontSize: 10, color: p.inkMuted, marginTop: 1 }}>{it.sub}</div>}
+                    </div>
+                    {it.badge ? (
+                      <div style={{ fontSize: 10, color: '#fff', fontWeight: 700, padding: '3px 8px', borderRadius: 10, background: it.accent || p.primary }}>{it.badge}</div>
+                    ) : (
+                      <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke={p.inkFaint} strokeWidth="1.5" strokeLinecap="round"><path d="M1 1l4 4-4 4" /></svg>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {/* 夜间模式切换 */}
+          <div style={{ marginTop: 12, background: p.surface, borderRadius: rr, padding: '11px 12px', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 30, height: 30, borderRadius: 10, background: '#2a2017', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>🌙</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13, color: p.ink, fontWeight: 600 }}>夜间模式</div>
+              <div style={{ fontSize: 10, color: p.inkMuted, marginTop: 1 }}>跟随系统</div>
+            </div>
+            {/* 开关 */}
+            <div style={{ width: 34, height: 20, borderRadius: 10, background: p.primary, position: 'relative' }}>
+              <div style={{ position: 'absolute', top: 2, right: 2, width: 16, height: 16, borderRadius: 8, background: '#fff', boxShadow: '0 1px 2px rgba(0,0,0,0.2)' }} />
+            </div>
+          </div>
+        </div>
+
+        {/* 底部退出 */}
+        <div style={{ padding: '10px 18px 20px', borderTop: `0.5px solid ${p.divider}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ fontSize: 11, color: p.inkMuted }}>版本 v5.2.1</div>
+          <div style={{ fontSize: 11, color: p.inkSoft, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" /></svg>
+            退出登录
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { PetDateScreen, AdoptScreen, LostScreen, AlbumScreen, VIPScreen, AboutScreen, DrawerScreen });

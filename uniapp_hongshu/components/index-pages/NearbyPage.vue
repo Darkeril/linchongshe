@@ -422,14 +422,14 @@
 	
 	.empty-text {
 		font-size: 32rpx;
-		color: #666;
+		color: #63463A;
 		margin-bottom: 20rpx;
 		font-weight: 500;
 	}
 	
 	.empty-tip {
 		font-size: 24rpx;
-		color: #999;
+		color: #8F7260;
 		line-height: 1.5;
 	}
 	

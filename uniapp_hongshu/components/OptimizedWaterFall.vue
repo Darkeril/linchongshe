@@ -25,7 +25,7 @@
             
             <!-- 加载状态 -->
             <view v-if="item._loading" class="image-loading">
-              <u-loading-icon color="#3d8af5" size="24"></u-loading-icon>
+              <u-loading-icon color="#C97B4A" size="24"></u-loading-icon>
             </view>
             
             <!-- 审核状态覆盖层 -->
@@ -36,9 +36,10 @@
               </view>
             </view>
             
-            <!-- 置顶标识 -->
-            <view v-if="item.pinned == 1 && type == 1" class="top-wrapper">
-              <view class="pinned-text">置顶</view>
+            <!-- 标签 / 置顶 -->
+            <view v-if="item.pinned == 1 && type == 1" class="card-tag">置顶</view>
+            <view v-else-if="item.categoryName" class="card-tag">
+              #{{ item.categoryName }}
             </view>
             
             <!-- 浏览数 -->
@@ -58,19 +59,19 @@
             {{ item.title }}
           </view>
           
-          <!-- 底部信息 -->
+          <!-- 底部信息：头像+用户名 | 点赞 -->
           <view v-if="slot_bottom" class="bottom-info">
-            <image 
-              class="avatar" 
-              mode="aspectFill"
-              :src="getOptimizedImageUrl(item.avatarUrl, 'avatar')"
-            />
-            <view class="user-info">
-              <view class="username">{{ item.username }}</view>
-              <view class="meta-info">
-                <text class="like-count">{{ item.likeCount || 0 }}</text>
-                <text class="comment-count">{{ item.commentCount || 0 }}</text>
-              </view>
+            <view class="user-row">
+              <image
+                class="avatar"
+                mode="aspectFill"
+                :src="getOptimizedImageUrl(item.avatarUrl, 'avatar')"
+              />
+              <text class="username">{{ item.username }}</text>
+            </view>
+            <view class="like-row">
+              <u-icon name="heart" :color="item.liked ? '#D66A5E' : '#8F7260'" size="24rpx"></u-icon>
+              <text class="like-count" :class="{ 'liked': item.liked }">{{ formatLikes(item.notesLikeNum || item.likeCount || 0) }}</text>
             </view>
           </view>
         </view>
@@ -97,7 +98,7 @@
             
             <!-- 加载状态 -->
             <view v-if="item._loading" class="image-loading">
-              <u-loading-icon color="#3d8af5" size="24"></u-loading-icon>
+              <u-loading-icon color="#C97B4A" size="24"></u-loading-icon>
             </view>
             
             <!-- 审核状态覆盖层 -->
@@ -108,9 +109,10 @@
               </view>
             </view>
             
-            <!-- 置顶标识 -->
-            <view v-if="item.pinned == 1 && type == 1" class="top-wrapper">
-              <view class="pinned-text">置顶</view>
+            <!-- 标签 / 置顶 -->
+            <view v-if="item.pinned == 1 && type == 1" class="card-tag">置顶</view>
+            <view v-else-if="item.categoryName" class="card-tag">
+              #{{ item.categoryName }}
             </view>
             
             <!-- 浏览数 -->
@@ -130,19 +132,19 @@
             {{ item.title }}
           </view>
           
-          <!-- 底部信息 -->
+          <!-- 底部信息：头像+用户名 | 点赞 -->
           <view v-if="slot_bottom" class="bottom-info">
-            <image 
-              class="avatar" 
-              mode="aspectFill"
-              :src="getOptimizedImageUrl(item.avatarUrl, 'avatar')"
-            />
-            <view class="user-info">
-              <view class="username">{{ item.username }}</view>
-              <view class="meta-info">
-                <text class="like-count">{{ item.likeCount || 0 }}</text>
-                <text class="comment-count">{{ item.commentCount || 0 }}</text>
-              </view>
+            <view class="user-row">
+              <image
+                class="avatar"
+                mode="aspectFill"
+                :src="getOptimizedImageUrl(item.avatarUrl, 'avatar')"
+              />
+              <text class="username">{{ item.username }}</text>
+            </view>
+            <view class="like-row">
+              <u-icon name="heart" :color="item.liked ? '#D66A5E' : '#8F7260'" size="24rpx"></u-icon>
+              <text class="like-count" :class="{ 'liked': item.liked }">{{ formatLikes(item.notesLikeNum || item.likeCount || 0) }}</text>
             </view>
           </view>
         </view>
@@ -469,6 +471,16 @@ export default {
     },
     
     /**
+     * 格式化点赞数（>999 显示 x.xk）
+     */
+    formatLikes(num) {
+      if (!num) return '0'
+      if (num > 9999) return (num / 10000).toFixed(1) + 'w'
+      if (num > 999) return (num / 1000).toFixed(1) + 'k'
+      return String(num)
+    },
+
+    /**
      * 跳转到详情页
      */
     goToDetail(id, notesType) {
@@ -485,26 +497,32 @@ export default {
 </script>
 
 <style scoped>
+/* ── 容器：两列 flex，列间距 16rpx (design: gap 8px) ── */
 .waterfall-container {
   display: flex;
+  gap: 16rpx;
   width: 100%;
-  background: #f5f5f5;
+  padding: 0 20rpx;
+  box-sizing: border-box;
+  background: #F4EDE2;
 }
 
 .water-left,
 .water-right {
   flex: 1;
-  padding: 0 5rpx;
+  min-width: 0;
 }
 
+/* ── 卡片：圆角 32rpx，极淡阴影 (design: radius 16, shadow 0 2px 8px) ── */
 .note-card {
-  margin-bottom: 10rpx;
-  background: #ffffff;
-  border-radius: 10rpx;
+  margin-bottom: 20rpx;
+  background: #FFFFFF;
+  border-radius: 32rpx;
   overflow: hidden;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
 }
 
+/* ── 图片区 ── */
 .image-container {
   position: relative;
   width: 100%;
@@ -521,7 +539,7 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   background: rgba(255, 255, 255, 0.8);
-  border-radius: 10rpx;
+  border-radius: 16rpx;
   padding: 20rpx;
 }
 
@@ -547,52 +565,60 @@ export default {
   margin-top: 8rpx;
 }
 
-.top-wrapper {
+/* ── 卡片标签：毛玻璃白底 (design: rgba(255,255,255,0.85) + blur + #8A4A1F) ── */
+.card-tag {
   position: absolute;
-  top: 10rpx;
-  left: 10rpx;
-  background: rgba(232, 57, 41, 0.8);
-  color: #ffffff;
-  padding: 4rpx 8rpx;
-  border-radius: 4rpx;
+  top: 16rpx;
+  left: 16rpx;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 6rpx 16rpx;
+  border-radius: 16rpx;
   font-size: 20rpx;
+  font-weight: 600;
+  color: #8A4A1F;
 }
 
+/* ── 浏览数 ── */
 .look-views {
   position: absolute;
-  bottom: 10rpx;
-  right: 10rpx;
-  background: rgba(0, 0, 0, 0.6);
+  bottom: 12rpx;
+  right: 12rpx;
+  background: rgba(0, 0, 0, 0.45);
   color: #ffffff;
-  padding: 4rpx 8rpx;
-  border-radius: 4rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
   display: flex;
   align-items: center;
   font-size: 20rpx;
 }
 
 .view-count {
-  margin-left: 5rpx;
+  margin-left: 6rpx;
 }
 
+/* ── 视频播放 ── */
 .video-play {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 50%;
-  width: 60rpx;
-  height: 60rpx;
+  width: 64rpx;
+  height: 64rpx;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* ── 标题：24rpx/500 (design: 12px, fontWeight 500) ── */
 .title {
-  padding: 20rpx;
-  font-size: 28rpx;
-  color: #333333;
+  padding: 16rpx 20rpx 0;
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #231710;
   line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -601,38 +627,52 @@ export default {
   -webkit-box-orient: vertical;
 }
 
+/* ── 底部：头像+用户名 左 / 点赞 右 (design: space-between) ── */
 .bottom-info {
   display: flex;
   align-items: center;
-  padding: 20rpx;
-  border-top: 1rpx solid #f0f0f0;
+  justify-content: space-between;
+  padding: 16rpx 20rpx 20rpx;
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
 }
 
 .avatar {
-  width: 44rpx;
-  height: 44rpx;
+  width: 36rpx;
+  height: 36rpx;
   border-radius: 50%;
-  margin-right: 15rpx;
-}
-
-.user-info {
-  flex: 1;
+  flex-shrink: 0;
 }
 
 .username {
-  font-size: 24rpx;
-  color: #666666;
-  margin-bottom: 5rpx;
-}
-
-.meta-info {
-  display: flex;
   font-size: 20rpx;
-  color: #999999;
+  color: #8F7260;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.like-count,
-.comment-count {
-  margin-right: 15rpx;
+.like-row {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  flex-shrink: 0;
+}
+
+.like-count {
+  font-size: 20rpx;
+  font-weight: 500;
+  color: #8F7260;
+}
+
+.like-count.liked {
+  color: #D66A5E;
 }
 </style>

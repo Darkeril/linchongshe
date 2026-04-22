@@ -147,7 +147,7 @@ export default {
         width: 80rpx;
         height: 80rpx;
         border-radius: 40rpx;
-        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background: linear-gradient(90deg, #F4EDE2 25%, #EADFCB 50%, #F4EDE2 75%);
         background-size: 200% 100%;
         animation: skeleton-loading 1.5s infinite;
         margin-right: 24rpx;
@@ -159,7 +159,7 @@ export default {
         .username-skeleton {
           width: 120rpx;
           height: 32rpx;
-          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background: linear-gradient(90deg, #F4EDE2 25%, #EADFCB 50%, #F4EDE2 75%);
           background-size: 200% 100%;
           animation: skeleton-loading 1.5s infinite;
           border-radius: 16rpx;
@@ -169,7 +169,7 @@ export default {
         .time-skeleton {
           width: 80rpx;
           height: 24rpx;
-          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background: linear-gradient(90deg, #F4EDE2 25%, #EADFCB 50%, #F4EDE2 75%);
           background-size: 200% 100%;
           animation: skeleton-loading 1.5s infinite;
           border-radius: 12rpx;
@@ -182,7 +182,7 @@ export default {
       
       .text-line-skeleton {
         height: 28rpx;
-        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background: linear-gradient(90deg, #F4EDE2 25%, #EADFCB 50%, #F4EDE2 75%);
         background-size: 200% 100%;
         animation: skeleton-loading 1.5s infinite;
         border-radius: 14rpx;
@@ -200,7 +200,7 @@ export default {
       .single-image-skeleton {
         width: 100%;
         height: 400rpx;
-        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background: linear-gradient(90deg, #F4EDE2 25%, #EADFCB 50%, #F4EDE2 75%);
         background-size: 200% 100%;
         animation: skeleton-loading 1.5s infinite;
         border-radius: 12rpx;
@@ -213,7 +213,7 @@ export default {
         .image-item-skeleton {
           flex: 1;
           height: 200rpx;
-          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background: linear-gradient(90deg, #F4EDE2 25%, #EADFCB 50%, #F4EDE2 75%);
           background-size: 200% 100%;
           animation: skeleton-loading 1.5s infinite;
           border-radius: 12rpx;
@@ -225,12 +225,12 @@ export default {
       display: flex;
       justify-content: space-around;
       padding-top: 20rpx;
-      border-top: 1rpx solid #f0f0f0;
+      border-top: 1rpx solid rgba(80,50,30,0.1);
       
       .action-item-skeleton {
         width: 80rpx;
         height: 32rpx;
-        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background: linear-gradient(90deg, #F4EDE2 25%, #EADFCB 50%, #F4EDE2 75%);
         background-size: 200% 100%;
         animation: skeleton-loading 1.5s infinite;
         border-radius: 16rpx;
@@ -261,7 +261,7 @@ export default {
       .image-skeleton {
         width: 100%;
         height: 300rpx;
-        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background: linear-gradient(90deg, #F4EDE2 25%, #EADFCB 50%, #F4EDE2 75%);
         background-size: 200% 100%;
         animation: skeleton-loading 1.5s infinite;
       }
@@ -272,7 +272,7 @@ export default {
         .note-title-skeleton {
           width: 100%;
           height: 24rpx;
-          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background: linear-gradient(90deg, #F4EDE2 25%, #EADFCB 50%, #F4EDE2 75%);
           background-size: 200% 100%;
           animation: skeleton-loading 1.5s infinite;
           border-radius: 12rpx;
@@ -287,7 +287,7 @@ export default {
           .username-skeleton {
             width: 80rpx;
             height: 20rpx;
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background: linear-gradient(90deg, #F4EDE2 25%, #EADFCB 50%, #F4EDE2 75%);
             background-size: 200% 100%;
             animation: skeleton-loading 1.5s infinite;
             border-radius: 10rpx;
@@ -296,7 +296,7 @@ export default {
           .stats-skeleton {
             width: 60rpx;
             height: 20rpx;
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background: linear-gradient(90deg, #F4EDE2 25%, #EADFCB 50%, #F4EDE2 75%);
             background-size: 200% 100%;
             animation: skeleton-loading 1.5s infinite;
             border-radius: 10rpx;

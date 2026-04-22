@@ -14,7 +14,7 @@ function FavoritesScreen({ palette, radius }) {
   return (
     <div style={{ width: '100%', height: '100%', background: p.bg, position: 'relative', overflow: 'hidden', fontFamily: TYPE.body }}>
       <StatusLine color={p.ink} />
-      <TopBar palette={p} title="我的收藏" right={<span style={{ fontSize: 13, color: p.primary, fontWeight: 700 }}>＋新建</span>} />
+      <TopBar palette={p} title="我的收藏" showMenu right={<span style={{ fontSize: 13, color: p.primary, fontWeight: 700 }}>＋新建</span>} />
 
       {/* Tab */}
       <div style={{ position: 'absolute', top: 92, left: 0, right: 0, height: 42, background: p.bg, display: 'flex', padding: '0 18px', gap: 18, borderBottom: `0.5px solid ${p.divider}`, zIndex: 5 }}>
@@ -89,7 +89,7 @@ function HistoryScreen({ palette, radius }) {
   return (
     <div style={{ width: '100%', height: '100%', background: p.bg, position: 'relative', overflow: 'hidden', fontFamily: TYPE.body }}>
       <StatusLine color={p.ink} />
-      <TopBar palette={p} title="浏览历史" right={<span style={{ fontSize: 12, color: p.inkMuted }}>🗑️ 清空</span>} />
+      <TopBar palette={p} title="浏览历史" showMenu right={<span style={{ fontSize: 12, color: p.inkMuted }}>🗑️ 清空</span>} />
 
       {/* Filter */}
       <div style={{ position: 'absolute', top: 92, left: 0, right: 0, padding: '8px 14px', display: 'flex', gap: 6, overflowX: 'auto', borderBottom: `0.5px solid ${p.divider}`, zIndex: 3 }}>
@@ -231,7 +231,7 @@ function WalletScreen({ palette, radius }) {
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 260, background: `linear-gradient(160deg, ${p.primaryInk}, ${p.primary})`, overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: 20, right: -20, opacity: 0.15 }}><PawIcon size={120} color="#fff" /></div>
       </div>
-      <TopBar palette={{ ...p, ink: '#fff' }} title="我的钱包" transparent right={<span style={{ fontSize: 12, color: '#fff' }}>明细 ›</span>} />
+      <TopBar palette={{ ...p, ink: '#fff' }} title="我的钱包" transparent showMenu right={<span style={{ fontSize: 12, color: '#fff' }}>明细 ›</span>} />
 
       <div style={{ position: 'absolute', top: 100, left: 14, right: 14, zIndex: 2 }}>
         <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)' }}>钱包余额 (CNY)</div>
@@ -311,7 +311,7 @@ function SupportScreen({ palette, radius }) {
   return (
     <div style={{ width: '100%', height: '100%', background: p.bg, position: 'relative', overflow: 'hidden', fontFamily: TYPE.body }}>
       <StatusLine color={p.ink} />
-      <TopBar palette={p} title="在线客服 · 小爪" right={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={p.ink} strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="1.5" fill={p.ink} /><circle cx="19" cy="12" r="1.5" fill={p.ink} /><circle cx="5" cy="12" r="1.5" fill={p.ink} /></svg>} />
+      <TopBar palette={p} title="在线客服 · 小爪" showMenu right={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={p.ink} strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="1.5" fill={p.ink} /><circle cx="19" cy="12" r="1.5" fill={p.ink} /><circle cx="5" cy="12" r="1.5" fill={p.ink} /></svg>} />
 
       {/* AI 客服条 */}
       <div style={{ position: 'absolute', top: 92, left: 0, right: 0, padding: '10px 14px', background: `linear-gradient(90deg, ${p.primarySoft}, ${p.surface})`, display: 'flex', alignItems: 'center', gap: 10, zIndex: 3, borderBottom: `0.5px solid ${p.divider}` }}>
