@@ -173,7 +173,8 @@ async function onSubmit(): Promise<void> {
     await userStore.loginWithPhone({ phone: phone.value, smsCode: smsCode.value });
     uni.showToast({ title: '登录成功', icon: 'success' });
     setTimeout(() => {
-      uni.reLaunch({ url: '/pages/index/index' });
+      // home 是 tabBar 页，必须用 switchTab
+      uni.switchTab({ url: '/pages/home/home' });
     }, 400);
   } catch (err) {
     const message = err instanceof Error ? err.message : '登录失败';

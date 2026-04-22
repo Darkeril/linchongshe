@@ -150,7 +150,8 @@ async function onWechatLogin(): Promise<void> {
     await userStore.loginWithWechat({ code: 'mock_wx_code' });
     uni.showToast({ title: '登录成功', icon: 'success' });
     setTimeout(() => {
-      uni.reLaunch({ url: '/pages/index/index' });
+      // home 是 tabBar 页，必须用 switchTab 而非 reLaunch
+      uni.switchTab({ url: '/pages/home/home' });
     }, 400);
   } catch (err) {
     const message = err instanceof Error ? err.message : '登录失败，请稍后重试';

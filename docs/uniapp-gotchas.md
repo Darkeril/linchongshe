@@ -673,3 +673,107 @@ onLoad(() => {
 **首次发现**：Phase 2.5（预见性沉淀；社区类 App TabBar 强刷新场景必踩）
 
 ---
+
+### 16. Swiper + Tab 布局：顶部固定 + 独立滚动
+
+**场景**：图文社区首页（小红书风格）—— 顶部 Tab 栏（关注/发现/附近）+ 下方每个 Tab 独立内容区上下滚动 + 左右滑动切换 Tab。
+
+**现象**：直接把顶部 Tab 和内容放同一个可滚容器里，会导致顶部栏跟着内容一起向上滚走；用户切 Tab 只能点击、无法左右滑。
+
+**根因**：
+- UniApp 的 `<swiper>` 默认高度是 150px，必须显式撑开剩余空间
+- `<swiper-item>` 本身不支持内部滚动，要在里面套 `<scroll-view scroll-y>` 并给显式高度（与 gotcha #4 一脉相承）
+- Flex 布局下 swiper 做 `flex: 1` 时需加 `height: 0` 兜底才能稳定撑开
+
+**正确做法**：
+```vue
+<view class="page">                      <!-- flex column, 100vh - 其他固定高度 -->
+  <view class="page__top-bar">...</view> <!-- flex-shrink: 0 -->
+  <swiper
+    :current="activeIndex"
+    :duration="260"
+    @change="onSwiperChange"
+    class="page__swiper"
+  >
+    <swiper-item v-for="t in tabs" :key="t.id" class="page__swiper-item">
+      <scroll-view scroll-y class="page__scroll">
+        <!-- tab 内容 -->
+      </scroll-view>
+    </swiper-item>
+  </swiper>
+</view>
+
+<script setup>
+const activeIndex = computed(() => tabs.findIndex(t => t.id === activeTab.value))
+function onSwiperChange(e) {
+  activeTab.value = tabs[e.detail.current].id  // 同步 swiper → tab state
+}
+function onTabTap(id) {
+  activeTab.value = id                          // 同步 tap → tab state → computed current
+}
+</script>
+
+<style>
+.page {
+  display: flex; flex-direction: column;
+  height: calc(100vh - <预留底部高度> - env(safe-area-inset-bottom));
+  overflow: hidden;
+}
+.page__top-bar { flex-shrink: 0; }
+.page__swiper { flex: 1; height: 0; width: 100%; }
+.page__swiper-item { width: 100%; height: 100%; }
+.page__scroll { width: 100%; height: 100%; }
+</style>
+```
+
+**反例**：
+```vue
+<!-- ❌ 顶部和内容在同一 scroll-view，顶部栏会跟着内容滚 -->
+<scroll-view scroll-y style="height: 100vh">
+  <view class="top-bar">...</view>
+  <view class="feed">...</view>
+</scroll-view>
+
+<!-- ❌ swiper 无高度，渲染默认 150px -->
+<swiper>
+  <swiper-item>...</swiper-item>
+</swiper>
+
+<!-- ❌ swiper 用 flex:1 没加 height:0，部分平台不生效 -->
+<swiper style="flex: 1">...</swiper>
+```
+
+**影响范围**：H5 / 小程序 / App（swiper 是 uni-app 跨端组件，但高度要求相同）
+**首次发现**：Phase 3（home.vue 三 Tab 切换 + 独立上下滚）
+
+---
+
+### 17. Sub-agent 误把项目 CLAUDE.md 规则当自己的
+
+**场景**：主 agent 通过 autoresearch-router 派发 sub-agent 执行 Phase 任务；sub-agent 读项目 CLAUDE.md 时看到"Plan Before Execute / 走 autoresearch-router"等规则。
+
+**现象**：sub-agent 停下来问"我需要先做 plan 吗？要不要我再派发 router？"— 把主线程的规则套在自己头上，导致 dispatch 失败或空跑。
+
+**根因**：
+- 项目级 CLAUDE.md 的规则 5/6（Plan Before Execute / 走 autoresearch-router）是**主线程流程规则**，不是 sub-agent 的
+- Sub-agent 读 CLAUDE.md 无法区分"哪条是给主线程的 / 哪条是给我的"
+- persona_behavior 注入了专家视角，但没有角色层级说明
+
+**正确做法**：`docs/plans/dispatch-template.md` 的派发 prompt 开头必须加固定角色澄清：
+
+```markdown
+## 你的角色（固定开场，禁止删改）
+
+你是 autoresearch-router 派发的 **sub-agent**，不是主线程。
+- 项目 CLAUDE.md 第五章「计划文档约定」、第八章第 9/12 条「走 autoresearch-router」是**主线程规则**，不是给你
+- 你拿到的这份派发 prompt 本身就是主线程做完 plan + 用户确认后的执行指令
+- 不要再做 plan、不要再派 router、不要再次征求确认
+- 直接按本 prompt 的任务清单执行，完成后回报 10 项报告
+```
+
+**反例**：派发 prompt 里只写任务清单，没有角色澄清 → sub-agent 读 CLAUDE.md 后主动停下来问。
+
+**影响范围**：所有 autoresearch-router 派发场景（meta-gotcha）
+**首次发现**：Phase 3（worker 读 CLAUDE.md 规则 5/6 后要求"澄清我是主线程还是 sub-agent"）
+
+---

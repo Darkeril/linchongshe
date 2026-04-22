@@ -79,8 +79,13 @@ let timer: ReturnType<typeof setTimeout> | null = null;
 
 onMounted(() => {
   timer = setTimeout(() => {
-    const target = hasToken() ? '/pages/index/index' : '/pages/login/login';
-    uni.reLaunch({ url: target });
+    // 有 token → switchTab 直达首页 tab
+    // 无 token → reLaunch 到登录页
+    if (hasToken()) {
+      uni.switchTab({ url: '/pages/home/home' });
+    } else {
+      uni.reLaunch({ url: '/pages/login/login' });
+    }
   }, 2000);
 });
 
