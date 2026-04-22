@@ -88,6 +88,16 @@ linchong_src/
 - 发现设计稿自身有问题（比如尺寸矛盾、缺状态）→ 先提出，等用户明确后再动手
 - 不接受"颜色改了、布局没对"这种半吊子还原
 
+**视觉验证（Phase 2.5 新增，硬性要求）**：
+- **代码编译通过 ≠ 视觉正确**。worker 完成实现后必须做视觉验证，否则视为未完成
+- Worker 必须在报告里按 `docs/plans/dispatch-template.md` 的视觉验证章节提供证据：
+  - `dev:h5` 启动日志 tail（证明能跑）
+  - **方案 A（默认）**：真实浏览器截图（iPhone 13 Pro 视口 + hash 路由访问目标页），贴截图 + 描述
+  - **方案 B（可选）**：Playwright headless 的 DOM dump + 截图（脚本见 dispatch-template 第 82–115 行）
+  - ⚠️ **禁止用 `curl` 拉 SPA 页面做 grep 验证** —— UniApp H5 是 hash 路由 SPA，curl 只能拿到骨架 HTML，拿不到子路由 DOM，Phase 2 按钮溢出坑当初用 curl 也查不出来
+- 主线程在 keep 之前必须过 reviewer（`reality-checker` persona）独立审查一轮
+- 最终用户验收以截图对比设计稿为准，不以代码 diff 为准
+
 **无设计稿页面的处理分支**（来自 Phase 0.5 决策 1.2）：
 - 如果某页面**当前没有设计稿**（设计师后补 / Claude Design 暂无额度 / 业务中新增），**不准用"没有设计稿"当理由停工**
 - Claude 先按 **latte 主题 + 已有设计稿的视觉语言** 出一版 V1：
@@ -245,6 +255,16 @@ src/
 
 **所有四类资产必须支持过期**：字段层面有 `expireAt` / `validUntil`，即使当前 UI 不显示也要预留。具体过期规则后续定。
 
+### 原则 9：UniApp 陷阱清单强制阅读（Phase 2.5 新增）
+
+**触发动机**：Phase 2 LoginScreen 因 UniApp 原生 `<button>` 默认样式未覆盖导致按钮溢出 —— 典型"踩完一次就沉淀"的项目特有知识。
+
+**规则**：
+1. 所有 worker 派发 prompt 的**第一条必读**是 `docs/uniapp-gotchas.md`
+2. Worker 报告的「触发的 gotchas」一栏**必须引用 `docs/uniapp-gotchas.md` 的具体条目编号**（形如「触发 #1 `<button>` 默认样式，按正确做法覆盖 `width: 100%`；触发 #11 `@tap` 风格约定」），或**明确声明「本次实现未触发任何 gotchas 条目」**。报告里既没有编号引用也没有明确声明 = **视为未读 gotchas，主线程必须退回重做，不得放行**。
+3. Phase 中踩到新坑必须**立刻追加**到 `docs/uniapp-gotchas.md`，每条记录：场景 / 现象 / 根因 / 正确做法 / 反例 / 影响范围 / 首次发现 Phase
+4. Worker 派发 prompt 的写法统一走 `docs/plans/dispatch-template.md` 模板
+
 ---
 
 ## 五、计划文档约定
@@ -295,5 +315,7 @@ src/
 6. **token 绝不走 query**：违反即视为安全漏洞
 7. **虚拟货币只有"爪币"**：设计稿/代码里如果出现"爱宠豆""积分"字样，全部改为"爪币"
 8. **Mock 必须覆盖所有接口**：包括后端未实现的缺失项，前端要能脱机跑通完整闭环
-4. **老目录不要再改**：`uniapp_hongshu/` 保持现状，所有新工作在 `aichongshe-app/`
-5. **复杂任务走 autoresearch-router**（继承全局规则），子 agent 继承当前线程的模型和推理强度
+9. **autoresearch-router 派发必须严格协议**（Phase 2.5 新增）：必须打印完整 Boot Block；worker 和 reviewer 成对派发（不允许只派 worker）；必须维护实验账本；派发 prompt 必须按 `docs/plans/dispatch-template.md` 模板写
+10. **视觉验证不可略**（Phase 2.5 新增）：代码编译通过 ≠ 视觉正确。Worker 必须在报告里提供 dev:h5 启动日志 + 关键控件 HTML 渲染片段；Reviewer 必须独立审查；未做视觉验证的 worker 产出视为未完成
+11. **老目录不要再改**：`uniapp_hongshu/` 保持现状，所有新工作在 `aichongshe-app/`
+12. **复杂任务走 autoresearch-router**（继承全局规则），子 agent 继承当前线程的模型和推理强度
