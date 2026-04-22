@@ -1,0 +1,28 @@
+// 全局样式入口：汇总 tokens + uview-plus 主题覆盖
+// 注：使用 @import 而非 @use，是因为 uni-app 会通过 additionalData 将 uni.scss
+// 内容预注入到每个 scss 文件前，会导致 @use 不在最顶端而报错。
+@import "./tokens.scss";
+
+// ── uview-plus 主题覆盖 ─────────────────────────────────────
+// 将 uview-plus 主色替换为 latte 焦糖 #C97B4A
+// 注：uview-plus 使用 CSS 变量 + SCSS 变量双通道，这里覆盖 CSS 变量保证控件即时响应
+:root,
+page {
+  --u-primary: #{$color-primary};
+  --u-primary-light: #{$color-primary-soft};
+  --u-primary-dark: #{$color-primary-ink};
+  --u-bg-color: #{$color-bg};
+  --u-main-color: #{$color-ink};
+  --u-content-color: #{$color-ink-soft};
+  --u-tips-color: #{$color-ink-muted};
+  --u-light-color: #{$color-ink-faint};
+}
+
+// 页面整体背景色
+page {
+  background-color: $color-bg;
+  color: $color-ink;
+  font-family: $font-family-body;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+}
