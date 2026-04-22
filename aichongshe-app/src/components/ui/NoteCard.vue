@@ -75,9 +75,12 @@ const props = withDefaults(defineProps<Props>(), {
   coverW: 180,
 });
 
+// emit 名**不能**叫 'tap' / 'like' —— 和 UniApp view 的原生 DOM 事件同名时，
+// 原生事件会沿 DOM 冒泡穿透组件，把 TouchEvent 对象作为第一个参数盖过 custom emit 的 note 参数。
+// 改用 'card-tap' / 'card-like'，避免与原生事件名冲突（gotcha：Phase 5a 踩坑）
 const emit = defineEmits<{
-  (e: 'tap', note: NoteListItem): void;
-  (e: 'like', note: NoteListItem): void;
+  (e: 'card-tap', note: NoteListItem): void;
+  (e: 'card-like', note: NoteListItem): void;
 }>();
 
 const warnColor = COLOR.warn;
@@ -93,11 +96,11 @@ const displayLikes = computed<string>(() => {
 });
 
 function onCardTap(): void {
-  emit('tap', props.note);
+  emit('card-tap', props.note);
 }
 
 function onLikeTap(): void {
-  emit('like', props.note);
+  emit('card-like', props.note);
 }
 </script>
 

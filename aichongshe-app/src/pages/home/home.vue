@@ -102,8 +102,8 @@
             :items="feedState[t.id].list"
             :has-more="feedState[t.id].hasMore"
             :loading="feedState[t.id].loading"
-            @tap="onNoteTap"
-            @like="onNoteLike"
+            @card-tap="onNoteTap"
+            @card-like="onNoteLike"
             @load-more="onLoadMore(t.id)"
           />
         </swiper-item>

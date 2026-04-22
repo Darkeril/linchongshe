@@ -56,3 +56,62 @@ export interface LikeNoteResult {
   liked: boolean;
   likes: number;
 }
+
+// ─────────────────────────────────────────────────────────────
+// 笔记详情（Phase 5a 新增）
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * 笔记详情中的单张图片。
+ * Phase 5a 图片内容由 PetPlaceholder 占位渲染（真实 url 暂为空字符串）；
+ * 当后端接入 CDN 图片时，url 将被填充，前端优先使用真实 url。
+ */
+export interface NoteImage {
+  /** 真实图片 URL；Phase 5a 为空字符串，由 PetPlaceholder 兜底 */
+  url: string;
+  /** 占位图 variant（决定风格） */
+  variant: PetVariant;
+  /** 占位图 seed（保证稳定渲染） */
+  seed: string | number;
+}
+
+/** 笔记作者（详情页顶部展示） */
+export interface NoteAuthor {
+  id: string;
+  name: string;
+  avatarVariant: PetVariant;
+  followed: boolean;
+}
+
+/** 笔记详情（含图文 + 元信息 + 作者） */
+export interface NoteDetail extends NoteListItem {
+  /** 图文列表（1-9 张） */
+  images: NoteImage[];
+  /** 正文 */
+  content: string;
+  /** 话题标签（不带 # 前缀，由组件自行拼接） */
+  topics: string[];
+  /** 作者信息 */
+  author: NoteAuthor;
+  /** 收藏数 */
+  saves: number;
+  /** 当前登录用户是否已收藏 */
+  saved: boolean;
+  /** 评论数 */
+  comments: number;
+  /** 人类可读的编辑时间描述（Phase 5a 伪随机；后续迁到时间戳） */
+  editedAt: string;
+  /** 发布所在城市（纯展示） */
+  fromCity: string;
+}
+
+/** 收藏切换响应 */
+export interface SaveNoteResult {
+  saved: boolean;
+  saves: number;
+}
+
+/** 关注切换响应 */
+export interface FollowResult {
+  followed: boolean;
+}

@@ -57,8 +57,8 @@
             <NoteCard
               :note="card.note"
               :cover-w="colW"
-              @tap="onCardTap"
-              @like="onCardLike"
+              @card-tap="onCardTap"
+              @card-like="onCardLike"
             />
           </view>
           <view
@@ -108,9 +108,11 @@ interface Props {
 
 const props = defineProps<Props>();
 
+// emit 名避开 DOM 原生事件名（tap / like），否则 DOM 原生事件会冒泡穿透组件，
+// 把 TouchEvent 对象作为第一参数盖过 custom emit 的 note（gotcha：Phase 5a 踩坑）
 const emit = defineEmits<{
-  (e: 'tap', note: NoteListItem): void;
-  (e: 'like', note: NoteListItem): void;
+  (e: 'card-tap', note: NoteListItem): void;
+  (e: 'card-like', note: NoteListItem): void;
   (e: 'load-more'): void;
 }>();
 
@@ -264,11 +266,11 @@ function onScrollToLower(): void {
 
 // ── 事件转发 ──────────────────────────────────────────────
 function onCardTap(note: NoteListItem): void {
-  emit('tap', note);
+  emit('card-tap', note);
 }
 
 function onCardLike(note: NoteListItem): void {
-  emit('like', note);
+  emit('card-like', note);
 }
 
 // ── 生命周期 ──────────────────────────────────────────────

@@ -7,12 +7,17 @@
  * - 点赞 mock 持久到内存里，切 tab 回来状态保留
  */
 import type {
+  FollowResult,
   LikeNoteResult,
+  NoteAuthor,
+  NoteDetail,
   NoteFeedId,
+  NoteImage,
   NoteListItem,
   NoteListParams,
   NoteListResult,
   PetVariant,
+  SaveNoteResult,
 } from '@/types/note';
 import { delay } from '@/api/mock/user.mock';
 
@@ -138,4 +143,158 @@ export function mockLikeNote(noteId: string): Promise<LikeNoteResult> {
   note.liked = !note.liked;
   note.likes = Math.max(0, note.likes + (note.liked ? 1 : -1));
   return delay({ liked: note.liked, likes: note.likes }, 200);
+}
+
+// ─────────────────────────────────────────────────────────────
+// 笔记详情 mock（Phase 5a 新增）
+// ─────────────────────────────────────────────────────────────
+
+/** 正文模板池（3 段组合渲染） */
+const CONTENT_TEMPLATES: string[] = [
+  '记录一下汤圆每周的洗澡日常～这次用了新的沐浴露，洗完之后毛特别柔软好摸。吹干之后整个变成了一个大毛球，傻乎乎地坐在那里，忍不住多拍了几张。\n\n有推荐的狗狗沐浴露吗？最好是香味淡一点的，汤圆对味道比较敏感。',
+  '今天第一次带小家伙去宠物友好咖啡馆，意外地乖，趴在我脚边一动不动。\n\n分享一下装备清单：牵引绳（防挣脱款）+ 吸水垫 + 零食条。坐标上海，想交流的姐妹评论区留言。',
+  '养了三年柴柴总结的冷知识：\n1. 柴柴的耳朵每天要用棉签轻轻擦一圈；\n2. 夏天不能剃光毛，会影响散热；\n3. 零食比玩具更能建立信任。\n\n希望对新手有帮助～',
+  '自制南瓜鸡肉饼教程来啦！食材只要鸡胸肉 + 南瓜泥 + 一点点鸡蛋清，烤箱 160° 25 分钟搞定。\n\n家里两只毛孩子闻到就冲过来，完全不掉渣，绝对值得收藏。',
+];
+
+/** 话题标签池（不带 # 前缀） */
+const TOPIC_POOL: string[] = [
+  '金毛日记',
+  '洗澡日常',
+  '毛绒绒',
+  '喵星人',
+  '宠物食谱',
+  '出行攻略',
+  '新手指南',
+  '萌宠互动',
+  '日常vlog',
+];
+
+/** 城市池 */
+const CITY_POOL: string[] = ['上海', '北京', '深圳', '杭州', '成都', '广州'];
+
+/** 笔记详情缓存（id → detail）：多次进入同一条笔记保持状态一致 */
+const DETAIL_CACHE: Map<string, NoteDetail> = new Map();
+
+/** 作者缓存（authorId → NoteAuthor）：跨笔记共享关注状态 */
+const AUTHOR_CACHE: Map<string, NoteAuthor> = new Map();
+
+/** 根据字符串生成稳定 hash（用于派生 author.id 等） */
+function hashStr(str: string): number {
+  let h = 0;
+  for (let i = 0; i < str.length; i += 1) {
+    h = (h * 31 + str.charCodeAt(i)) & 0x7fffffff;
+  }
+  return h;
+}
+
+/** 根据 feed + id 在 STORE 里查找 NoteListItem */
+function findInStore(noteId: string): NoteListItem | undefined {
+  const feedId = (noteId.split('-')[0] ?? 'discover') as NoteFeedId;
+  const list = STORE[feedId] ?? [];
+  return list.find((n) => n.id === noteId);
+}
+
+/** 从缓存或构造一个 NoteAuthor（同作者跨笔记共享关注状态） */
+function resolveAuthor(base: NoteListItem): NoteAuthor {
+  const authorId = `u-${hashStr(base.user)}`;
+  const cached = AUTHOR_CACHE.get(authorId);
+  if (cached) return cached;
+  const author: NoteAuthor = {
+    id: authorId,
+    name: base.user,
+    avatarVariant: base.avatarVariant,
+    followed: false,
+  };
+  AUTHOR_CACHE.set(authorId, author);
+  return author;
+}
+
+/**
+ * 根据 id 构造笔记详情（首次构造后缓存，保证点赞/收藏/关注在进入-返回-再进入时状态一致）。
+ */
+export function buildNoteDetail(id: string): NoteDetail | null {
+  const cached = DETAIL_CACHE.get(id);
+  if (cached) return cached;
+
+  const base = findInStore(id);
+  if (!base) return null;
+
+  const hashBase = hashStr(id);
+  // 3-5 张图片
+  const imageCount = 3 + (hashBase % 3); // 3 / 4 / 5
+  const images: NoteImage[] = Array.from({ length: imageCount }, (_, i) => ({
+    url: '',
+    variant: VARIANTS[(hashBase + i) % VARIANTS.length] as PetVariant,
+    seed: `${id}-${i}`,
+  }));
+
+  // 正文：按 hash 选一条模板
+  const content = CONTENT_TEMPLATES[hashBase % CONTENT_TEMPLATES.length] as string;
+
+  // 话题：2-4 个，从 TOPIC_POOL 取
+  const topicCount = 2 + (hashBase % 3); // 2 / 3 / 4
+  const topics: string[] = [];
+  for (let i = 0; i < topicCount; i += 1) {
+    const idx = (hashBase + i * 7) % TOPIC_POOL.length;
+    const t = TOPIC_POOL[idx] as string;
+    if (!topics.includes(t)) topics.push(t);
+  }
+
+  const saves = Math.floor(seeded(hashBase + 41) * 2000);
+  const comments = 5 + Math.floor(seeded(hashBase + 59) * 295); // 5..300
+  const hoursAgo = 1 + Math.floor(seeded(hashBase + 67) * 23); // 1..23
+  const editedAt = `${hoursAgo} 小时前`;
+  const fromCity = CITY_POOL[hashBase % CITY_POOL.length] as string;
+
+  const detail: NoteDetail = {
+    ...base,
+    images,
+    content,
+    topics,
+    author: resolveAuthor(base),
+    saves,
+    saved: false,
+    comments,
+    editedAt,
+    fromCity,
+  };
+  DETAIL_CACHE.set(id, detail);
+  return detail;
+}
+
+/** 详情查询 mock（返回 store 里同一个 note 引用的字段副本，点赞状态与列表同步） */
+export function mockGetNoteDetail(id: string): Promise<NoteDetail> {
+  const detail = buildNoteDetail(id);
+  if (!detail) {
+    return Promise.reject(new Error(`mock: note ${id} not found`));
+  }
+  // 用 store 里的最新 liked / likes 覆盖（列表点赞后再进详情，状态保持一致）
+  const base = findInStore(id);
+  if (base) {
+    detail.liked = base.liked;
+    detail.likes = base.likes;
+  }
+  return delay(detail, 260);
+}
+
+/** 收藏 mock（in-place 切换缓存里的 saved/saves） */
+export function mockToggleSave(noteId: string): Promise<SaveNoteResult> {
+  const detail = DETAIL_CACHE.get(noteId) ?? buildNoteDetail(noteId);
+  if (!detail) {
+    return Promise.reject(new Error(`mock: note ${noteId} not found`));
+  }
+  detail.saved = !detail.saved;
+  detail.saves = Math.max(0, detail.saves + (detail.saved ? 1 : -1));
+  return delay({ saved: detail.saved, saves: detail.saves }, 200);
+}
+
+/** 关注 mock（in-place 切换 AUTHOR_CACHE 里的 followed） */
+export function mockToggleFollow(authorId: string): Promise<FollowResult> {
+  const author = AUTHOR_CACHE.get(authorId);
+  if (!author) {
+    return Promise.reject(new Error(`mock: author ${authorId} not found`));
+  }
+  author.followed = !author.followed;
+  return delay({ followed: author.followed }, 200);
 }
