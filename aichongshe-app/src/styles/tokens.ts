@@ -47,41 +47,45 @@ export const RADIUS = {
 } as const;
 export type RadiusToken = keyof typeof RADIUS;
 
-// ── 间距 ─────────────────────────────────────────────────
+// ── 间距（从 design/screens-part*.jsx 提取，按实际频率归纳） ─
+// 设计稿不严格走 4px 栅格，小间距 2/3/5/6/10/14 出现频率极高
 export const SPACING = {
-  xxs: 2,
-  xs: 4,
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 20,
-  '2xl': 24,
-  '3xl': 32,
-  '4xl': 40,
-  '5xl': 48,
+  xxs: 2,   // tag 小徽章内边距、图标间细缝
+  xs: 4,    // 图标组/文字行间 gap 最常用
+  sm: 6,    // 中高频，按钮内间距、次级 gap
+  md: 8,    // 最常见卡片内 gap
+  lg: 10,   // 极高频，标题与副文间距
+  xl: 12,   // 卡片内大 padding
+  '2xl': 14, // 页面边距（左右 14 最常用）
+  '3xl': 16, // 大块 padding
+  '4xl': 20, // 区块之间的大留白
+  '5xl': 24, // 超大留白、Hero 底部
 } as const;
 export type SpacingToken = keyof typeof SPACING;
 
-// ── 字号 ─────────────────────────────────────────────────
+// ── 字号（从 design/screens-part*.jsx 提取） ─────────────
+// 设计稿偏小字，9~14px 覆盖绝大多数内容，大字集中在 18/22/26
 export const FONT_SIZE = {
-  xs: 10,
-  sm: 12,
-  base: 14,
-  md: 16,
-  lg: 18,
-  xl: 20,
-  '2xl': 24,
-  '3xl': 28,
-  '4xl': 32,
+  xs: 10,    // 标签、次要元信息
+  sm: 11,    // 说明文字
+  base: 12,  // 正文基准
+  md: 13,    // 列表主文
+  lg: 14,    // 强调正文、按钮
+  xl: 16,    // 小标题
+  '2xl': 18, // 区块标题
+  '3xl': 22, // 页面标题
+  '4xl': 26, // 品牌大标题、数字
 } as const;
 export type FontSizeToken = keyof typeof FONT_SIZE;
 
-// ── 字重 ─────────────────────────────────────────────────
+// ── 字重（从 design/screens-part*.jsx 提取） ─────────────
+// 设计稿实际使用：500/600/700/800，最高频是 700
 export const FONT_WEIGHT = {
   regular: 400,
   medium: 500,
   semibold: 600,
   bold: 700,
+  black: 800, // 品牌字体 Baloo 2 大标题使用
 } as const;
 export type FontWeightToken = keyof typeof FONT_WEIGHT;
 
@@ -101,12 +105,14 @@ export const FONT_FAMILY = {
 } as const;
 export type FontFamilyToken = keyof typeof FONT_FAMILY;
 
-// ── 阴影 ─────────────────────────────────────────────────
+// ── 阴影（从 design/screens-part*.jsx 提取的阴影模式归纳） ─
+// 设计稿最常用：2px 6/8px、4px 12px、6/8px 16-24px、10px+ 30px
+// 保持 latte 暖棕基调（alpha 偏浅，不要黑压压）
 export const SHADOW = {
-  sm: '0 1px 2px rgba(80, 50, 30, 0.06)',
-  md: '0 4px 12px rgba(80, 50, 30, 0.08)',
-  lg: '0 8px 24px rgba(80, 50, 30, 0.12)',
-  xl: '0 16px 40px rgba(80, 50, 30, 0.16)',
+  sm: '0 2px 6px rgba(80, 50, 30, 0.08)',   // 浅卡片、小徽章
+  md: '0 4px 12px rgba(80, 50, 30, 0.12)',  // 常规卡片/按钮
+  lg: '0 6px 18px rgba(80, 50, 30, 0.15)',  // 浮起卡片、悬浮面板
+  xl: '0 10px 30px rgba(80, 50, 30, 0.20)', // 模态、Hero 深阴影
 } as const;
 export type ShadowToken = keyof typeof SHADOW;
 

@@ -36,34 +36,38 @@ $radius-lg:   22px;
 $radius-xl:   28px;
 $radius-pill: 999px;
 
-// ── 间距（移动端 4px 基准栅格） ─────────────────────────────
-$spacing-xxs: 2px;
-$spacing-xs:  4px;
-$spacing-sm:  8px;
-$spacing-md:  12px;
-$spacing-lg:  16px;
-$spacing-xl:  20px;
-$spacing-2xl: 24px;
-$spacing-3xl: 32px;
-$spacing-4xl: 40px;
-$spacing-5xl: 48px;
+// ── 间距（从 design/screens-part*.jsx 提取，按实际频率归纳） ──
+// 设计稿不严格走 4px 栅格，小间距 2/3/5/6/10/14 出现频率极高
+$spacing-xxs: 2px;   // tag 小徽章内边距、图标间细缝
+$spacing-xs:  4px;   // 图标组/文字行间 gap 最常用
+$spacing-sm:  6px;   // 中高频，按钮内间距、次级 gap
+$spacing-md:  8px;   // 最常见卡片内 gap
+$spacing-lg:  10px;  // 极高频，标题与副文间距
+$spacing-xl:  12px;  // 卡片内大 padding
+$spacing-2xl: 14px;  // 页面边距（左右 14 最常用）
+$spacing-3xl: 16px;  // 大块 padding
+$spacing-4xl: 20px;  // 区块之间的大留白
+$spacing-5xl: 24px;  // 超大留白、Hero 底部
 
-// ── 字号 ─────────────────────────────────────────────────────
-$font-size-xs:   10px;
-$font-size-sm:   12px;
-$font-size-base: 14px;
-$font-size-md:   16px;
-$font-size-lg:   18px;
-$font-size-xl:   20px;
-$font-size-2xl:  24px;
-$font-size-3xl:  28px;
-$font-size-4xl:  32px;
+// ── 字号（从 design/screens-part*.jsx 提取） ─────────────────
+// 设计稿偏小字，9~14px 覆盖绝大多数内容，大字集中在 18/22/26
+$font-size-xs:   10px; // 标签、次要元信息
+$font-size-sm:   11px; // 说明文字
+$font-size-base: 12px; // 正文基准
+$font-size-md:   13px; // 列表主文
+$font-size-lg:   14px; // 强调正文、按钮
+$font-size-xl:   16px; // 小标题
+$font-size-2xl:  18px; // 区块标题
+$font-size-3xl:  22px; // 页面标题
+$font-size-4xl:  26px; // 品牌大标题、数字
 
-// ── 字重 ─────────────────────────────────────────────────────
+// ── 字重（从 design/screens-part*.jsx 提取） ─────────────────
+// 设计稿实际使用：500/600/700/800，最高频是 700
 $font-weight-regular:  400;
 $font-weight-medium:   500;
 $font-weight-semibold: 600;
 $font-weight-bold:     700;
+$font-weight-black:    800; // 品牌字体 Baloo 2 大标题使用
 
 // ── 行高 ─────────────────────────────────────────────────────
 $line-height-tight:   1.2;
@@ -75,12 +79,13 @@ $font-family-body:  "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang
 $font-family-brand: "Baloo 2", "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
 $font-family-num:   "Baloo 2", -apple-system, system-ui, sans-serif;
 
-// ── 阴影 ─────────────────────────────────────────────────────
-// 基于 latte 的暖色调阴影，偏棕不偏黑
-$shadow-sm: 0 1px 2px rgba(80, 50, 30, 0.06);
-$shadow-md: 0 4px 12px rgba(80, 50, 30, 0.08);
-$shadow-lg: 0 8px 24px rgba(80, 50, 30, 0.12);
-$shadow-xl: 0 16px 40px rgba(80, 50, 30, 0.16);
+// ── 阴影（从 design/screens-part*.jsx 提取的阴影模式归纳） ───
+// 设计稿最常用：2px 6/8px、4px 12px、6/8px 16-24px、10px+ 30px
+// 保持 latte 暖棕基调（alpha 偏浅，不要黑压压）
+$shadow-sm: 0 2px 6px rgba(80, 50, 30, 0.08);   // 浅卡片、小徽章
+$shadow-md: 0 4px 12px rgba(80, 50, 30, 0.12);  // 常规卡片/按钮
+$shadow-lg: 0 6px 18px rgba(80, 50, 30, 0.15);  // 浮起卡片、悬浮面板
+$shadow-xl: 0 10px 30px rgba(80, 50, 30, 0.20); // 模态、Hero 深阴影
 
 // ── Z-Index ──────────────────────────────────────────────────
 $z-base:    1;
