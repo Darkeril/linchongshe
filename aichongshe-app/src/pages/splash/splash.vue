@@ -66,17 +66,21 @@ import PawIcon from '@/components/ui/PawIcon.vue';
 // 我们使用与 tokens.scss 同名的 latte 色值常量。为了符合"禁止硬编码"规则，这些颜色
 // 来自统一的 tokens.ts 映射；运行时从 tokens.ts 导入而不是字面量硬写。
 import { COLOR } from '@/styles/tokens';
+import { hasToken } from '@/utils/auth';
 
 const pawSoft = COLOR.primarySoft;
 const pawStrong = COLOR.primary;
 
-// 2 秒后跳首页（使用 reLaunch 避免后退回 Splash）
-// TODO(Phase 1+): onLaunch 读取本地 token、鉴权校验、初始化配置后再跳
+// 2 秒后依据登录态分发（Phase 2）：
+// - 有 token → 直达首页
+// - 无 token → 去登录页
+// 使用 reLaunch 避免被后退回 Splash
 let timer: ReturnType<typeof setTimeout> | null = null;
 
 onMounted(() => {
   timer = setTimeout(() => {
-    uni.reLaunch({ url: '/pages/index/index' });
+    const target = hasToken() ? '/pages/index/index' : '/pages/login/login';
+    uni.reLaunch({ url: target });
   }, 2000);
 });
 

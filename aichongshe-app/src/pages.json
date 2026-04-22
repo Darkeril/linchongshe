@@ -16,6 +16,22 @@
       "style": {
         "navigationBarTitleText": "爱宠社"
       }
+    },
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "登录"
+      }
+    },
+    {
+      "path": "pages/login/phone-login",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "手机号登录"
+      }
     }
   ],
   "globalStyle": {

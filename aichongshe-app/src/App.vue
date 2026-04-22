@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import { onLaunch, onShow, onHide } from '@dcloudio/uni-app';
+import { useUserStore } from '@/stores/user';
 
 onLaunch(() => {
-  // TODO(Phase 1+): 读取本地登录态、初始化全局配置、埋点 SDK 等
   console.log('[App] onLaunch');
+  // Phase 2：从 storage 恢复登录态（accessToken + UserProfile）
+  // 真实鉴权校验（refreshToken 续期 / exp 校验）在后续 Phase 补
+  try {
+    const userStore = useUserStore();
+    userStore.restoreFromStorage();
+  } catch (err) {
+    console.warn('[App] restoreFromStorage failed:', err);
+  }
 });
 
 onShow(() => {
