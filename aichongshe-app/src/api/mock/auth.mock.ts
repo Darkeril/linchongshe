@@ -4,7 +4,8 @@
  *
  * 规则（来自 Phase 2 计划 + CLAUDE.md 原则 5）：
  * - 微信登录：无条件成功，返回固定 UserProfile + access_token
- * - 手机号登录：任意 11 位 + 验证码 "1234" → 成功；否则抛错
+ * - 手机号登录：任意 11 位 + 验证码 "123456" → 成功；否则抛错
+ *   （Phase 6 修：原 mock "1234" 与前端 6 位 SMS_REGEX 校验冲突，统一为 6 位）
  * - 请求验证码：任意 11 位手机号 → 成功
  */
 import type {
@@ -48,8 +49,8 @@ export function mockLoginByPhone(params: PhoneLoginParams): Promise<LoginResult>
         reject(new Error('手机号格式不正确'));
         return;
       }
-      if (params.smsCode !== '1234') {
-        reject(new Error('验证码错误（mock 专用码为 1234）'));
+      if (params.smsCode !== '123456') {
+        reject(new Error('验证码错误（mock 专用码为 123456）'));
         return;
       }
       const user: UserProfile = {

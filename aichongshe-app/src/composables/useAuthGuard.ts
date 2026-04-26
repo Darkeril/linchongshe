@@ -1,42 +1,42 @@
 /**
- * 登录拦截中间件（Phase 2 最小版）。
+ * 登录拦截中间件（Phase 6 升级）。
  *
- * 对标 CLAUDE.md 原则 6 的完整版：
- *   - 未登录时弹底部半屏 Sheet（不离开当前页）
- *   - 缓存原动作（action replay），登录成功后自动执行
+ * 对标 CLAUDE.md 原则 6：未登录时弹底部 Sheet（不离开当前页）→
+ * 登录成功后自动执行原动作（action replay）。
  *
- * 当前 Phase 2 只做最简实现：未登录直接 reLaunch 到 /pages/login/login。
- * Sheet + action replay 会在 Phase 3 首页实现点赞 / 关注 / 收藏时补齐。
+ * Promise 语义：
+ *   - 已登录                       → 直接 await action()，resolve(result)
+ *   - 未登录 + 用户登录成功         → 执行 action（动作回放），resolve(result)
+ *   - 未登录 + 用户取消（关闭 Sheet）→ reject({ code: 'AUTH_CANCELLED' })
+ *   - 未登录 + 被新动作替换         → reject({ code: 'AUTH_REPLACED' })
+ *   - 登录成功后回放抛错           → reject({ code: 'ACTION_FAILED', message })
  *
  * 使用示例：
  *   const { requireAuth } = useAuthGuard();
- *   requireAuth(() => doLike(noteId));
+ *   try {
+ *     await requireAuth(async () => { await likeNote(noteId); });
+ *   } catch (err) {
+ *     const code = (err as { code?: string })?.code;
+ *     if (code === 'AUTH_CANCELLED' || code === 'AUTH_REPLACED') return; // 静默
+ *     uni.showToast({ title: '操作失败', icon: 'none' });
+ *   }
  */
 import { useUserStore } from '@/stores/user';
-
-export interface RequireAuthOptions {
-  /** 拦截触发时的可选提示（预留给 Phase 3 Sheet 用，当前版本未使用） */
-  reason?: string;
-  /** 未登录时跳转目标；默认 /pages/login/login */
-  redirect?: string;
-}
+import { useAuthSheet } from '@/stores/authSheet';
 
 export function useAuthGuard() {
-  const userStore = useUserStore();
-
   /**
    * 包装一个需要登录的动作。
-   * - 已登录 → 立即执行 action
-   * - 未登录 → 跳转 Login 页（Phase 3 会升级为 Sheet + replay）
+   * 已登录立即执行；未登录弹 Sheet 等登录成功后回放。
    */
-  function requireAuth(action: () => void, options: RequireAuthOptions = {}): void {
+  async function requireAuth<T>(action: () => T | Promise<T>): Promise<T> {
+    const userStore = useUserStore();
     if (userStore.isLogin) {
-      action();
-      return;
+      return await action();
     }
-    // TODO(Phase 3): 替换为底部 Sheet + 动作回放；Phase 2 先做 redirect
-    const target = options.redirect ?? '/pages/login/login';
-    uni.reLaunch({ url: target });
+    return new Promise<T>((resolve, reject) => {
+      useAuthSheet().requestAuth<T>(action, { resolve, reject });
+    });
   }
 
   return { requireAuth };

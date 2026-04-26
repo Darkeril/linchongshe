@@ -122,8 +122,10 @@ import { COLOR } from '@/styles/tokens';
 import { getNoteList, likeNote } from '@/api/services/note';
 import type { NoteFeedId, NoteListItem } from '@/types/note';
 import { navigateSafe } from '@/utils/navigate';
+import { useAuthGuard } from '@/composables/useAuthGuard';
 
 const inkColor = COLOR.ink;
+const { requireAuth } = useAuthGuard();
 
 const tabs: Array<{ id: NoteFeedId; label: string }> = [
   { id: 'follow', label: '关注' },
@@ -216,31 +218,38 @@ function onNoteTap(note: NoteListItem): void {
   });
 }
 
-/** 乐观更新：in-place mutation（Vue3 reactive 能追踪属性变化，
- *   且 WaterFall 的 cards 持有同一个对象引用，修改属性会直接反映到渲染。
- *   如用替换对象 `list[idx] = newObj`，WaterFall 的 cards[i].note 会指向旧对象，视图不更新。） */
+/** 乐观更新：in-place mutation（gotcha #18，Vue3 reactive 不追踪引用替换）。
+ *  Phase 6：包进 requireAuth，未登录时弹 LoginSheet → 登录成功后回放。
+ *  关键：乐观更新逻辑放进 action 闭包内，避免登录前先改 UI 造成"心形已变红"错觉。 */
 async function onNoteLike(note: NoteListItem): Promise<void> {
   const feedId = activeTab.value;
   const list = feedState[feedId].list;
   const idx = list.findIndex((n) => n.id === note.id);
   if (idx === -1) return;
   const target = list[idx]!;
-  // 记录旧状态以便失败回滚
-  const prevLiked = target.liked;
-  const prevLikes = target.likes;
-  // in-place 切换
-  target.liked = !prevLiked;
-  target.likes = Math.max(0, prevLikes + (prevLiked ? -1 : 1));
 
   try {
-    const res = await likeNote(note.id);
-    // 用后端返回的权威值对齐
-    target.liked = res.liked;
-    target.likes = res.likes;
+    await requireAuth(async () => {
+      // 记录旧状态以便失败回滚
+      const prevLiked = target.liked;
+      const prevLikes = target.likes;
+      // in-place 乐观切换
+      target.liked = !prevLiked;
+      target.likes = Math.max(0, prevLikes + (prevLiked ? -1 : 1));
+      try {
+        const res = await likeNote(note.id);
+        target.liked = res.liked;
+        target.likes = res.likes;
+      } catch (err) {
+        // 回滚
+        target.liked = prevLiked;
+        target.likes = prevLikes;
+        throw err;
+      }
+    });
   } catch (err) {
-    // 回滚
-    target.liked = prevLiked;
-    target.likes = prevLikes;
+    const code = (err as { code?: string })?.code;
+    if (code === 'AUTH_CANCELLED' || code === 'AUTH_REPLACED') return;
     uni.showToast({
       title: err instanceof Error ? err.message : '点赞失败',
       icon: 'none',

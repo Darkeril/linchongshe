@@ -9,28 +9,30 @@
 -->
 <template>
   <view class="phone-login">
-    <!-- 左上返回 -->
-    <view
-      class="phone-login__back"
-      hover-class="phone-login__back--hover"
-      :hover-stay-time="120"
-      @click="onBack"
-    >
-      <svg
-        width="22"
-        height="22"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
+    <!-- 顶部 Header 区（flex 布局，避免 absolute back + margin-top title 冲突） -->
+    <view class="phone-login__header">
+      <view
+        class="phone-login__back"
+        hover-class="phone-login__back--hover"
+        :hover-stay-time="120"
+        @click="onBack"
       >
-        <path
-          d="M15 5 L8 12 L15 19"
-          :stroke="inkColor"
-          stroke-width="2"
-          fill="none"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M15 5 L8 12 L15 19"
+            :stroke="inkColor"
+            stroke-width="2"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </view>
     </view>
 
     <!-- 标题 -->
@@ -88,7 +90,7 @@
 
       <!-- 说明（mock 提示，方便用户试） -->
       <view class="phone-login__hint">
-        Mock 环境：任意 11 位手机号 + 验证码 <text class="phone-login__hint-code">1234</text>
+        Mock 环境：任意 11 位手机号 + 验证码 <text class="phone-login__hint-code">123456</text>
       </view>
     </view>
   </view>
@@ -211,13 +213,22 @@ onBeforeUnmount(() => {
   background: $color-bg;
   font-family: $font-family-body;
   padding: 0 56rpx;
+  // 顶部预留 safe-area，header 在文档流中
+  padding-top: calc(40rpx + env(safe-area-inset-top));
   box-sizing: border-box;
 
-  // ── 返回按钮 (左上) ─────────────────────────────────────
+  // ── Header（flex 容器，仅放 back 按钮；标题在文档流中接续） ─
+  // 修正：原 V1 用 absolute back + margin-top: 180rpx title 重叠，改用文档流
+  &__header {
+    display: flex;
+    align-items: center;
+    height: 72rpx;
+    margin-bottom: 80rpx;
+    margin-left: -24rpx; // 视觉对齐左边缘（按钮内有 padding 视觉中线偏右）
+  }
+
+  // ── 返回按钮 ────────────────────────────────────────────
   &__back {
-    position: absolute;
-    top: 40rpx;
-    left: 32rpx;
     width: 72rpx;
     height: 72rpx;
     border-radius: 36rpx;
@@ -227,7 +238,6 @@ onBeforeUnmount(() => {
     justify-content: center;
     box-shadow: $shadow-sm;
     transition: transform 0.12s ease;
-    z-index: $z-base + 1;
 
     &--hover {
       transform: scale(0.94);
@@ -236,7 +246,6 @@ onBeforeUnmount(() => {
 
   // ── 标题区 ──────────────────────────────────────────────
   &__title {
-    margin-top: 180rpx;
     font-size: $font-size-3xl; // 22px
     font-weight: $font-weight-bold;
     color: $color-ink;
@@ -311,9 +320,16 @@ onBeforeUnmount(() => {
     border: none;
     line-height: 1;
     flex-shrink: 0;
+    // 文字居中（修 UniApp button 默认 left-aligned，gotcha #1）
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 0;
 
     &::after {
       border: none;
+      display: none;
     }
 
     &--disabled {
@@ -324,11 +340,11 @@ onBeforeUnmount(() => {
 
   // ── 主按钮（与 Login 主按钮同款渐变） ──────────────────
   &__submit {
-    // 强制撑满（覆盖 UniApp button 默认 inline-block）
+    // 强制撑满（覆盖 UniApp button 默认 inline-block，gotcha #1）
     width: 100%;
     box-sizing: border-box;
 
-    margin-top: 24rpx;
+    margin: 24rpx 0 0 0;
     height: 104rpx;
     border-radius: 52rpx;
     border: none;
@@ -338,10 +354,22 @@ onBeforeUnmount(() => {
     font-size: $font-size-xl;
     font-weight: $font-weight-semibold;
     font-family: $font-family-body;
+    line-height: 1;
+    // 文字居中（gotcha #1）
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
     box-shadow:
       0 16rpx 40rpx rgba($color-primary, 0.55),
       inset 0 2rpx 0 rgba(255, 255, 255, 0.3);
     transition: transform 0.12s ease, opacity 0.12s ease;
+
+    &::after {
+      border: none;
+      display: none;
+    }
     line-height: 1;
     white-space: nowrap;
 

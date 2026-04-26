@@ -20,11 +20,14 @@
       <slot />
     </view>
     <AppTabBar :active="active" :badges="badges" />
+    <!-- Phase 6：全局登录面板（由 useAuthSheet store 控制 open） -->
+    <LoginSheet />
   </view>
 </template>
 
 <script setup lang="ts">
 import AppTabBar, { type TabId } from '@/components/ui/AppTabBar.vue';
+import LoginSheet from '@/components/ui/LoginSheet.vue';
 
 interface Props {
   /** 当前 active 的 tab，publish 不作为 active 目标 */

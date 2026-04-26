@@ -105,6 +105,9 @@
       @sheet-close="onSheetClose"
       @sheet-submit="onSheetSubmit"
     />
+
+    <!-- Phase 6：全局登录面板（由 useAuthSheet store 控制 open） -->
+    <LoginSheet />
   </view>
 </template>
 
@@ -117,6 +120,7 @@ import TopicTag from '@/components/ui/TopicTag.vue';
 import NoteDetailActions from '@/components/ui/NoteDetailActions.vue';
 import CommentList from '@/components/ui/CommentList.vue';
 import CommentInputSheet from '@/components/ui/CommentInputSheet.vue';
+import LoginSheet from '@/components/ui/LoginSheet.vue';
 import {
   getNoteDetail,
   likeNote,
@@ -217,47 +221,64 @@ function onListLoadMore(): void {
 
 // ── 评论点赞（in-place mutation，gotcha #18） ──────
 
-function onListLike(c: CommentItem): void {
-  requireAuth(() => {
-    // 直接改 comment 对象属性（不替换引用）
-    const prevLiked = c.liked;
-    const prevLikes = c.likes;
-    c.liked = !prevLiked;
-    c.likes = Math.max(0, prevLikes + (prevLiked ? -1 : 1));
-    likeComment(c.id)
-      .then((res) => {
+async function onListLike(c: CommentItem): Promise<void> {
+  try {
+    await requireAuth(async () => {
+      // gotcha #18：in-place mutation
+      const prevLiked = c.liked;
+      const prevLikes = c.likes;
+      c.liked = !prevLiked;
+      c.likes = Math.max(0, prevLikes + (prevLiked ? -1 : 1));
+      try {
+        const res = await likeComment(c.id);
         c.liked = res.liked;
         c.likes = res.likes;
-      })
-      .catch((err: unknown) => {
+      } catch (err) {
         c.liked = prevLiked;
         c.likes = prevLikes;
-        uni.showToast({
-          title: err instanceof Error ? err.message : '点赞失败',
-          icon: 'none',
-        });
-      });
-  });
+        throw err;
+      }
+    });
+  } catch (err) {
+    const code = (err as { code?: string })?.code;
+    if (code === 'AUTH_CANCELLED' || code === 'AUTH_REPLACED') return;
+    uni.showToast({
+      title: err instanceof Error ? err.message : '点赞失败',
+      icon: 'none',
+    });
+  }
 }
 
 // ── 评论回复 ────────────────────────────────────────
 
-function onListReply(target: CommentItem, thread: CommentThread): void {
-  requireAuth(() => {
-    sheetReplyTarget.value = target.author;
-    sheetReplyRootId.value = thread.root.id;
-    sheetOpen.value = true;
-  });
+async function onListReply(target: CommentItem, thread: CommentThread): Promise<void> {
+  try {
+    await requireAuth(() => {
+      sheetReplyTarget.value = target.author;
+      sheetReplyRootId.value = thread.root.id;
+      sheetOpen.value = true;
+    });
+  } catch (err) {
+    const code = (err as { code?: string })?.code;
+    if (code === 'AUTH_CANCELLED' || code === 'AUTH_REPLACED') return;
+    uni.showToast({ title: '操作失败', icon: 'none' });
+  }
 }
 
 // ── 发一级评论入口（底部 Actions 输入框/评论图标） ──
 
-function onInputTap(): void {
-  requireAuth(() => {
-    sheetReplyTarget.value = null;
-    sheetReplyRootId.value = null;
-    sheetOpen.value = true;
-  });
+async function onInputTap(): Promise<void> {
+  try {
+    await requireAuth(() => {
+      sheetReplyTarget.value = null;
+      sheetReplyRootId.value = null;
+      sheetOpen.value = true;
+    });
+  } catch (err) {
+    const code = (err as { code?: string })?.code;
+    if (code === 'AUTH_CANCELLED' || code === 'AUTH_REPLACED') return;
+    uni.showToast({ title: '操作失败', icon: 'none' });
+  }
 }
 
 // ── Sheet 提交 ──────────────────────────────────────
@@ -319,17 +340,25 @@ function onBack(): void {
   }
 }
 
-// gotchas #18：关注状态 in-place mutation，避免子组件持有旧引用
+// gotcha #18：关注状态 in-place mutation；Phase 6 接入 requireAuth
 async function onFollow(): Promise<void> {
   const d = detail.value;
   if (!d) return;
-  const prev = d.author.followed;
-  d.author.followed = !prev;
   try {
-    const res = await toggleFollow(d.author.id);
-    d.author.followed = res.followed;
+    await requireAuth(async () => {
+      const prev = d.author.followed;
+      d.author.followed = !prev;
+      try {
+        const res = await toggleFollow(d.author.id);
+        d.author.followed = res.followed;
+      } catch (err) {
+        d.author.followed = prev;
+        throw err;
+      }
+    });
   } catch (err) {
-    d.author.followed = prev; // 回滚
+    const code = (err as { code?: string })?.code;
+    if (code === 'AUTH_CANCELLED' || code === 'AUTH_REPLACED') return;
     uni.showToast({
       title: err instanceof Error ? err.message : '操作失败',
       icon: 'none',
@@ -355,21 +384,29 @@ function onTopicTap(topic: string): void {
 
 // ── 底部操作 ────────────────────────────────────────
 
-// gotchas #18：in-place mutation 乐观更新
+// gotcha #18：in-place mutation；Phase 6 接入 requireAuth
 async function onLike(): Promise<void> {
   const d = detail.value;
   if (!d) return;
-  const prevLiked = d.liked;
-  const prevLikes = d.likes;
-  d.liked = !prevLiked;
-  d.likes = Math.max(0, prevLikes + (prevLiked ? -1 : 1));
   try {
-    const res = await likeNote(d.id);
-    d.liked = res.liked;
-    d.likes = res.likes;
+    await requireAuth(async () => {
+      const prevLiked = d.liked;
+      const prevLikes = d.likes;
+      d.liked = !prevLiked;
+      d.likes = Math.max(0, prevLikes + (prevLiked ? -1 : 1));
+      try {
+        const res = await likeNote(d.id);
+        d.liked = res.liked;
+        d.likes = res.likes;
+      } catch (err) {
+        d.liked = prevLiked;
+        d.likes = prevLikes;
+        throw err;
+      }
+    });
   } catch (err) {
-    d.liked = prevLiked;
-    d.likes = prevLikes;
+    const code = (err as { code?: string })?.code;
+    if (code === 'AUTH_CANCELLED' || code === 'AUTH_REPLACED') return;
     uni.showToast({
       title: err instanceof Error ? err.message : '点赞失败',
       icon: 'none',
@@ -380,17 +417,25 @@ async function onLike(): Promise<void> {
 async function onSave(): Promise<void> {
   const d = detail.value;
   if (!d) return;
-  const prevSaved = d.saved;
-  const prevSaves = d.saves;
-  d.saved = !prevSaved;
-  d.saves = Math.max(0, prevSaves + (prevSaved ? -1 : 1));
   try {
-    const res = await toggleSave(d.id);
-    d.saved = res.saved;
-    d.saves = res.saves;
+    await requireAuth(async () => {
+      const prevSaved = d.saved;
+      const prevSaves = d.saves;
+      d.saved = !prevSaved;
+      d.saves = Math.max(0, prevSaves + (prevSaved ? -1 : 1));
+      try {
+        const res = await toggleSave(d.id);
+        d.saved = res.saved;
+        d.saves = res.saves;
+      } catch (err) {
+        d.saved = prevSaved;
+        d.saves = prevSaves;
+        throw err;
+      }
+    });
   } catch (err) {
-    d.saved = prevSaved;
-    d.saves = prevSaves;
+    const code = (err as { code?: string })?.code;
+    if (code === 'AUTH_CANCELLED' || code === 'AUTH_REPLACED') return;
     uni.showToast({
       title: err instanceof Error ? err.message : '收藏失败',
       icon: 'none',
