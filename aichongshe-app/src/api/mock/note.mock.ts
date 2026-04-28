@@ -17,9 +17,11 @@ import type {
   NoteListParams,
   NoteListResult,
   PetVariant,
+  PublishNotePayload,
+  PublishNoteResult,
   SaveNoteResult,
 } from '@/types/note';
-import { delay } from '@/api/mock/user.mock';
+import { delay, mockUserProfile } from '@/api/mock/user.mock';
 
 /** 4 种宠物 variant 循环 */
 const VARIANTS: PetVariant[] = ['dog', 'cat', 'mochi', 'puppy'];
@@ -297,4 +299,80 @@ export function mockToggleFollow(authorId: string): Promise<FollowResult> {
   }
   author.followed = !author.followed;
   return delay({ followed: author.followed }, 200);
+}
+
+// ─────────────────────────────────────────────────────────────
+// 发布笔记 mock（Phase 7 新增）
+// ─────────────────────────────────────────────────────────────
+
+let publishSeq = 0;
+
+function normalizeTopics(topics: string[]): string[] {
+  const cleaned: string[] = [];
+  for (const raw of topics) {
+    const t = raw.replace(/^#/, '').trim();
+    if (t && !cleaned.includes(t)) cleaned.push(t);
+  }
+  return cleaned;
+}
+
+function makePublishedImages(payload: PublishNotePayload, id: string): NoteImage[] {
+  if (payload.images.length === 0) {
+    return [{
+      url: '',
+      variant: 'dog',
+      seed: `${id}-empty`,
+    }];
+  }
+  return payload.images.slice(0, 9).map((img, i) => ({
+    url: img.url,
+    variant: img.variant,
+    seed: img.seed || `${id}-${i}`,
+  }));
+}
+
+/** 发布笔记：插入 discover feed，并写入 detail 缓存，保证发布后可直接进详情。 */
+export function mockPublishNote(payload: PublishNotePayload): Promise<PublishNoteResult> {
+  publishSeq += 1;
+  const id = `discover-published-${Date.now()}-${publishSeq}`;
+  const topics = normalizeTopics(payload.topics);
+  const images = makePublishedImages(payload, id);
+  const cover = images[0]!;
+  const author: NoteAuthor = {
+    id: mockUserProfile.id,
+    name: mockUserProfile.nickname,
+    avatarVariant: 'mochi',
+    followed: true,
+  };
+  AUTHOR_CACHE.set(author.id, author);
+
+  const base: NoteListItem = {
+    id,
+    title: payload.title,
+    coverUrl: cover.url,
+    variant: cover.variant,
+    tag: topics[0],
+    h: 220,
+    user: mockUserProfile.nickname,
+    avatarVariant: author.avatarVariant,
+    likes: 0,
+    liked: false,
+  };
+
+  STORE.discover.unshift(base);
+  const detail: NoteDetail = {
+    ...base,
+    images,
+    content: payload.content,
+    topics,
+    author,
+    saves: 0,
+    saved: false,
+    comments: 0,
+    editedAt: '刚刚',
+    fromCity: payload.location?.split('·')[0]?.trim() || '上海',
+  };
+  DETAIL_CACHE.set(id, detail);
+
+  return delay({ id, status: 'published' }, 520);
 }

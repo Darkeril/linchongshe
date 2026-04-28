@@ -86,6 +86,7 @@
 <script setup lang="ts">
 import { COLOR } from '@/styles/tokens';
 import { navigateSafe, switchTab } from '@/utils/navigate';
+import { useAuthGuard } from '@/composables/useAuthGuard';
 import HomeIcon from '@/components/ui/icons/HomeIcon.vue';
 import BagIcon from '@/components/ui/icons/BagIcon.vue';
 import PlusIcon from '@/components/ui/icons/PlusIcon.vue';
@@ -106,6 +107,7 @@ const props = withDefaults(defineProps<Props>(), {
   badges: () => ({}),
 });
 
+const { requireAuth } = useAuthGuard();
 const primaryColor = COLOR.primary;
 const inkMutedColor = COLOR.inkMuted;
 
@@ -130,10 +132,12 @@ const TAB_ROUTES: Record<Exclude<TabId, 'publish'>, string> = {
 
 async function onItemTap(id: TabId): Promise<void> {
   if (id === 'publish') {
-    // 发布按钮：navigate 而非 switchTab（独立路由）
+    // 发布按钮：先过登录拦截，再 navigate（独立路由）
     try {
-      await navigateSafe({ url: '/pages/publish/publish' });
+      await requireAuth(() => navigateSafe({ url: '/pages/publish/publish' }));
     } catch (err) {
+      const code = (err as { code?: string })?.code;
+      if (code === 'AUTH_CANCELLED' || code === 'AUTH_REPLACED') return;
       console.error('[AppTabBar] publish navigate failed:', err);
     }
     return;

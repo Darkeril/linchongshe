@@ -17,10 +17,18 @@
     <!-- 封面 -->
     <view class="acs-note-card__cover">
       <PetPlaceholder
+        v-if="!note.coverUrl"
         :variant="note.variant"
         :seed="note.id"
         :w="coverW"
         :h="note.h"
+      />
+      <image
+        v-else
+        class="acs-note-card__cover-image"
+        :src="note.coverUrl"
+        mode="aspectFill"
+        :style="{ height: note.h + 'px' }"
       />
       <!-- 标签（可选） -->
       <view v-if="note.tag" class="acs-note-card__tag">
@@ -127,6 +135,11 @@ function onLikeTap(): void {
     width: 100%;
     line-height: 0;
     font-size: 0; // 避免 inline svg 下有微小空隙
+  }
+
+  &__cover-image {
+    width: 100%;
+    display: block;
   }
 
   // 标签：毛玻璃白 85% + blur 8px

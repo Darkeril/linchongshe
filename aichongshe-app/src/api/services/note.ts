@@ -11,6 +11,7 @@ import {
   mockGetNoteDetail,
   mockGetNoteList,
   mockLikeNote,
+  mockPublishNote,
   mockToggleFollow,
   mockToggleSave,
 } from '@/api/mock/note.mock';
@@ -21,6 +22,8 @@ import type {
   NoteDetail,
   NoteListParams,
   NoteListResult,
+  PublishNotePayload,
+  PublishNoteResult,
   SaveNoteResult,
 } from '@/types/note';
 
@@ -88,6 +91,33 @@ export function toggleFollow(authorId: string): Promise<FollowResult> {
   return request<FollowResult>({
     url: `/app/web/user/${authorId}/follow`,
     method: 'POST',
+    header: getAuthHeader(),
+  });
+}
+
+/** 发布图文笔记（Phase 7 mock-first）。
+ *  真实后端当前有 `/app/note/saveNote`，但图片上传仍需 multipart/OSS 前置流程；
+ *  非 mock 模式先按 JSON 版 saveNote 对齐，最终契约见 docs/api-todo.md。
+ */
+export function publishNote(payload: PublishNotePayload): Promise<PublishNoteResult> {
+  if (isMock()) {
+    return mockPublishNote(payload);
+  }
+
+  const requestId = `acs-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  return request<PublishNoteResult>({
+    url: `/app/note/saveNote?requestId=${encodeURIComponent(requestId)}`,
+    method: 'POST',
+    data: {
+      title: payload.title,
+      content: payload.content,
+      urls: payload.images.map((img) => img.url),
+      noteCover: payload.images[0]?.url ?? '',
+      tags: payload.topics,
+      noteType: 1,
+      address: payload.location ?? '',
+      relatedProducts: payload.relatedProducts ?? [],
+    },
     header: getAuthHeader(),
   });
 }

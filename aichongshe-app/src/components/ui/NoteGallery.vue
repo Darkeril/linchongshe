@@ -22,8 +22,14 @@
         :key="`${img.seed}-${idx}`"
         class="acs-gallery__item"
       >
-        <!-- Phase 5a：真实 url 暂为空，全部走 PetPlaceholder 占位 -->
+        <image
+          v-if="img.url"
+          class="acs-gallery__image"
+          :src="img.url"
+          mode="aspectFill"
+        />
         <PetPlaceholder
+          v-else
           :variant="img.variant"
           :seed="img.seed"
           :w="galleryW"
@@ -115,6 +121,12 @@ function onSwiperChange(e: { detail: { current: number } }): void {
       width: 100% !important;
       height: 100% !important;
     }
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    display: block;
   }
 
   // 右下页码：设计稿 bottom 12 / right 12 → 24rpx / 24rpx；padding 3/10 → 6/20rpx；radius 10 → 20rpx

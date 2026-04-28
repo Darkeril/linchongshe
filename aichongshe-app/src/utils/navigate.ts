@@ -19,6 +19,8 @@ export interface NavigateOptions {
   url: string;
   /** 强制 reLaunch（重置栈） */
   reset?: boolean;
+  /** 使用 redirectTo 替换当前页 */
+  replace?: boolean;
   /** navigateTo 事件通道（非 reset 时可选） */
   events?: Record<string, (...args: unknown[]) => void>;
 }
@@ -27,6 +29,14 @@ export function navigateSafe(options: NavigateOptions): Promise<void> {
   return new Promise((resolve, reject) => {
     if (options.reset) {
       uni.reLaunch({
+        url: options.url,
+        success: () => resolve(),
+        fail: reject,
+      });
+      return;
+    }
+    if (options.replace) {
+      uni.redirectTo({
         url: options.url,
         success: () => resolve(),
         fail: reject,

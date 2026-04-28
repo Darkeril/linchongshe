@@ -21,6 +21,8 @@ export interface NoteListItem {
   id: string;
   /** 标题（2 行截断） */
   title: string;
+  /** 真实封面 URL；为空时使用 PetPlaceholder */
+  coverUrl?: string;
   /** 封面宠物占位 variant */
   variant: PetVariant;
   /** 可选分类标签（标签胶囊，例如「金毛日记」） */
@@ -114,4 +116,36 @@ export interface SaveNoteResult {
 /** 关注切换响应 */
 export interface FollowResult {
   followed: boolean;
+}
+
+// ─────────────────────────────────────────────────────────────
+// 发布笔记（Phase 7 新增）
+// ─────────────────────────────────────────────────────────────
+
+/** 发布页选中的单张图片 */
+export interface PublishImageItem {
+  /** 本地临时路径或上传后的 CDN URL */
+  url: string;
+  /** mock / 占位渲染用宠物变体 */
+  variant: PetVariant;
+  /** 占位渲染稳定 seed */
+  seed: string | number;
+}
+
+/** 发布笔记入参 */
+export interface PublishNotePayload {
+  title: string;
+  content: string;
+  topics: string[];
+  images: PublishImageItem[];
+  location?: string;
+  petName?: string;
+  mentionedUsers?: string[];
+  relatedProducts?: string[];
+}
+
+/** 发布笔记结果 */
+export interface PublishNoteResult {
+  id: string;
+  status: 'published';
 }
