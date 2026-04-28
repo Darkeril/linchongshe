@@ -79,6 +79,17 @@
 
 ---
 
+## 像素复核记录
+
+- 复核日期：2026-04-28
+- 复核视口：390 × 844
+- 参考来源：`design/screens-part3.jsx` 的 PublishScreen 坐标
+- 复核方式：Playwright 截图 + DOM bounding box 对照
+- 结果：顶部栏、图片 tile、标题区、正文区、话题区、选项列表、底部工具栏和发布按钮的可见元素最大坐标偏差 `0.5px`。
+- 截图证据：`/tmp/acs-pixel/reference.png`、`/tmp/acs-pixel/current-final.png`
+
+---
+
 ## 后续真实接口接入 TODO
 
 1. 新增上传 service：基于 `uni.uploadFile` 对接 `/oss/uploadBatch` 或 `/app/note/saveNoteByDTO`。

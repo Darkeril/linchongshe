@@ -18,6 +18,37 @@
 -->
 <template>
   <view class="acs-publish">
+    <!-- #ifdef H5 -->
+    <view class="acs-publish__status">
+      <text class="acs-publish__status-time">9:41</text>
+      <view class="acs-publish__status-spacer" />
+      <view class="acs-publish__status-icons">
+        <svg width="17" height="11" viewBox="0 0 17 11" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="7" width="2.6" height="4" rx="0.5" :fill="inkColor" />
+          <rect x="4" y="5" width="2.6" height="6" rx="0.5" :fill="inkColor" />
+          <rect x="8" y="2.5" width="2.6" height="8.5" rx="0.5" :fill="inkColor" />
+          <rect x="12" y="0" width="2.6" height="11" rx="0.5" :fill="inkColor" />
+        </svg>
+        <svg width="15" height="11" viewBox="0 0 15 11" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M7.5 3C9.5 3 11.3 3.8 12.6 5.1l1-1A8 8 0 007.5 1.5 8 8 0 001.4 4.1l1 1C3.7 3.8 5.5 3 7.5 3z"
+            :fill="inkColor"
+          />
+          <path
+            d="M7.5 6.2c1.2 0 2.3 0.5 3.1 1.3l1-1a6 6 0 00-8.2 0l1 1c0.8-0.8 1.9-1.3 3.1-1.3z"
+            :fill="inkColor"
+          />
+          <circle cx="7.5" cy="9.2" r="1.3" :fill="inkColor" />
+        </svg>
+        <svg width="24" height="11" viewBox="0 0 24 11" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.5" y="0.5" width="21" height="10" rx="2.5" :stroke="inkColor" stroke-opacity="0.4" fill="none" />
+          <rect x="2" y="2" width="18" height="7" rx="1.5" :fill="inkColor" />
+          <path d="M22.5 3.5v4c0.6-0.2 1.1-0.9 1.1-2s-0.5-1.8-1.1-2z" :fill="inkColor" fill-opacity="0.4" />
+        </svg>
+      </view>
+    </view>
+    <!-- #endif -->
+
     <view class="acs-publish__header">
       <view class="acs-publish__header-action" @tap="onCancel">
         <text class="acs-publish__cancel-text">取消</text>
@@ -60,7 +91,7 @@
           @tap="onChooseImage"
         >
           <view class="acs-publish__add-icon">
-            <PlusIcon :size="24" :color="primaryColor" />
+            <CameraIcon :size="24" :color="primaryColor" />
           </view>
           <text class="acs-publish__add-text">添加 {{ images.length }}/{{ MAX_IMAGES }}</text>
         </view>
@@ -83,7 +114,7 @@
           class="acs-publish__content-input"
           maxlength="500"
           auto-height
-          placeholder="和大家分享今天发生的趣事..."
+          :placeholder="contentPlaceholder"
           :placeholder-style="placeholderStyle"
         />
       </view>
@@ -157,7 +188,7 @@ import { computed, ref } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
 import LoginSheet from '@/components/ui/LoginSheet.vue';
 import CloseIcon from '@/components/ui/icons/CloseIcon.vue';
-import PlusIcon from '@/components/ui/icons/PlusIcon.vue';
+import CameraIcon from '@/components/ui/icons/CameraIcon.vue';
 import { publishNote } from '@/api/services/note';
 import { useAuthGuard } from '@/composables/useAuthGuard';
 import { navigateSafe, switchTab } from '@/utils/navigate';
@@ -182,7 +213,9 @@ interface PublishDraft {
 
 const { requireAuth } = useAuthGuard();
 const primaryColor = COLOR.primary;
+const inkColor = COLOR.ink;
 const placeholderStyle = `color: ${COLOR.inkFaint}; font-size: 14px;`;
+const contentPlaceholder = '和大家分享今天发生的趣事...\n提示：加上话题 #xxx 会被更多人看到哦';
 
 const images = ref<PublishImageItem[]>([]);
 const title = ref<string>('');
@@ -197,8 +230,8 @@ const selectedProduct = ref<string>('');
 const optionRows = computed<Array<{ action: OptionAction; icon: string; label: string; value: string }>>(() => [
   { action: 'location', icon: '📍', label: '所在位置', value: selectedLocation.value },
   { action: 'pet', icon: '🐕', label: '添加我的宠物', value: selectedPet.value },
-  { action: 'friend', icon: '@', label: '@好友提醒', value: selectedFriend.value },
-  { action: 'product', icon: '🛍', label: '关联商品', value: selectedProduct.value },
+  { action: 'friend', icon: '👥', label: '@好友提醒', value: selectedFriend.value },
+  { action: 'product', icon: '🛍️', label: '关联商品', value: selectedProduct.value },
 ]);
 
 const toolbarItems: Array<{ action: ToolbarAction; label: string }> = [
@@ -475,19 +508,54 @@ function onCancel(): void {
   flex-direction: column;
   overflow: hidden;
 
-  &__header {
+  &__status {
     flex-shrink: 0;
-    height: 100rpx;
-    padding: calc(36rpx + env(safe-area-inset-top)) 32rpx 0;
+    height: 38px;
+    padding: 14px 26px 6px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-sizing: content-box;
+    color: $color-ink;
+    font-size: 15px;
+    font-weight: $font-weight-semibold;
+    box-sizing: border-box;
+  }
+
+  &__status-time {
+    letter-spacing: 0.2px;
+    line-height: 1;
+  }
+
+  &__status-spacer {
+    width: 120px;
+    height: 24px;
+  }
+
+  &__status-icons {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    line-height: 0;
+  }
+
+  &__header {
+    flex-shrink: 0;
+    height: 50px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+
+    /* #ifndef H5 */
+    height: calc(50px + var(--status-bar-height));
+    padding-top: var(--status-bar-height);
+    /* #endif */
   }
 
   &__header-action {
-    min-width: 112rpx;
-    height: 72rpx;
+    min-width: 40px;
+    height: 36px;
     display: flex;
     align-items: center;
 
@@ -501,7 +569,7 @@ function onCancel(): void {
   }
 
   &__cancel-text {
-    font-size: $font-size-xl;
+    font-size: 15px;
     color: $color-ink-soft;
     line-height: 1;
   }
@@ -527,18 +595,18 @@ function onCancel(): void {
   }
 
   &__image-grid {
-    padding: 4rpx 32rpx 0;
+    padding: 2px 16px 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 12rpx;
+    gap: 6px;
   }
 
   &__image-tile,
   &__add-tile {
     position: relative;
-    width: calc((100vw - 88rpx) / 3);
-    height: calc((100vw - 88rpx) / 3);
-    border-radius: 22rpx;
+    width: calc((100vw - 44px) / 3);
+    height: calc((100vw - 44px) / 3);
+    border-radius: 11.2px;
     overflow: hidden;
     box-sizing: border-box;
   }
@@ -551,16 +619,16 @@ function onCancel(): void {
 
   &__cover-badge {
     position: absolute;
-    top: 8rpx;
-    left: 8rpx;
-    padding: 4rpx 12rpx;
-    border-radius: 12rpx;
+    top: 4px;
+    left: 4px;
+    padding: 2px 6px;
+    border-radius: 6px;
     background: $color-primary;
     line-height: 1;
   }
 
   &__cover-text {
-    font-size: 18rpx;
+    font-size: 9px;
     color: #ffffff;
     font-weight: $font-weight-bold;
     line-height: 1;
@@ -568,11 +636,11 @@ function onCancel(): void {
 
   &__remove {
     position: absolute;
-    top: 8rpx;
-    right: 8rpx;
-    width: 36rpx;
-    height: 36rpx;
-    border-radius: 18rpx;
+    top: 4px;
+    right: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 9px;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
@@ -585,12 +653,12 @@ function onCancel(): void {
 
   &__add-tile {
     background: $color-surface;
-    border: 3rpx dashed $color-primary-soft;
+    border: 1.5px dashed $color-primary-soft;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10rpx;
+    gap: 4px;
 
     &:active {
       opacity: 0.72;
@@ -598,10 +666,6 @@ function onCancel(): void {
   }
 
   &__add-icon {
-    width: 56rpx;
-    height: 56rpx;
-    border-radius: 28rpx;
-    background: rgba($color-primary-soft, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -619,43 +683,48 @@ function onCancel(): void {
     padding-right: 36rpx;
 
     &--title {
-      padding-top: 36rpx;
+      padding-top: 18px;
     }
 
     &--content {
-      padding-top: 20rpx;
+      padding-top: 10px;
     }
   }
 
   &__title-input {
     width: 100%;
-    height: 58rpx;
+    height: 22px;
     font-size: $font-size-2xl;
     font-weight: $font-weight-bold;
     color: $color-ink;
-    line-height: $line-height-tight;
+    line-height: 22px;
+    min-height: 22px;
+    max-height: 22px;
   }
 
   &__content-input {
     width: 100%;
-    min-height: 150rpx;
+    min-height: 72px;
     font-size: $font-size-lg;
     color: $color-ink;
     line-height: $line-height-relaxed;
   }
 
   &__topics {
-    padding: 16rpx 36rpx 0;
+    padding: 8px 18px 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 12rpx;
+    gap: 6px;
   }
 
   &__topic-chip,
   &__topic-add {
-    padding: 8rpx 20rpx;
-    border-radius: 24rpx;
-    line-height: 1;
+    height: 24px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
   }
 
   &__topic-chip {
@@ -670,12 +739,12 @@ function onCancel(): void {
     font-size: $font-size-sm;
     color: $color-primary-ink;
     font-weight: $font-weight-semibold;
-    line-height: 1;
+    line-height: 16px;
   }
 
   &__topic-add {
     background: $color-surface;
-    border: 2rpx dashed $color-ink-faint;
+    border: 1px dashed $color-ink-faint;
     box-sizing: border-box;
 
     &:active {
@@ -687,11 +756,11 @@ function onCancel(): void {
     font-size: $font-size-sm;
     color: $color-ink-soft;
     font-weight: $font-weight-medium;
-    line-height: 1;
+    line-height: 16px;
   }
 
   &__options {
-    margin: 36rpx 28rpx 0;
+    margin: 18px 14px 0;
     background: $color-surface;
     border-radius: $radius-md;
     overflow: hidden;
@@ -699,11 +768,12 @@ function onCancel(): void {
   }
 
   &__option-row {
-    height: 92rpx;
-    padding: 0 28rpx;
+    height: 43px;
+    padding: 0 14px;
     display: flex;
     align-items: center;
     border-bottom: 1rpx solid $color-divider;
+    box-sizing: border-box;
 
     &--last {
       border-bottom: none;
@@ -715,7 +785,8 @@ function onCancel(): void {
   }
 
   &__option-icon {
-    width: 42rpx;
+    width: 16px;
+    margin-right: 10px;
     font-size: $font-size-xl;
     color: $color-primary;
     line-height: 1;
@@ -744,34 +815,34 @@ function onCancel(): void {
   }
 
   &__option-arrow {
-    margin-left: 12rpx;
-    font-size: 40rpx;
+    margin-left: 6px;
+    font-size: 20px;
     color: $color-ink-faint;
     line-height: 1;
   }
 
   &__scroll-gap {
-    height: 34rpx;
+    height: 24px;
   }
 
   &__bottom {
     flex-shrink: 0;
-    padding: 24rpx 32rpx calc(44rpx + env(safe-area-inset-bottom));
+    padding: 11.5px 16px calc(22px + env(safe-area-inset-bottom));
     background: $color-surface;
-    border-top: 1rpx solid $color-divider;
+    border-top: 0.5px solid $color-divider;
     box-shadow: 0 -8rpx 28rpx rgba(80, 50, 30, 0.06);
   }
 
   &__toolbar {
     display: flex;
-    gap: 20rpx;
-    margin-bottom: 20rpx;
+    gap: 10px;
+    margin-bottom: 10px;
   }
 
   &__tool {
     flex: 1;
-    height: 64rpx;
-    border-radius: 20rpx;
+    height: 34px;
+    border-radius: 10px;
     background: $color-surface-dim;
     display: flex;
     align-items: center;
@@ -791,14 +862,14 @@ function onCancel(): void {
 
   &__submit {
     width: 100%;
-    height: 92rpx;
+    height: 46px;
     border: none;
     border-radius: $radius-lg;
     background: linear-gradient(135deg, $color-primary, $color-primary-ink);
     color: #ffffff;
     font-size: $font-size-xl;
     font-weight: $font-weight-bold;
-    line-height: 92rpx;
+    line-height: 46px;
     box-shadow: 0 12rpx 36rpx rgba($color-primary, 0.33);
     font-family: $font-family-body;
     padding: 0;
