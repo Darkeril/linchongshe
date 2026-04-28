@@ -7,6 +7,12 @@ declare module '*.vue' {
   export default component;
 }
 
+declare module 'uview-plus' {
+  import type { Plugin } from 'vue';
+  const uviewPlus: Plugin;
+  export default uviewPlus;
+}
+
 interface ImportMetaEnv {
   /** 是否启用 Mock 数据（"true" | "false"，字符串） */
   readonly VITE_USE_MOCK: string;

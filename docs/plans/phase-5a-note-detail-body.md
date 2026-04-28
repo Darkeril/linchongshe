@@ -1,7 +1,7 @@
 # Phase 5a：笔记详情页主体（不含评论 + 登录拦截升级）
 
 - **创建日期**：2026-04-22
-- **状态**：📝 待用户确认
+- **状态**：✅ 已完成（见提交 3d5833c：笔记详情页主体 + DOM 事件名冲突 bug 修复）
 - **执行方式**：autoresearch-router 严格协议（Boot Block 完整 + worker + reviewer 成对 + 账本 + 按 dispatch-template）
 - **前置依赖**：Phase 0 ~ 4 完成
 

@@ -20,7 +20,7 @@ export const BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? '';
 
 export interface RequestOptions {
   url: string;
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   data?: Record<string, unknown> | unknown[];
   header?: Record<string, string>;
   timeout?: number;
